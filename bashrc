@@ -28,6 +28,12 @@ alias ll='ls -la'
 alias aqui='explorer.exe .'
 alias fmedia='find . -type f \( -name "*.mp4" -o -name "*.mkv" \) -exec mv {} . \;'
 alias cdd='cd "/mnt/c/Users/Gonçalo Sousa/Desktop"'
+alias data='echo $(date "+%d/%m/%Y %H:%M:%S")'
+tempolx='curl wttr.in/Lisboa\?format=4'
+temposx='curl wttr.in/Seixal\?format=4'
+tempolxf='curl wttr.in/Lisboa'
+temposxf='curl wttr.in/Seixal'
+
 
 
 field() {
