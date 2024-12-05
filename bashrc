@@ -59,7 +59,7 @@ alias glp='git log --graph --oneline --decorate --all'
 alias gp='git push origin'
 alias gs='git status'
 alias gu='git pull' # gu = git update
-
+alias gs='git switch'
 
 # Prompt
 # Store `tput` colors for future use to reduce fork+exec
