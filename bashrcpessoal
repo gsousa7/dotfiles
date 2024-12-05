@@ -1,0 +1,31 @@
+function getyt() {
+yt-dlp --extract-audio --audio-format mp3 --output "/mnt/c/Users/Gonçalo Sousa/Desktop/%(title)s.%(ext)s" "$1"
+}
+
+function getytmp4() {
+yt-dlp -f 'bestvideo[height=1080]+bestaudio/best[height=1080]' --merge-output-format mp4 --output "/mnt/c/Users/Gonçalo Sousa/Desktop/%(title)s.%(ext)s" "$1"
+}
+
+function getytplist() {
+    yt-dlp -x --audio-format mp3 --output "/mnt/c/Users/Gonçalo Sousa/Desktop/%(title)s.%(ext)s" "$1"
+}
+
+function getytplistmp4() {
+    yt-dlp -f 'bestvideo+bestaudio' --merge-output-format mp4 --output "/mnt/c/Users/Gonçalo Sousa/Desktop/%(title)s.%(ext)s" "$1"
+}
+
+function getytplistmp4subs() {
+yt-dlp -f 'bestvideo+bestaudio' --merge-output-format mp4 --write-subs --embed-subs --sub-lang en --output "/mnt/c/Users/Gonçalo Sousa/Desktop/%(title)s.%(ext)s" "$1"
+}
+
+function getytmp4subs() {
+yt-dlp -f 'bestvideo[height=1080]+bestaudio/best[height=1080]' --merge-output-format mp4 --write-subs --embed-subs --sub-lang en --output "/mnt/c/Users/Gonçalo Sousa/Desktop/%(title)s.%(ext)s" "$1"
+}
+
+function getspot() {
+    spotdl --output "/mnt/c/Users/Gonçalo Sousa/Desktop/{artist} - {title}.mp3" "$1"
+}
+
+function getalb() {
+    spotdl --output "/mnt/c/Users/Gonçalo Sousa/Desktop/{artist} - {album}/{artist} - {title}.mp3" "$1"
+}

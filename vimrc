@@ -4,6 +4,12 @@
 # Open vin and run
 ## :PlugInstall
 
+set mouse-=0
+set visualbell
+set t_vb=
+set t_u7=
+
+
 " ---------------------------------------------
 " General Settings
 " ---------------------------------------------
