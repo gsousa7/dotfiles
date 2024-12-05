@@ -1,8 +1,9 @@
-# Install with 
-## curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+" Install with
+"" curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-# Open vin and run
-## :PlugInstall
+" Open vin and run
+"" :PlugInstall
+"or run vim +PlugInstall +qall
 
 set mouse-=0
 set visualbell
