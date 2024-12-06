@@ -1,4 +1,3 @@
 #!/usr/bin/env bash
 
-#this script will install dot files and backup existing ones
-add conditionals to test files
+# This script will backup existing dot files if they exist and install the new ones
