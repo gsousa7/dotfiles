@@ -19,7 +19,7 @@ set backspace=indent,eol,start " Allow backspace in insert mode
 set encoding=utf-8           " Use UTF-8 encoding
 set fileencoding=utf-8       " Ensure files are saved as UTF-8
 set clipboard=unnamedplus    " Use system clipboard
-set mouse=a                  " Enable mouse support
+"set mouse=a                  " Enable mouse support
 set history=1000             " Store 1000 lines of command history
 set wildmenu                 " Enhanced command-line completion
 set lazyredraw               " Improve performance for macros/scripts

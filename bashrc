@@ -29,11 +29,11 @@ alias aqui='explorer.exe .'
 alias fmedia='find . -type f \( -name "*.mp4" -o -name "*.mkv" \) -exec mv {} . \;'
 alias cdd='cd "/mnt/c/Users/Gonçalo Sousa/Desktop"'
 alias data='echo $(date "+%d/%m/%Y %H:%M:%S")'
-tempolx='curl wttr.in/Lisboa\?format=4'
-temposx='curl wttr.in/Seixal\?format=4'
-tempolxf='curl wttr.in/Lisboa'
-temposxf='curl wttr.in/Seixal'
-
+alias tempolx='curl wttr.in/Lisboa\?format=4'
+alias temposx='curl wttr.in/Seixal\?format=4'
+alias tempolxf='curl wttr.in/Lisboa'
+alias temposxf='curl wttr.in/Seixal'
+alias code='/mnt/c/Users/Gonçalo\ Sousa\ AppData/Local/Programs/Microsoft\ VS\ Code/Code.exe'
 
 
 field() {
@@ -56,12 +56,18 @@ export LESS_TERMCAP_us=$'\e[1;4;31m'
 
 # Git Aliases
 alias nb='git checkout -b'
-alias ga='git add -A'
+alias gall='git add -A'
+alias ga='git add'
+alias gf='git fetch'
 alias gb='git branch'
-alias gc='git clone'
+alias gc='git commit -m'
+alias gcl='git clone'
 alias gi='git init'
 alias gl='git log'
-alias glp='git log --graph --oneline --decorate --all'
+alias gls='git log --graph --oneline --decorate --all'
+alias glpd='git log --graph --oneline --decorate --all -p --pretty=format:"%C(auto)%h %C(cyan)%an <%ae> %C(yellow)%ad %C(reset)%s %C(auto)%d %C(reset)"'
+alias glps='git log --graph --oneline --decorate --all --stat --pretty=format:"%C(auto)%h %C(cyan)%an <%ae> %C(yellow)%ad %C(reset)%s %C(auto)%d %C(reset)"'
+alias glp='git log --graph --oneline --decorate --all --pretty=format:"%C(auto)%h %C(cyan)%an <%ae> %C(yellow)%ad %C(reset)%s %C(auto)%d %C(reset)" --date=format:"%d/%m/%Y %H:%M:%S"'
 alias gp='git push origin'
 alias gs='git status'
 alias gu='git pull' # gu = git update
