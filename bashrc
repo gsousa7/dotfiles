@@ -34,7 +34,7 @@ alias temposx='curl wttr.in/Seixal\?format=4'
 alias tempolxf='curl wttr.in/Lisboa'
 alias temposxf='curl wttr.in/Seixal'
 alias code='/mnt/c/Users/Gonçalo\ Sousa\ AppData/Local/Programs/Microsoft\ VS\ Code/Code.exe'
-
+alias dus='du -sh * 2>/dev/null'
 
 field() {
     awk -F "${2:- }" "{ print \$${1:-1} }"
