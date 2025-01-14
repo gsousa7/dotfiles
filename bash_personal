@@ -1,12 +1,22 @@
 #lazygit usage:
-## lazygit "Commit msg"
-#function lazygit() {
-#  git add -A
-#  git commit -m "$1"
-#  git push -u origin master
-#}
-
-
+## lazygit "Commit msg" "branch"
+function lazygit() {
+	if [ -z "$1" ]; then
+		echo "Error: Commit message is required."
+		echo "Usage: lazygit '<commit_message>' <branch_name>"
+		return 1
+	fi
+	
+	if [ -z "$2" ]; then
+		echo "Error: Branch name is required"
+		echo "Usage: lazygit '<commit_message>' <branch_name>"
+		return 1
+	fi
+	
+	git add -A
+	git commit -m "$1"
+	git push -u origin "$2"
+}
 
 # explain.sh begins
 explain () {
@@ -24,6 +34,7 @@ explain () {
   fi
 }
 
+# Common Alias
 alias ll='ls -la'
 alias aqui='explorer.exe .'
 alias fmedia='find . -type f \( -name "*.mp4" -o -name "*.mkv" \) -exec mv {} . \;'
@@ -35,6 +46,7 @@ alias tempolxf='curl wttr.in/Lisboa'
 alias temposxf='curl wttr.in/Seixal'
 alias code='/mnt/c/Users/Gonçalo\ Sousa\ AppData/Local/Programs/Microsoft\ VS\ Code/Code.exe'
 alias dus='du -sh * 2>/dev/null'
+alias net='ip -br -c a'
 
 field() {
     awk -F "${2:- }" "{ print \$${1:-1} }"
@@ -54,9 +66,10 @@ export LESS_TERMCAP_so=$'\e[01;33m'
 export LESS_TERMCAP_ue=$'\e[0m'
 export LESS_TERMCAP_us=$'\e[1;4;31m'
 
-# Git Aliases
+## Git Aliases
 alias nb='git checkout -b'
 alias gall='git add -A'
+alias gst='git status'
 alias ga='git add'
 alias gf='git fetch'
 alias gb='git branch'
@@ -72,6 +85,29 @@ alias gp='git push origin'
 alias gs='git status'
 alias gu='git pull' # gu = git update
 alias gs='git switch'
+
+## Kubernetes Alias
+alias k='kubectl'
+alias ks='kubectl -n kube-system'
+alias kdesc='kubectl describe'
+
+# Create resources
+alias kcf='kubectl create -f'
+alias kaf='kubectl apply -f'
+
+# Get resources
+alias kgn='kubectl get nodes'
+alias kgp='kubectl get pods'
+alias kgpa='kubectl get pods --all-namespaces'
+alias kgs='kubectl get services'
+alias kgd='kubectl get deployments'
+
+# Delete
+alias kd='kubectl delete'
+alias kdp='kubectl delete pod'
+alias kds='kubectl delete services'
+alias kdd='kubectl delete deployments'
+alias kdn='kubectl delete namespaces'
 
 # Prompt
 # Store `tput` colors for future use to reduce fork+exec
@@ -152,20 +188,43 @@ colors() {
 }
 
 
-
-# Copy stdin to the clipboard
-#copy() {
-#	pbcopy 2>/dev/null ||
-#	    xsel 2>/dev/null ||
-#	    clip.exe
-#}
-
 # Convert epoch to human readable (print current date if no args)
 epoch() {
 	local num=${1:--1}
 	printf '%(%B %d, %Y %-I:%M:%S %p %Z)T\n' "$num"
 }
 
+function getyt() {
+yt-dlp --extract-audio --audio-format mp3 --output "/mnt/c/Users/Gonçalo Sousa/Desktop/%(title)s.%(ext)s" "$1"
+}
+
+function getytmp4() {
+yt-dlp -f 'bestvideo[height=1080]+bestaudio/best[height=1080]' --merge-output-format mp4 --output "/mnt/c/Users/Gonçalo Sousa/Desktop/%(title)s.%(ext)s" "$1"
+}
+
+function getytplist() {
+    yt-dlp -x --audio-format mp3 --output "/mnt/c/Users/Gonçalo Sousa/Desktop/%(title)s.%(ext)s" "$1"
+}
+
+function getytplistmp4() {
+    yt-dlp -f 'bestvideo+bestaudio' --merge-output-format mp4 --output "/mnt/c/Users/Gonçalo Sousa/Desktop/%(title)s.%(ext)s" "$1"
+}
+
+function getytplistmp4subs() {
+yt-dlp -f 'bestvideo+bestaudio' --merge-output-format mp4 --write-subs --embed-subs --sub-lang en --output "/mnt/c/Users/Gonçalo Sousa/Desktop/%(title)s.%(ext)s" "$1"
+}
+
+function getytmp4subs() {
+yt-dlp -f 'bestvideo[height=1080]+bestaudio/best[height=1080]' --merge-output-format mp4 --write-subs --embed-subs --sub-lang en --output "/mnt/c/Users/Gonçalo Sousa/Desktop/%(title)s.%(ext)s" "$1"
+}
+
+function getspot() {
+    spotdl --output "/mnt/c/Users/Gonçalo Sousa/Desktop/{artist} - {title}.mp3" "$1"
+}
+
+function getalb() {
+    spotdl --output "/mnt/c/Users/Gonçalo Sousa/Desktop/{artist} - {album}/{artist} - {title}.mp3" "$1"
+}
 
 # load completion
 . /etc/bash/bash_completion 2>/dev/null ||
