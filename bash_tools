@@ -6,13 +6,13 @@ function lazygit() {
 		echo "Usage: lazygit '<commit_message>' <branch_name>"
 		return 1
 	fi
-	
+
 	if [ -z "$2" ]; then
 		echo "Error: Branch name is required"
 		echo "Usage: lazygit '<commit_message>' <branch_name>"
 		return 1
 	fi
-	
+
 	git add -A
 	git commit -m "$1"
 	git push -u origin "$2"
@@ -47,6 +47,8 @@ alias temposxf='curl wttr.in/Seixal'
 alias code='/mnt/c/Users/Gonçalo\ Sousa\ AppData/Local/Programs/Microsoft\ VS\ Code/Code.exe'
 alias dus='du -sh * 2>/dev/null'
 alias net='ip -br -c a'
+alias lsfunc='cat ~/.bash* |grep "()"
+alias lsalias=' cat ~/.bashrc |grep "alias"
 
 field() {
     awk -F "${2:- }" "{ print \$${1:-1} }"
@@ -81,10 +83,13 @@ alias gls='git log --graph --oneline --decorate --all'
 alias glpd='git log --graph --oneline --decorate --all -p --pretty=format:"%C(auto)%h %C(cyan)%an <%ae> %C(yellow)%ad %C(reset)%s %C(auto)%d %C(reset)"'
 alias glps='git log --graph --oneline --decorate --all --stat --pretty=format:"%C(auto)%h %C(cyan)%an <%ae> %C(yellow)%ad %C(reset)%s %C(auto)%d %C(reset)"'
 alias glp='git log --graph --oneline --decorate --all --pretty=format:"%C(auto)%h %C(cyan)%an <%ae> %C(yellow)%ad %C(reset)%s %C(auto)%d %C(reset)" --date=format:"%d/%m/%Y %H:%M:%S"'
+alias gstr='git log --oneline --simplify-by-decoration --graph --all'
 alias gp='git push origin'
-alias gs='git status'
+alias gst='git status'
 alias gu='git pull' # gu = git update
 alias gs='git switch'
+
+
 
 ## Kubernetes Alias
 alias k='kubectl'
