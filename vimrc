@@ -5,7 +5,6 @@
 "" :PlugInstall
 "or run vim +PlugInstall +qall
 
-set mouse-=0
 set visualbell
 set t_vb=
 set t_u7=
@@ -19,7 +18,8 @@ set backspace=indent,eol,start " Allow backspace in insert mode
 set encoding=utf-8           " Use UTF-8 encoding
 set fileencoding=utf-8       " Ensure files are saved as UTF-8
 set clipboard=unnamedplus    " Use system clipboard
-"set mouse=a                  " Enable mouse support
+set mouse=a                  " Enable mouse support
+set mouse=r                  " Allows right click to paste
 set history=1000             " Store 1000 lines of command history
 set wildmenu                 " Enhanced command-line completion
 set lazyredraw               " Improve performance for macros/scripts
@@ -61,9 +61,6 @@ call plug#begin('~/.vim/plugged')
 
 " Essential Plugins
 Plug 'junegunn/vim-plug'              " Plugin manager
-Plug 'preservim/nerdtree'             " File explorer
-Plug 'tpope/vim-fugitive'             " Git integration
-Plug 'airblade/vim-gitgutter'         " Git diff in gutter
 Plug 'vim-airline/vim-airline'        " Status line
 Plug 'vim-airline/vim-airline-themes' " Airline themes
 Plug 'sheerun/vim-polyglot'           " Syntax highlighting for many languages
@@ -75,9 +72,6 @@ call plug#end()
 " ---------------------------------------------
 " Key Mappings
 " ---------------------------------------------
-" NERDTree Toggle
-nnoremap <silent> <C-n> :NERDTreeToggle<CR>
-
 " Quickly save and quit
 nnoremap <silent> <leader>w :w<CR>
 nnoremap <silent> <leader>q :q<CR>
@@ -92,19 +86,13 @@ nnoremap <silent> <C-l> <C-w>l
 " Clear search highlights
 nnoremap <silent> <leader>/ :noh<CR>
 
-" ---------------------------------------------
-" GitGutter Settings
-" ---------------------------------------------
-let g:gitgutter_map_keys = 0        " Disable default key mappings
-nnoremap <leader>hp :GitGutterPreviewHunk<CR>
-nnoremap <leader>hs :GitGutterStageHunk<CR>
 
 " ---------------------------------------------
 " ALE Settings
 " ---------------------------------------------
 let g:ale_fix_on_save = 1           " Auto-fix on save
 let g:ale_linters_explicit = 1      " Use only specified linters
-let g:ale_linters = {'python': ['flake8'], 'javascript': ['eslint']}
+let g:ale_linters = {'python': ['flake8'], 'yaml': ['yamllint'], 'sh': ['shellsheck']}
 
 " ---------------------------------------------
 " Other Settings

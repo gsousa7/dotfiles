@@ -14,6 +14,7 @@ FILES_TO_SYMLINK=(
   "gitconfig"
   "htoprc"
   "vimrc"
+  "tmux.conf"
 )
 
 # Bash tools file to include
@@ -52,15 +53,38 @@ detect_package_manager() {
 
 # Function to install core packages
 install_packages() {
-  log_message "Installing core packages..."
+    log_message "Installing core packages..."
 
-  if [ "$PACKAGE_MANAGER" == "apt" ]; then
-    log_message "Refreshing package repositories using apt..."
-    sudo apt update
-  fi
+    # Append documentation packages based on package manager
+    if [ "$PACKAGE_MANAGER" == "apt" ]; then
+        PACKAGES+=(
+            "man-db"
+            "manpages"
+            "manpages-dev"
+            "python3-doc"
+            "bash-doc"
+            "info"
+            "debian-reference-en"
+        )
+        log_message "Refreshing package repositories using apt..."
+        sudo apt update
+		
+    elif [ "$PACKAGE_MANAGER" == "dnf" ]; then
+        PACKAGES+=(
+            "man-db"
+            "man-pages"
+            "python3-docs"
+            "bash-doc"
+            "info"
+            "man-pages-devel"
+            "system-doc"
+        )
+    fi
 
-  log_message "Installing packages using $PACKAGE_MANAGER..."
-  sudo "$PACKAGE_MANAGER" install -y "${PACKAGES[@]}" && log_message "Packages installed successfully." || log_message "Failed to install packages."
+    log_message "Installing packages using $PACKAGE_MANAGER..."
+    sudo "$PACKAGE_MANAGER" install -y "${PACKAGES[@]}" && \
+        log_message "Packages installed successfully." || \
+        log_message "Failed to install packages."
 }
 
 # Function to install pip-based extra tools
