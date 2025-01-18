@@ -19,11 +19,11 @@ FILES_TO_SYMLINK=(
 # Bash tools file to include
 BASH_TOOLS="bash_tools"
 
-# List of packages to install
+# List of core packages to install
 PACKAGES=(
   "telnet" "rsync" "wget" "curl" "bash-completion" "vim" "htop" "tcpdump" "jq"
   "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip"
-  "nc" "netcat" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git"
+  "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git"
 )
 
 # Extra tools to install via pip
@@ -37,11 +37,11 @@ log_message() {
 # Function to detect package manager
 detect_package_manager() {
   log_message "Detecting package manager..."
-  if command -v dnf &>/dev/null; then
+  if command -v dnf &> /dev/null; then
     PACKAGE_MANAGER="dnf"
-  elif command -v yum &>/dev/null; then
+  elif command -v yum &> /dev/null; then
     PACKAGE_MANAGER="yum"
-  elif command -v apt-get &>/dev/null; then
+  elif command -v apt-get &> /dev/null; then
     PACKAGE_MANAGER="apt"
   else
     log_message "Error: No supported package manager found (dnf/yum/apt). Exiting."
@@ -50,9 +50,9 @@ detect_package_manager() {
   log_message "Package manager detected: $PACKAGE_MANAGER"
 }
 
-# Function to install core packages and extra tools
-install_packages_and_tools() {
-  log_message "Installing core packages and extra tools..."
+# Function to install core packages
+install_packages() {
+  log_message "Installing core packages..."
 
   if [ "$PACKAGE_MANAGER" == "apt" ]; then
     log_message "Refreshing package repositories using apt..."
@@ -60,21 +60,30 @@ install_packages_and_tools() {
   fi
 
   log_message "Installing packages using $PACKAGE_MANAGER..."
-  sudo "$PACKAGE_MANAGER" install -y "${PACKAGES[@]}" && log_message "Packages installed successfully."
+  sudo "$PACKAGE_MANAGER" install -y "${PACKAGES[@]}" && log_message "Packages installed successfully." || log_message "Failed to install packages."
+}
 
+# Function to install pip-based extra tools
+install_extra_tools() {
   log_message "Installing extra tools via pip..."
-  pip install --upgrade "${EXTRA_TOOLS[@]}"
-}
 
-# Function to ensure git is installed before cloning
-install_git_if_needed() {
-  if ! command -v git &>/dev/null; then
-    log_message "Git not found. Installing git..."
-    sudo "$PACKAGE_MANAGER" install -y git
+  # Ensure pip is installed
+  if ! command -v pip &> /dev/null; then
+    log_message "pip not found. Installing python3-pip..."
+    sudo "$PACKAGE_MANAGER" install -y python3-pip || { log_message "Failed to install python3-pip. Exiting."; exit 1; }
   fi
+
+  for tool in "${EXTRA_TOOLS[@]}"; do
+    if ! command -v "$tool" &> /dev/null; then
+      log_message "Installing $tool..."
+      pip install --user "$tool" && log_message "$tool installed successfully." || log_message "Failed to install $tool."
+    else
+      log_message "$tool is already installed."
+    fi
+  done
 }
 
-# Function to clone the dotfiles repository if not already cloned
+# Function to clone the dotfiles repository
 clone_dotfiles_repo() {
   if [ ! -d "$DOTFILES_DIR" ]; then
     log_message "Cloning dotfiles repository..."
@@ -90,7 +99,7 @@ symlink_dotfiles() {
   mkdir -p "$BACKUP_DIR"
 
   for file in "${FILES_TO_SYMLINK[@]}"; do
-    dotfile=".$file"  # Add leading dot for the home directory
+    dotfile=".$file"
     if [ -f "$HOME/$dotfile" ]; then
       log_message "Backing up $dotfile to $BACKUP_DIR"
       mv "$HOME/$dotfile" "$BACKUP_DIR/" && log_message "$dotfile backed up."
@@ -107,27 +116,26 @@ include_bash_tools() {
 
     if ! grep -q "source \$HOME/.$BASH_TOOLS" "$HOME/.bashrc"; then
       log_message "Adding include for .$BASH_TOOLS in .bashrc"
-      echo -e "\n# Source Bash tools\nif [ -f \"\$HOME/.$BASH_TOOLS\" ]; then\n    . \"\$HOME/.$BASH_TOOLS\"\nfi" >> "$HOME/.bashrc" && log_message "Include for $BASH_TOOLS added to .bashrc."
+      echo -e "\n# Source Bash tools\nif [ -f \"\$HOME/.$BASH_TOOLS\" ]; then\n    . \"\$HOME/.$BASH_TOOLS\"\nfi" >> "$HOME/.bashrc"
+      log_message "Include for $BASH_TOOLS added to .bashrc."
     fi
   fi
 }
 
-# Install Vim-Plug if not installed
 install_vim_plug() {
   local plug_vim_path="$HOME/.vim/autoload/plug.vim"
 
   if [ ! -f "$plug_vim_path" ]; then
     log_message "Installing Vim-Plug..."
     curl -fLo "$plug_vim_path" --create-dirs \
-      https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+      https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim || log_message "Failed to install Vim-Plug."
   else
     log_message "Vim-Plug is already installed."
   fi
 }
 
-# Install Vim plugins only if Vim is installed
 install_vim_plugins() {
-  if command -v vim &>/dev/null; then
+  if command -v vim &> /dev/null; then
     log_message "Installing Vim plugins..."
     vim +'PlugInstall --sync' +qa
   else
@@ -135,26 +143,16 @@ install_vim_plugins() {
   fi
 }
 
-# Function to pull the latest changes from the dotfiles repository
-pull_dotfiles_changes() {
-  log_message "Pulling the latest changes from GitHub..."
-  cd "$DOTFILES_DIR" || { log_message "Error accessing dotfiles directory. Exiting."; exit 1; }
-  git pull && log_message "Dotfiles updated successfully." || log_message "Error pulling changes. Exiting."
-}
-
 # Main script execution
 log_message "Script execution started."
 detect_package_manager
 
-# Ensure git is installed before proceeding
-install_git_if_needed
-
-# Prompt the user to choose between installing packages/tools/dotfiles or just updating dotfiles
+# Prompt the user
 read -p "Do you want to (i)nstall packages and tools, dotfiles, or (u)pdate dotfiles? [iI1/uU2]: " choice
 case "$choice" in
   [iI1]*)
-    log_message "Installing packages, tools, and dotfiles..."
-    install_packages_and_tools
+    install_packages
+    install_extra_tools
     clone_dotfiles_repo
     symlink_dotfiles
     include_bash_tools
@@ -163,7 +161,7 @@ case "$choice" in
     ;;
   [uU2]*)
     log_message "Updating dotfiles..."
-    pull_dotfiles_changes
+    cd "$DOTFILES_DIR" && git pull || log_message "Error pulling changes."
     ;;
   *)
     log_message "Invalid choice. Exiting."

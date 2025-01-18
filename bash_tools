@@ -47,8 +47,8 @@ alias temposxf='curl wttr.in/Seixal'
 alias code='/mnt/c/Users/Gonçalo\ Sousa\ AppData/Local/Programs/Microsoft\ VS\ Code/Code.exe'
 alias dus='du -sh * 2>/dev/null'
 alias net='ip -br -c a'
-alias lsfunc='cat ~/.bash* |grep "()"
-alias lsalias=' cat ~/.bashrc |grep "alias"
+alias lsfunc='cat ~/.bash* |grep "()"'
+alias lsalias='cat ~/.bashrc |grep "alias"'
 
 field() {
     awk -F "${2:- }" "{ print \$${1:-1} }"
