@@ -23,7 +23,7 @@ BASH_TOOLS="bash_tools"
 PACKAGES=(
   "telnet" "rsync" "wget" "curl" "bash-completion" "vim" "htop" "tcpdump" "jq"
   "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip"
-  "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx"
+  "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux"
 )
 
 # Extra tools to install via pip
