@@ -26,7 +26,7 @@ PACKAGES=(
   "nc" "netcat" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git"
 )
 
-# Extra tools to install
+# Extra tools to install via pip
 EXTRA_TOOLS=("spotdl" "yt-dlp")
 
 # Log function to capture success and failure
@@ -37,11 +37,11 @@ log_message() {
 # Function to detect package manager
 detect_package_manager() {
   log_message "Detecting package manager..."
-  if command -v dnf &> /dev/null; then
+  if command -v dnf &>/dev/null; then
     PACKAGE_MANAGER="dnf"
-  elif command -v yum &> /dev/null; then
+  elif command -v yum &>/dev/null; then
     PACKAGE_MANAGER="yum"
-  elif command -v apt-get &> /dev/null; then
+  elif command -v apt-get &>/dev/null; then
     PACKAGE_MANAGER="apt"
   else
     log_message "Error: No supported package manager found (dnf/yum/apt). Exiting."
@@ -50,52 +50,28 @@ detect_package_manager() {
   log_message "Package manager detected: $PACKAGE_MANAGER"
 }
 
-# Function to install pip if it's not installed
-install_pip() {
-  if ! command -v pip &> /dev/null; then
-    log_message "pip not found, attempting to install pip..."
-    if [ "$PACKAGE_MANAGER" == "apt" ]; then
-      sudo apt install -y python3-pip && log_message "pip installed successfully."
-    elif [ "$PACKAGE_MANAGER" == "dnf" ]; then
-      sudo dnf install -y python3-pip && log_message "pip installed successfully."
-    else
-      log_message "Error: Unable to install pip. Exiting."
-      exit 1
-    fi
-  else
-    log_message "pip is already installed."
-  fi
-}
-
 # Function to install core packages and extra tools
 install_packages_and_tools() {
   log_message "Installing core packages and extra tools..."
-  
+
   if [ "$PACKAGE_MANAGER" == "apt" ]; then
     log_message "Refreshing package repositories using apt..."
     sudo apt update
   fi
 
   log_message "Installing packages using $PACKAGE_MANAGER..."
-  case "$PACKAGE_MANAGER" in
-    "apt"|"dnf"|"yum")
-      sudo "$PACKAGE_MANAGER" install -y "${PACKAGES[@]}" && log_message "Packages installed successfully."
-      ;;
-    *)
-      log_message "Unsupported package manager. Exiting."
-      exit 1
-      ;;
-  esac
+  sudo "$PACKAGE_MANAGER" install -y "${PACKAGES[@]}" && log_message "Packages installed successfully."
 
-  log_message "Installing extra tools..."
-  for tool in "${EXTRA_TOOLS[@]}"; do
-    if ! command -v "$tool" &> /dev/null; then
-      log_message "Installing $tool..."
-      pip install "$tool" && log_message "$tool installed successfully." || log_message "Failed to install $tool."
-    else
-      log_message "$tool is already installed."
-    fi
-  done
+  log_message "Installing extra tools via pip..."
+  pip install --upgrade "${EXTRA_TOOLS[@]}"
+}
+
+# Function to ensure git is installed before cloning
+install_git_if_needed() {
+  if ! command -v git &>/dev/null; then
+    log_message "Git not found. Installing git..."
+    sudo "$PACKAGE_MANAGER" install -y git
+  fi
 }
 
 # Function to clone the dotfiles repository if not already cloned
@@ -136,6 +112,29 @@ include_bash_tools() {
   fi
 }
 
+# Install Vim-Plug if not installed
+install_vim_plug() {
+  local plug_vim_path="$HOME/.vim/autoload/plug.vim"
+
+  if [ ! -f "$plug_vim_path" ]; then
+    log_message "Installing Vim-Plug..."
+    curl -fLo "$plug_vim_path" --create-dirs \
+      https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  else
+    log_message "Vim-Plug is already installed."
+  fi
+}
+
+# Install Vim plugins only if Vim is installed
+install_vim_plugins() {
+  if command -v vim &>/dev/null; then
+    log_message "Installing Vim plugins..."
+    vim +'PlugInstall --sync' +qa
+  else
+    log_message "Vim is not installed. Skipping plugin installation."
+  fi
+}
+
 # Function to pull the latest changes from the dotfiles repository
 pull_dotfiles_changes() {
   log_message "Pulling the latest changes from GitHub..."
@@ -146,9 +145,11 @@ pull_dotfiles_changes() {
 # Main script execution
 log_message "Script execution started."
 detect_package_manager
-install_pip
 
-# Prompt the user to choose between packages, dotfiles, or all
+# Ensure git is installed before proceeding
+install_git_if_needed
+
+# Prompt the user to choose between installing packages/tools/dotfiles or just updating dotfiles
 read -p "Do you want to (i)nstall packages and tools, dotfiles, or (u)pdate dotfiles? [iI1/uU2]: " choice
 case "$choice" in
   [iI1]*)
@@ -157,6 +158,8 @@ case "$choice" in
     clone_dotfiles_repo
     symlink_dotfiles
     include_bash_tools
+    install_vim_plug
+    install_vim_plugins
     ;;
   [uU2]*)
     log_message "Updating dotfiles..."
@@ -169,4 +172,3 @@ case "$choice" in
 esac
 
 log_message "Operation complete."
-
