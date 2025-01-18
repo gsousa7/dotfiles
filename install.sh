@@ -23,7 +23,7 @@ BASH_TOOLS="bash_tools"
 PACKAGES=(
   "telnet" "rsync" "wget" "curl" "bash-completion" "vim" "htop" "tcpdump" "jq"
   "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip"
-  "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git"
+  "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx"
 )
 
 # Extra tools to install via pip
@@ -65,23 +65,28 @@ install_packages() {
 
 # Function to install pip-based extra tools
 install_extra_tools() {
-  log_message "Installing extra tools via pip..."
+  log_message "Installing extra tools via pipx..."
 
-  # Ensure pip is installed
-  if ! command -v pip &> /dev/null; then
-    log_message "pip not found. Installing python3-pip..."
-    sudo "$PACKAGE_MANAGER" install -y python3-pip || { log_message "Failed to install python3-pip. Exiting."; exit 1; }
+  # Ensure pipx is installed
+  if ! command -v pipx &> /dev/null; then
+    log_message "pipx not found. Installing python3-pip and pipx..."
+    sudo "$PACKAGE_MANAGER" install -y python3-pip pipx || { log_message "Failed to install python3-pip and pipx. Exiting."; exit 1; }
   fi
 
+  # Install each extra tool using pipx
   for tool in "${EXTRA_TOOLS[@]}"; do
     if ! command -v "$tool" &> /dev/null; then
       log_message "Installing $tool..."
-      pip install --user "$tool" && log_message "$tool installed successfully." || log_message "Failed to install $tool."
+      pipx install "$tool" && log_message "$tool installed successfully." || log_message "Failed to install $tool."
     else
       log_message "$tool is already installed."
     fi
   done
+
+  # Ensure pipx is in the PATH
+  pipx ensurepath
 }
+
 
 # Function to clone the dotfiles repository
 clone_dotfiles_repo() {
