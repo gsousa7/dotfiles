@@ -87,7 +87,6 @@ install_extra_tools() {
   pipx ensurepath
 }
 
-
 # Function to clone the dotfiles repository
 clone_dotfiles_repo() {
   if [ ! -d "$DOTFILES_DIR" ]; then
@@ -111,6 +110,13 @@ symlink_dotfiles() {
     fi
     ln -sf "$DOTFILES_DIR/$file" "$HOME/$dotfile" && log_message "Symlink created for $file." || log_message "Failed to create symlink for $file."
   done
+
+  # Special handling for htop configuration
+  if [ -f "$DOTFILES_DIR/htoprc" ]; then
+    # For newer versions of htop, link it in ~/.config/htop
+    mkdir -p "$HOME/.config/htop"
+    ln -sf "$DOTFILES_DIR/htoprc" "$HOME/.config/htop/htoprc" && log_message "Symlink created for htoprc."
+  fi
 }
 
 # Function to handle bash_tools include
