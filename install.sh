@@ -128,18 +128,34 @@ symlink_dotfiles() {
 
   for file in "${FILES_TO_SYMLINK[@]}"; do
     dotfile=".$file"
+    echo "dotfile: $dotfile"  # Debug line
+
+    # Check if the dotfile already exists
     if [ -f "$HOME/$dotfile" ]; then
       log_message "Backing up $dotfile to $BACKUP_DIR"
-      mv "$HOME/$dotfile" "$BACKUP_DIR/" && log_message "$dotfile backed up."
+      if mv "$HOME/$dotfile" "$BACKUP_DIR/"; then
+        log_message "$dotfile backed up."
+      else
+        log_message "Failed to back up $dotfile."
+      fi
     fi
-    ln -sf "$DOTFILES_DIR/$file" "$HOME/$dotfile" && log_message "Symlink created for $file." || log_message "Failed to create symlink for $file."
+
+    # Create the symlink
+    if ln -sf "$DOTFILES_DIR/$file" "$HOME/$dotfile"; then
+      log_message "Symlink created for $file."
+    else
+      log_message "Failed to create symlink for $file."
+    fi
   done
 
   # Special handling for htop configuration
   if [ -f "$DOTFILES_DIR/htoprc" ]; then
-    # For newer versions of htop, link it in ~/.config/htop
     mkdir -p "$HOME/.config/htop"
-    ln -sf "$DOTFILES_DIR/htoprc" "$HOME/.config/htop/htoprc" && log_message "Symlink created for htoprc."
+    if ln -sf "$DOTFILES_DIR/htoprc" "$HOME/.config/htop/htoprc"; then
+      log_message "Symlink created for htoprc."
+    else
+      log_message "Failed to create symlink for htoprc."
+    fi
   fi
 }
 
