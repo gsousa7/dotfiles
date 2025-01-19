@@ -1,6 +1,6 @@
 export EDITOR='vim'
 export GREP_COLOR='1;36'
-export GREP_COLORS='mt=1;36'
+#export GREP_COLORS='mt=1;36'
 export GREP_OPTIONS='--color=auto'
 export PAGER='less'
 export TZ='Europe/Lisbon'
@@ -36,6 +36,9 @@ alias code='"${DESKTOPWINSL}AppData/Local/Programs/Microsoft VS Code/Code.exe"'
 alias dus='du -sh * 2>/dev/null'
 alias net='ip -br -c a'
 alias rb=$(source $HOME/.bashrc)
+alias eb=$(vim $HOME/.bashrc)
+alias ebt$($HOME/.bash_tools)
+
 
 # Git Aliases
 alias nb='git checkout -b'
@@ -289,6 +292,9 @@ show_utility_commands() {
 	echo -e "${MAGENTA}net${RESET} - Show network interfaces and their status."
 	echo -e "${MAGENTA}field${RESET} - Extract specific fields from a line. Usage: ${YELLOW}field <column_number> <delimiter>${RESET}"
 	echo -e "${MAGENTA}epoch${RESET} - Convert epoch to human-readable date. Usage: ${YELLOW}epoch <epoch_time>${RESET}"
+	echo -e "${MAGENTA}rb{RESET} - Reload \$HOME/.bashrc"
+	echo -e "${MAGENTA}eb{RESET} - Open \$HOME/.bashrc in vim"
+	echo -e "${MAGENTA}ebt{RESET} - Open \$HOME/.bash_tools in vim"
 }
 
 show_media_commands() {
