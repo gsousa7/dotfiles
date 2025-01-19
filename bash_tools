@@ -1,5 +1,5 @@
 export EDITOR='vim'
-export GREP_COLOR='1;36'~
+export GREP_COLOR='1;36'
 export PAGER='less'
 export TZ='Europe/Lisbon'
 export DESKTOPWINSL='/mnt/c/Users/Gonçalo Sousa/'
@@ -20,73 +20,21 @@ GREEN="\e[32m"
 RESET="\e[0m"
 ORANGE="\e[38;5;214m"
 
-
-#lazygit usage:
-## lazygit "Commit msg" "branch"
-function lazygit() {
-	if [ -z "$1" ]; then
-		echo "Error: Commit message is required."
-		echo "Usage: lazygit '<commit_message>' <branch_name>"
-		return 1
-	fi
-
-	if [ -z "$2" ]; then
-		echo "Error: Branch name is required"
-		echo "Usage: lazygit '<commit_message>' <branch_name>"
-		return 1
-	fi
-
-	git add -A
-	git commit -m "$1"
-	git push -u origin "$2"
-}
-
-# explain.sh begins
-explain () {
-  if [ "$#" -eq 0 ]; then
-    while read  -p "Command: " cmd; do
-      curl -Gs "https://www.mankier.com/api/explain/?cols="$(tput cols) --data-urlencode "q=$cmd"
-    done
-    echo "Bye!"
-  elif [ "$#" -eq 1 ]; then
-    curl -Gs "https://www.mankier.com/api/explain/?cols="$(tput cols) --data-urlencode "q=$1"
-  else
-    echo "Usage"
-    echo "explain                  interactive mode."
-    echo "explain 'cmd -o | ...'   one quoted command to explain it."
-  fi
-}
-
-# Common Alias
+# Custom Alias
 alias ll='ls -la'
 alias aqui='explorer.exe .'
 alias fmedia='find . -type f \( -name "*.mp4" -o -name "*.mkv" \) -exec mv {} . \;'
-alias cdd='cd "/mnt/c/Users/Gonçalo Sousa/Desktop"'
+alias cdd='cd "${DESKTOPWINSL}Desktop"'
 alias data='echo $(date "+%d/%m/%Y %H:%M:%S")'
 alias tempolx='curl wttr.in/Lisboa\?format=4'
 alias temposx='curl wttr.in/Seixal\?format=4'
 alias tempolxf='curl wttr.in/Lisboa'
 alias temposxf='curl wttr.in/Seixal'
-alias code='/mnt/c/Users/Gonçalo\ Sousa\ AppData/Local/Programs/Microsoft\ VS\ Code/Code.exe'
+alias code='"${DESKTOPWINSL}AppData/Local/Programs/Microsoft VS Code/Code.exe"'
 alias dus='du -sh * 2>/dev/null'
 alias net='ip -br -c a'
-alias lsfunc='cat ~/.bash* |grep "()"'
-alias lsalias='cat ~/.bashrc |grep "alias"'
 
-field() {
-    awk -F "${2:- }" "{ print \$${1:-1} }"
-}
-
-tempo() {
-    curl -s "wttr.in/${1}?format=4"
-}
-
-tempof() {
-    curl -s "wttr.in/${1}"
-}
-
-
-## Git Aliases
+# Git Aliases
 alias nb='git checkout -b'
 alias gall='git add -A'
 alias gst='git status'
@@ -107,32 +55,124 @@ alias gst='git status'
 alias gu='git pull' # gu = git update
 alias gs='git switch'
 
-
-
-## Kubernetes Alias
+# Kubernetes Alias
 alias k='kubectl'
 alias ks='kubectl -n kube-system'
 alias kdesc='kubectl describe'
 
-# Create resources
+## Create resources
 alias kcf='kubectl create -f'
 alias kaf='kubectl apply -f'
 
-# Get resources
+## Get resources
 alias kgn='kubectl get nodes'
 alias kgp='kubectl get pods'
 alias kgpa='kubectl get pods --all-namespaces'
 alias kgs='kubectl get services'
 alias kgd='kubectl get deployments'
 
-# Delete
+## Delete
 alias kd='kubectl delete'
 alias kdp='kubectl delete pod'
 alias kds='kubectl delete services'
 alias kdd='kubectl delete deployments'
 alias kdn='kubectl delete namespaces'
 
+# Custom functions
+field() {
+    awk -F "${2:- }" "{ print \$${1:-1} }"
+}
 
+tempo() {
+    curl -s "wttr.in/${1}?format=4"
+}
+
+tempof() {
+    curl -s "wttr.in/${1}"
+}
+
+## lazygit "Commit msg" "branch"
+function lazygit() {
+	if [ -z "$1" ]; then
+		echo "Error: Commit message is required."
+		echo "Usage: lazygit '<commit_message>' <branch_name>"
+		return 1
+	fi
+
+	if [ -z "$2" ]; then
+		echo "Error: Branch name is required"
+		echo "Usage: lazygit '<commit_message>' <branch_name>"
+		return 1
+	fi
+
+	git add -A
+	git commit -m "$1"
+	git push -u origin "$2"
+}
+
+## explain.sh begins
+explain () {
+  if [ "$#" -eq 0 ]; then
+    while read  -p "Command: " cmd; do
+      curl -Gs "https://www.mankier.com/api/explain/?cols="$(tput cols) --data-urlencode "q=$cmd"
+    done
+    echo "Bye!"
+  elif [ "$#" -eq 1 ]; then
+    curl -Gs "https://www.mankier.com/api/explain/?cols="$(tput cols) --data-urlencode "q=$1"
+  else
+    echo "Usage"
+    echo "explain                  interactive mode."
+    echo "explain 'cmd -o | ...'   one quoted command to explain it."
+  fi
+}
+
+## Convert epoch to human readable (print current date if no args)
+epoch() {
+	local num=${1:--1}
+	printf '%(%B %d, %Y %-I:%M:%S %p %Z)T\n' "$num"
+}
+
+## Get mp3 file of youtube
+function getyt() {
+    yt-dlp --extract-audio --audio-format mp3 --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
+}
+
+## Get mp4 file of youtube
+function getytmp4() {
+    yt-dlp -f 'bestvideo[height=1080]+bestaudio/best[height=1080]' --merge-output-format mp4 --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
+}
+
+## Get mp3 file of youtube playlist
+function getytplist() {
+    yt-dlp -x --audio-format mp3 --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
+}
+
+## Get mp4 file of youtube playlist
+function getytplistmp4() {
+    yt-dlp -f 'bestvideo+bestaudio' --merge-output-format mp4 --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
+}
+
+## Get mp4 file of youtube with subs
+function getytmp4subs() {
+    yt-dlp -f 'bestvideo[height=1080]+bestaudio/best[height=1080]' --merge-output-format mp4 --write-subs --embed-subs --sub-lang en --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
+}
+
+## Get mp4 file of youtube playlist with subs
+function getytplistmp4subs() {
+    yt-dlp -f 'bestvideo+bestaudio' --merge-output-format mp4 --write-subs --embed-subs --sub-lang en --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
+}
+
+## Get Spotify track
+function getspot() {
+    spotdl --output "${DESKTOPWINSL}Desktop/{artist} - {title}.mp3" "$1"
+}
+
+## Get Spotify album
+function getalb() {
+    spotdl --output "${DESKTOPWINSL}Desktop/{artist} - {album}/{artist} - {title}.mp3" "$1"
+}
+
+# get vim help
 vimfo() {
     echo -e "${BLUE}Quick Vim Commands Reference${RESET}\n"
     
@@ -394,188 +434,6 @@ colors() {
     done
     tput sgr0
 }
-
-
-# Convert epoch to human readable (print current date if no args)
-epoch() {
-	local num=${1:--1}
-	printf '%(%B %d, %Y %-I:%M:%S %p %Z)T\n' "$num"
-}
-
-function getyt() {
-yt-dlp --extract-audio --audio-format mp3 --output "/mnt/c/Users/Gonçalo Sousa/Desktop/%(title)s.%(ext)s" "$1"
-}
-
-function getytmp4() {
-yt-dlp -f 'bestvideo[height=1080]+bestaudio/best[height=1080]' --merge-output-format mp4 --output "/mnt/c/Users/Gonçalo Sousa/Desktop/%(title)s.%(ext)s" "$1"
-}
-
-function getytplist() {
-    yt-dlp -x --audio-format mp3 --output "/mnt/c/Users/Gonçalo Sousa/Desktop/%(title)s.%(ext)s" "$1"
-}
-
-function getytplistmp4() {
-    yt-dlp -f 'bestvideo+bestaudio' --merge-output-format mp4 --output "/mnt/c/Users/Gonçalo Sousa/Desktop/%(title)s.%(ext)s" "$1"
-}
-
-function getytplistmp4subs() {
-yt-dlp -f 'bestvideo+bestaudio' --merge-output-format mp4 --write-subs --embed-subs --sub-lang en --output "/mnt/c/Users/Gonçalo Sousa/Desktop/%(title)s.%(ext)s" "$1"
-}
-
-function getytmp4subs() {
-yt-dlp -f 'bestvideo[height=1080]+bestaudio/best[height=1080]' --merge-output-format mp4 --write-subs --embed-subs --sub-lang en --output "/mnt/c/Users/Gonçalo Sousa/Desktop/%(title)s.%(ext)s" "$1"
-}
-
-function getspot() {
-    spotdl --output "/mnt/c/Users/Gonçalo Sousa/Desktop/{artist} - {title}.mp3" "$1"
-}
-
-function getalb() {
-    spotdl --output "/mnt/c/Users/Gonçalo Sousa/Desktop/{artist} - {album}/{artist} - {title}.mp3" "$1"
-}
-
-show_git_commands() {
-    echo -e "${BLUE}List of Git aliases and functions:${RESET}"
-    echo -e "\n${ORANGE}# Git:${RESET}"
-	echo -e "${MAGENTA}lazygit${RESET} - Commit and push changes to a specified branch. Usage: ${YELLOW}lazygit '<commit_message>' <branch_name>${RESET}"
-	echo -e "${MAGENTA}nb${RESET} - Create a new Git branch. Usage: nb ${YELLOW}<branch_name>${RESET}"
-	echo -e "${MAGENTA}gall${RESET} - Add all changes to Git staging area (equal to git add -A)."
-	echo -e "${MAGENTA}gst${RESET} - Show the current status of the Git repository."
-	echo -e "${MAGENTA}ga${RESET} - Add file to Git staging area. Usage: ga <file>"
-	echo -e "${MAGENTA}gf${RESET} - Fetch updates from the remote Git repository (git fetch)."
-	echo -e "${MAGENTA}gb${RESET} - Show the list of Git branches."
-	echo -e "${MAGENTA}gc${RESET} - Commit staged changes with a message. Usage: ${YELLOW}gc '<commit_message>'${RESET}"
-	echo -e "${MAGENTA}gcl${RESET} - Clone a Git repository. Usage: ${YELLOW}gcl <repository_url>${RESET}"
-	echo -e "${MAGENTA}gi${RESET} - Initialize a new Git repository."
-	echo -e "${MAGENTA}gl${RESET} - Show the Git log."
-	echo -e "${MAGENTA}gls${RESET} - Show a graph of the Git log with oneline and decorations."
-	echo -e "${MAGENTA}glpd${RESET} - Show the Git log with detailed commit information and patch diff."
-	echo -e "${MAGENTA}glps${RESET} - Show the Git log with stats and details."
-	echo -e "${MAGENTA}glp${RESET} - Show the Git log with formatted output and human-readable date."
-	echo -e "${MAGENTA}gstr${RESET} - Show a simplified graph of the Git log, displaying only decorated commits."
-	echo -e "${MAGENTA}gp${RESET} - Push changes to a remote Git repository. Usage: ${YELLOW}gp <branch_name>${RESET}"
-	echo -e "${MAGENTA}gu${RESET} - Pull updates from the remote Git repository (git pull)."
-	echo -e "${MAGENTA}gs${RESET} - Switch Git branches. Usage: ${YELLOW}gs <branch_name>${RESET}"
-}
-
-show_kubernetes_commands() {
-    echo -e "${BLUE}List of Kubernetes aliases and functions:${RESET}"
-	echo -e "\n${ORANGE}# Kubernetes Alias:${RESET}"
-	echo -e "${MAGENTA}k${RESET} - Kubernetes alias for kubectl."
-	echo -e "${MAGENTA}ks${RESET} - Kubernetes alias for kubectl with the kube-system namespace."
-
-	echo -e "\n${ORANGE}## Create resources:${RESET}"
-	echo -e "${MAGENTA}kdesc${RESET} - Describe Kubernetes resources. Usage: ${YELLOW}kdesc <resource_type> <resource_name>${RESET}"
-	echo -e "${MAGENTA}kcf${RESET} - Create a Kubernetes resource from a file. ${YELLOW}Usage: kcf <file.yaml>${RESET}"
-	echo -e "${MAGENTA}kaf${RESET} - Apply a Kubernetes resource from a file. ${YELLOW}Usage: kaf <file.yaml>${RESET}"
-
-	echo -e "\n${ORANGE}## Get resources:${RESET}"
-	echo -e "${MAGENTA}kgn${RESET} - Get the list of nodes in the Kubernetes cluster."
-	echo -e "${MAGENTA}kgp${RESET} - Get the list of pods in the Kubernetes cluster."
-	echo -e "${MAGENTA}kgpa${RESET} - Get the list of pods in all namespaces in the Kubernetes cluster."
-	echo -e "${MAGENTA}kgs${RESET} - Get the list of services in the Kubernetes cluster."
-	echo -e "${MAGENTA}kgd${RESET} - Get the list of deployments in the Kubernetes cluster."
-
-	echo -e "\n${ORANGE}## Delete:${RESET}"
-	echo -e "${MAGENTA}kd${RESET} - Delete a Kubernetes resource. Usage: ${YELLOW}kd <resource_type> <resource_name>${RESET}"
-	echo -e "${MAGENTA}kdp${RESET} - Delete a Kubernetes pod. Usage: ${YELLOW}kdp <pod_name>${RESET}"
-	echo -e "${MAGENTA}kds${RESET} - Delete a Kubernetes service. Usage: ${YELLOW}kds <service_name>${RESET}"
-	echo -e "${MAGENTA}kdd${RESET} - Delete a Kubernetes deployment. Usage: ${YELLOW}kdd <deployment_name>${RESET}"
-	echo -e "${MAGENTA}kdn${RESET} - Delete a Kubernetes namespace. Usage: ${YELLOW}kdn <namespace_name>${RESET}"
-}
-
-show_utility_commands() {
-    echo -e "${BLUE}List of Terminal Utility functions:${RESET}"
-	echo -e "${MAGENTA}ll${RESET} - Long list."
-	echo -e "${MAGENTA}aqui${RESET} - Open the current directory in Windows Explorer (WSL Only)."
-	echo -e "${MAGENTA}fmedia${RESET} - Move all .mkv and .mp4 files to the current directory."
-	echo -e "${MAGENTA}cdd${RESET} - Change directory to Windows Desktop on WSL (WSL Only)."
-	echo -e "${MAGENTA}explain${RESET} - Explains the given command or enters interactive mode to explain commands."
-	echo -e "${MAGENTA}tldr${RESET} - Explains the given command and provides examples."
-	echo -e "${MAGENTA}code${RESET} - Launch Visual Studio Code from the command line."
-	echo -e "${MAGENTA}data${RESET} - Print the current date and time."
-	echo -e "${MAGENTA}tempolx${RESET} - Get the weather in Lisboa."
-	echo -e "${MAGENTA}temposx${RESET} - Get the weather in Seixal."
-	echo -e "${MAGENTA}tempolxf${RESET} - Get the full weather info in Lisboa."
-	echo -e "${MAGENTA}temposxf${RESET} - Get the full weather info in Seixal."
-	echo -e "${MAGENTA}tempo${RESET} - Get the weather in a specified city. Usage: ${YELLOW}tempo <city>${RESET}"
-	echo -e "${MAGENTA}tempof${RESET} - Get the full weather info in a specified city. Usage: ${YELLOW}tempof <city>${RESET}"
-	echo -e "${MAGENTA}dus${RESET} - Show disk usage of files and directories."
-	echo -e "${MAGENTA}net${RESET} - Show network interfaces and their status."
-	echo -e "${MAGENTA}field${RESET} - Extract specific fields from a line. Usage: ${YELLOW}field <column_number> <delimiter>${RESET}"
-	echo -e "${MAGENTA}epoch${RESET} - Convert epoch to human-readable date. Usage: ${YELLOW}epoch <epoch_time>${RESET}"
-}
-
-show_media_commands() {
-    echo -e "${BLUE}List of Media Download functions:${RESET}"
-    echo -e "\n${ORANGE}# YouTube (Download audio and video):${RESET}"
-	echo -e "${MAGENTA}getyt${RESET} - Download audio from a YouTube video and save it in desktop as MP3. Usage: ${YELLOW}getyt <url>${RESET}"
-	echo -e "${MAGENTA}getytmp4${RESET} - Download audio from a YouTube video and save it in desktop as MP4 1080p. Usage: ${YELLOW}getytmp4 <url>${RESET}"
-	echo -e "${MAGENTA}getytplist${RESET} - Download audio from all videos and save it in desktop in a YouTube playlist. Usage: ${YELLOW}getytplist <url>${RESET}"
-	echo -e "${MAGENTA}getytplistmp4${RESET} - Download all videos and save it in desktop in a YouTube playlist in MP4 format. Usage: ${YELLOW}getytplistmp4 <url>${RESET}"
-	echo -e "${MAGENTA}getytplistmp4subs${RESET} - Download all videos and save it in desktop in a YouTube playlist in MP4 format with subtitles. Usage: ${YELLOW}getytplistmp4subs <url>${RESET}"
-	echo -e "${MAGENTA}getytmp4subs${RESET} - Download a YouTube video and save it in desktop in MP4 format (1080p) with subtitles. Usage: ${YELLOW}getytmp4subs <url>${RESET}"
-	echo -e "\n${ORANGE}# Spotify (Download audio):${RESET}"
-	echo -e "${MAGENTA}getspot${RESET} - Download a song from Spotify and save it in desktop. Usage: ${YELLOW}getspot <url>${RESET}"
-	echo -e "${MAGENTA}getalb${RESET} - Download an album from Spotify and save it in desktop. Usage: ${YELLOW}getalb <url>${RESET}"
-}
-
-show_custom_commands() {
-    echo -e "${BLUE}List of Customization functions:${RESET}"
-    echo -e "\n${ORANGE}# Customization & Misc:${RESET}"
-    echo -e "${MAGENTA}set_prompt_colors${RESET} - Change theme of Terminal/Prompt 0-29. Usage: ${YELLOW}set_prompt_colors <number 0-29>${RESET}"
-	echo -e "${MAGENTA}colors${RESET} - Print all 256 colors in the terminal."
-}
-
-show_help() {
-    echo -e "${YELLOW}Available sections:${RESET}"
-    echo "- git            (Git commands)"
-    echo "- kubernetes     (or k8s - Kubernetes commands)"
-    echo "- utils          (or utilities, terminal - Terminal utilities)"
-    echo "- youtube        (or yt, spotify, media - Media download commands)"
-    echo "- custom         (or customization, misc - Customization commands)"
-    echo "- all            (Show all commands)"
-}
-
-# Main lscom function
-lscom() {
-    local section="${1:-all}"
-    
-    case "$section" in
-        "git"|"Git")
-            show_git_commands
-            ;;
-        "k8s"|"kubernetes"|"Kubernetes")
-            show_kubernetes_commands
-            ;;
-        "utils"|"utilities"|"terminal")
-            show_utility_commands
-            ;;
-        "youtube"|"yt"|"spotify"|"media")
-            show_media_commands
-            ;;
-        "custom"|"customization"|"misc"|"theme"|"skin")
-            show_custom_commands
-            ;;
-        "all"|"")
-            echo -e "${BLUE}Complete list of aliases and functions:${RESET}"
-            show_git_commands
-            echo
-            show_kubernetes_commands
-            echo
-            show_utility_commands
-            echo
-            show_media_commands
-            echo
-            show_custom_commands
-            ;;
-        *)
-            show_help
-            ;;
-    esac
-}
-
-
 
 # Load external files
 . ~/.bash_aliases    2>/dev/null || true
