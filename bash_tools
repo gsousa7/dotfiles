@@ -1,10 +1,10 @@
 export EDITOR='vim'
 export GREP_COLOR='1;36'
-export GREP_COLORS='mt=1;36'
-export GREP_OPTIONS='--color=auto'
+#export GREP_COLORS='mt=1;36'
+#export GREP_OPTIONS='--color=auto'
 export PAGER='less'
 export TZ='Europe/Lisbon'
-DESKTOPWINSL='/mnt/c/Users/Gonçalo Sousa/'
+#DESKTOPWINSL='/mnt/c/Users/Gonçalo Sousa/'
 
 #Color Man pages
 export LESS_TERMCAP_mb=$'\e[1;32m'
@@ -35,9 +35,9 @@ alias temposxf='curl wttr.in/Seixal'
 alias code='"${DESKTOPWINSL}AppData/Local/Programs/Microsoft VS Code/Code.exe"'
 alias dus='du -sh * 2>/dev/null'
 alias net='ip -br -c a'
-alias rb="$(source $HOME/.bashrc)"
-alias eb="$(vim $HOME/.bashrc)"
-alias ebt="$(vim $HOME/.bash_tools)"
+#alias rb="$(source $HOME/.bashrc)"
+#alias eb="$(vim $HOME/.bashrc)"
+#alias ebt="$(vim $HOME/.bash_tools)"
 
 
 # Git Aliases
@@ -139,44 +139,44 @@ epoch() {
 }
 
 ## Get mp3 file of youtube
-function getyt() {
-    yt-dlp --extract-audio --audio-format mp3 --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
-}
-
-## Get mp4 file of youtube
-function getytmp4() {
-    yt-dlp -f 'bestvideo[height=1080]+bestaudio/best[height=1080]' --merge-output-format mp4 --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
-}
-
-## Get mp3 file of youtube playlist
-function getytplist() {
-    yt-dlp -x --audio-format mp3 --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
-}
-
-## Get mp4 file of youtube playlist
-function getytplistmp4() {
-    yt-dlp -f 'bestvideo+bestaudio' --merge-output-format mp4 --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
-}
-
-## Get mp4 file of youtube with subs
-function getytmp4subs() {
-    yt-dlp -f 'bestvideo[height=1080]+bestaudio/best[height=1080]' --merge-output-format mp4 --write-subs --embed-subs --sub-lang en --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
-}
-
-## Get mp4 file of youtube playlist with subs
-function getytplistmp4subs() {
-    yt-dlp -f 'bestvideo+bestaudio' --merge-output-format mp4 --write-subs --embed-subs --sub-lang en --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
-}
-
-## Get Spotify track
-function getspot() {
-    spotdl --output "${DESKTOPWINSL}Desktop/{artist} - {title}.mp3" "$1"
-}
-
-## Get Spotify album
-function getalb() {
-    spotdl --output "${DESKTOPWINSL}Desktop/{artist} - {album}/{artist} - {title}.mp3" "$1"
-}
+#function getyt() {
+#    yt-dlp --extract-audio --audio-format mp3 --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
+#}
+#
+### Get mp4 file of youtube
+#function getytmp4() {
+#    yt-dlp -f 'bestvideo[height=1080]+bestaudio/best[height=1080]' --merge-output-format mp4 --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
+#}
+#
+### Get mp3 file of youtube playlist
+#function getytplist() {
+#    yt-dlp -x --audio-format mp3 --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
+#}
+#
+### Get mp4 file of youtube playlist
+#function getytplistmp4() {
+#    yt-dlp -f 'bestvideo+bestaudio' --merge-output-format mp4 --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
+#}
+#
+### Get mp4 file of youtube with subs
+#function getytmp4subs() {
+#    yt-dlp -f 'bestvideo[height=1080]+bestaudio/best[height=1080]' --merge-output-format mp4 --write-subs --embed-subs --sub-lang en --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
+#}
+#
+### Get mp4 file of youtube playlist with subs
+#function getytplistmp4subs() {
+#    yt-dlp -f 'bestvideo+bestaudio' --merge-output-format mp4 --write-subs --embed-subs --sub-lang en --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
+#}
+#
+### Get Spotify track
+#function getspot() {
+#    spotdl --output "${DESKTOPWINSL}Desktop/{artist} - {title}.mp3" "$1"
+#}
+#
+### Get Spotify album
+#function getalb() {
+#    spotdl --output "${DESKTOPWINSL}Desktop/{artist} - {album}/{artist} - {title}.mp3" "$1"
+#}
 
 # get vim help
 vimfo() {
@@ -292,9 +292,9 @@ show_utility_commands() {
 	echo -e "${MAGENTA}net${RESET} - Show network interfaces and their status."
 	echo -e "${MAGENTA}field${RESET} - Extract specific fields from a line. Usage: ${YELLOW}field <column_number> <delimiter>${RESET}"
 	echo -e "${MAGENTA}epoch${RESET} - Convert epoch to human-readable date. Usage: ${YELLOW}epoch <epoch_time>${RESET}"
-	echo -e "${MAGENTA}rb{RESET} - Reload \$HOME/.bashrc"
-	echo -e "${MAGENTA}eb{RESET} - Open \$HOME/.bashrc in vim"
-	echo -e "${MAGENTA}ebt{RESET} - Open \$HOME/.bash_tools in vim"
+	#echo -e "${MAGENTA}rb{RESET} - Reload \$HOME/.bashrc"
+	#echo -e "${MAGENTA}eb{RESET} - Open \$HOME/.bashrc in vim"
+	#echo -e "${MAGENTA}ebt{RESET} - Open \$HOME/.bash_tools in vim"
 }
 
 show_media_commands() {
