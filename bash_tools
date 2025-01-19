@@ -1,5 +1,7 @@
 export EDITOR='vim'
 export GREP_COLOR='1;36'
+export GREP_COLORS='mt=1;36'
+export GREP_OPTIONS='--color=auto'
 export PAGER='less'
 export TZ='Europe/Lisbon'
 export DESKTOPWINSL='/mnt/c/Users/Gonçalo Sousa/'
@@ -33,6 +35,7 @@ alias temposxf='curl wttr.in/Seixal'
 alias code='"${DESKTOPWINSL}AppData/Local/Programs/Microsoft VS Code/Code.exe"'
 alias dus='du -sh * 2>/dev/null'
 alias net='ip -br -c a'
+alias rb=$(source $HOME/.bashrc)
 
 # Git Aliases
 alias nb='git checkout -b'
