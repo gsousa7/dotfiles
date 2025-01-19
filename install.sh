@@ -197,6 +197,7 @@ case "$choice" in
   [uU2]*)
     log_message "Updating dotfiles..."
     cd "$DOTFILES_DIR" && git pull || log_message "Error pulling changes."
+	source $HOME/.bashrc
     ;;
   *)
     log_message "Invalid choice. Exiting."
