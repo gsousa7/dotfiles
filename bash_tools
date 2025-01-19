@@ -38,6 +38,9 @@ alias net='ip -br -c a'
 #alias rb="$(source $HOME/.bashrc)"
 #alias eb="$(vim $HOME/.bashrc)"
 #alias ebt="$(vim $HOME/.bash_tools)"
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
 
 
 # Git Aliases
