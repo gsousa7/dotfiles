@@ -37,7 +37,7 @@ alias dus='du -sh * 2>/dev/null'
 alias net='ip -br -c a'
 #alias rb="$(source $HOME/.bashrc)"
 #alias eb="$(vim $HOME/.bashrc)"
-alias ebt="$(vim $HOME/.bash_tools)"
+#alias ebt="$(vim $HOME/.bash_tools)"
 
 
 # Git Aliases
