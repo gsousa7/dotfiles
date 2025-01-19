@@ -28,7 +28,7 @@ PACKAGES=(
 )
 
 # Extra tools to install via pip
-EXTRA_TOOLS=("spotdl" "yt-dlp")
+EXTRA_TOOLS=("spotdl" "yt-dlp" "tldr")
 
 # Log function to capture success and failure
 log_message() {
