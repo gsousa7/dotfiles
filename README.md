@@ -1,11 +1,14 @@
 # Personal and Professional Dotfiles Repository
 
 ## Installation Instructions
+This repository includes the following custom configurations:
+- Bash configuration customization (prompt, history, colors)
+- Git aliases
+- Kubernetes aliases
+- Utility aliases
+ 
 
-### **1. Prerequisites**
-- Ensure your SSH key is added to GitHub (since this repository is private).
-
-### **2. Recommended Installation Method (Cloning the Repository)**
+### **1. Installation**
 #### Clone the repository
 ```bash
 git clone git@github.com:gsousa7/dotfiles.git $HOME/dotfiles
@@ -26,12 +29,17 @@ chmod +x install.sh
 ./install.sh
 ```
 
+
 ## Usage
-- To install, type **1** (or **I/i**) when prompted.
-- To update, type **2** (or **U/u**).
+- To install, type **1** (or **I** or **i**) when prompted.
+- To update, type **2** (or **U** or **u**).
 - To view available aliases and functions, run:
   ```bash
-  lscom help  # or just lscom
+  lscom help 
+  ```
+  or
+  ```bash
+  lscom
   ```
 - To see Vim info, run:
   ```bash
@@ -39,5 +47,5 @@ chmod +x install.sh
   ```
 
 ## Notes
-- Inspired by [bahamas10's dotfiles](https://github.com/bahamas10/dotfiles/tree/master).
+- Inspired by [bahamas10's dotfiles](https://github.com/bahamas10/dotfiles).
 
