@@ -11,7 +11,6 @@ LOG_FILE="$HOME/dotfiles_install.log"
 # List of dotfiles to handle
 FILES_TO_SYMLINK=(
   "bash_completion"
-  "gitconfig"
   "htoprc"
   "vimrc"
   "tmux.conf"
@@ -157,6 +156,20 @@ include_bash_tools() {
   fi
 }
 
+update_gitconfig() {
+  log_message "Updating Git configuration..."
+  
+  # Prompt for Git user name and email
+  read -p "Enter your Git username (user only): " git_user
+  read -p "Enter your Git email: " git_email
+
+  # Create gitconfig
+  git config --global user.name "$git_user"
+  git config --global user.email "$git_email"
+
+  log_message "Git configuration updated."
+}
+
 install_vim_plug() {
   local plug_vim_path="$HOME/.vim/autoload/plug.vim"
 
@@ -189,6 +202,7 @@ case "$choice" in
     install_packages
     install_extra_tools
     clone_dotfiles_repo
+	update_gitconfig
     symlink_dotfiles
     include_bash_tools
     install_vim_plug
@@ -197,8 +211,8 @@ case "$choice" in
   [uU2]*)
     log_message "Updating dotfiles..."
     cd "$DOTFILES_DIR" && git pull || log_message "Error pulling changes."
-	  log_message "Reloading bash..."
-	  source "$HOME/.bashrc" && log_message "Bash reloaded." || log_message "Reloading bash failed. Run: source ~/.bashrc"
+	log_message "Reloading bash..."
+	source "$HOME/.bashrc" && log_message "Bash reloaded." || log_message "Reloading bash failed. Run: source ~/.bashrc"
     ;;
   *)
     log_message "Invalid choice. Exiting."
