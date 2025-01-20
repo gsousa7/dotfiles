@@ -41,6 +41,9 @@ alias ebt="vim $HOME/.bash_tools"
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
+alias wdir='cd $HOME/work'
+alias gdir='cd $HOME/git'
+alias ldir='cd $HOME/lab'
 
 
 # Git Aliases
@@ -184,7 +187,7 @@ function getalb() {
 # get vim help
 vimfo() {
     echo -e "${BLUE}Quick Vim Commands Reference${RESET}\n"
-    
+
     # Basic Commands
     echo -e "${ORANGE}Basic Commands:${RESET} (No need for 'Esc :')"
     echo -e "${MAGENTA}\\q${RESET}  - Quit"
@@ -298,6 +301,9 @@ show_utility_commands() {
 	echo -e "${MAGENTA}rb{RESET} - Reload \$HOME/.bashrc"
 	echo -e "${MAGENTA}eb{RESET} - Open \$HOME/.bashrc in vim"
 	echo -e "${MAGENTA}ebt{RESET} - Open \$HOME/.bash_tools in vim"
+    echo -e "${MAGENTA}wdir{RESET} - Change directory to \$HOME/work"
+    echo -e "${MAGENTA}gdir{RESET} - Change directory to \$HOME/git"
+    echo -e "${MAGENTA}ldir{RESET} - Change directory to \$HOME/lab"
 }
 
 show_media_commands() {
@@ -334,7 +340,7 @@ show_help() {
 # Main lscom function
 lscom() {
     local section="${1:-all}"
-    
+
     case "$section" in
         "git"|"Git")
             show_git_commands
