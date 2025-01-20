@@ -67,7 +67,7 @@ install_packages() {
         )
         log_message "Refreshing package repositories using apt..."
         sudo apt update
-		
+
     elif [ "$PACKAGE_MANAGER" == "dnf" ]; then
         PACKAGES+=(
             "man-db"
@@ -158,7 +158,7 @@ include_bash_tools() {
 
 update_gitconfig() {
   log_message "Updating Git configuration..."
-  
+
   # Prompt for Git user name and email
   read -p "Enter your Git username (user only): " git_user
   read -p "Enter your Git email: " git_email
@@ -211,8 +211,7 @@ case "$choice" in
   [uU2]*)
     log_message "Updating dotfiles..."
     cd "$DOTFILES_DIR" && git pull || log_message "Error pulling changes."
-	log_message "Reloading bash..."
-	source "$HOME/.bashrc" && log_message "Bash reloaded." || log_message "Reloading bash failed. Run: source ~/.bashrc"
+    echo "Reload bash or close and open a new shell"
     ;;
   *)
     log_message "Invalid choice. Exiting."
