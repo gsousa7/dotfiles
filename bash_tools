@@ -298,12 +298,12 @@ show_utility_commands() {
 	echo -e "${MAGENTA}net${RESET} - Show network interfaces and their status."
 	echo -e "${MAGENTA}field${RESET} - Extract specific fields from a line. Usage: ${YELLOW}field <column_number> <delimiter>${RESET}"
 	echo -e "${MAGENTA}epoch${RESET} - Convert epoch to human-readable date. Usage: ${YELLOW}epoch <epoch_time>${RESET}"
-	echo -e "${MAGENTA}rb{RESET} - Reload \$HOME/.bashrc"
-	echo -e "${MAGENTA}eb{RESET} - Open \$HOME/.bashrc in vim"
-	echo -e "${MAGENTA}ebt{RESET} - Open \$HOME/.bash_tools in vim"
-    echo -e "${MAGENTA}wdir{RESET} - Change directory to \$HOME/work"
-    echo -e "${MAGENTA}gdir{RESET} - Change directory to \$HOME/git"
-    echo -e "${MAGENTA}ldir{RESET} - Change directory to \$HOME/lab"
+	echo -e "${MAGENTA}rb${RESET} - Reload \$HOME/.bashrc"
+	echo -e "${MAGENTA}eb${RESET} - Open \$HOME/.bashrc in vim"
+	echo -e "${MAGENTA}ebt${RESET} - Open \$HOME/.bash_tools in vim"
+    echo -e "${MAGENTA}wdir${RESET} - Change directory to \$HOME/work"
+    echo -e "${MAGENTA}gdir${RESET} - Change directory to \$HOME/git"
+    echo -e "${MAGENTA}ldir${RESET} - Change directory to \$HOME/lab"
 }
 
 show_media_commands() {
