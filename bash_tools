@@ -6,7 +6,7 @@ export GREP_COLORS='mt=1;36'
 export GREP_OPTIONS='--color=auto'
 export PAGER='less'
 export TZ='Europe/Lisbon'
-DESKTOPWINSL='/mnt/c/Users/Gonçalo Sousa/'
+export DESKTOPWINSL='/mnt/c/Users/Gonçalo Sousa/'
 export HISTCONTROL='ignoredups'
 export HISTSIZE=5000
 export HISTFILESIZE=5000

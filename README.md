@@ -3,9 +3,11 @@
 ## Installation Instructions
 This repository includes the following custom configurations:
 - Bash configuration customization (prompt, history, colors)
+  - `.bash_completion`, `.bashrc`, `.htoprc` and `.tmux.conf`
 - Git aliases
 - Kubernetes aliases
 - Utility aliases
+- Vim configuration customization (`.vimrc` with theme, linting, shortcuts and tools)
  
 
 ### **1. Installation**

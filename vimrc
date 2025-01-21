@@ -1,28 +1,19 @@
-" Install with
-"" curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
-" Open vin and run
-"" :PlugInstall
-"or run vim +PlugInstall +qall
-
-set visualbell
-set t_vb=
-set t_u7=
-
-
 " ---------------------------------------------
 " General Settings
 " ---------------------------------------------
-set nocompatible             " Disable vi compatibility
-set backspace=indent,eol,start " Allow backspace in insert mode
-set encoding=utf-8           " Use UTF-8 encoding
-set fileencoding=utf-8       " Ensure files are saved as UTF-8
-set clipboard=unnamedplus    " Use system clipboard
-set mouse=a                  " Enable mouse support
-set mouse=r                  " Allows right click to paste
-set history=1000             " Store 1000 lines of command history
-set wildmenu                 " Enhanced command-line completion
-set lazyredraw               " Improve performance for macros/scripts
+set nocompatible                " Disable vi compatibility
+set backspace=indent,eol,start  " Allow backspace in insert mode
+set encoding=utf-8              " Use UTF-8 encoding
+set fileencoding=utf-8          " Ensure files are saved as UTF-8
+set clipboard=unnamedplus       " Use system clipboard
+set mouse=a                     " Enable mouse support
+set mouse=r                     " Allows right click to paste
+set history=1000                " Store 1000 lines of command history
+set wildmenu                    " Enhanced command-line completion
+set lazyredraw                  " Improve performance for macros/scripts
+set visualbell                  " Disables the audible bell and uses a visual flash instead
+set t_vb=                       " Disables the visual bell effect
+set t_u7=                       " Disables cursor position reporting
 
 " ---------------------------------------------
 " Appearance
@@ -92,7 +83,7 @@ nnoremap <silent> <leader>/ :noh<CR>
 " ---------------------------------------------
 let g:ale_fix_on_save = 1           " Auto-fix on save
 let g:ale_linters_explicit = 1      " Use only specified linters
-let g:ale_linters = {'python': ['flake8'], 'yaml': ['yamllint'], 'sh': ['shellsheck']}
+let g:ale_linters = {'python': ['flake8'], 'yaml': ['yamllint'], 'sh': ['shellcheck']}
 
 " ---------------------------------------------
 " Other Settings

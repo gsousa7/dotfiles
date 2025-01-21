@@ -35,7 +35,7 @@ log_message() {
   echo "$1" | tee -a "$LOG_FILE"
 }
 
-# Function to detect package manager
+# Detect package manager
 detect_package_manager() {
   log_message "Detecting package manager..."
   if command -v dnf &> /dev/null; then
@@ -51,7 +51,7 @@ detect_package_manager() {
   log_message "Package manager detected: $PACKAGE_MANAGER"
 }
 
-# Function to install core packages
+# Install core packages
 install_packages() {
     log_message "Installing core packages..."
 
@@ -82,12 +82,10 @@ install_packages() {
     fi
 
     log_message "Installing packages using $PACKAGE_MANAGER..."
-    sudo "$PACKAGE_MANAGER" install -y "${PACKAGES[@]}" && \
-        log_message "Packages installed successfully." || \
-        log_message "Failed to install packages."
+    sudo "$PACKAGE_MANAGER" install -y "${PACKAGES[@]}" && log_message "Packages installed successfully." || log_message "Failed to install packages."
 }
 
-# Function to install pip-based extra tools
+# Install pip-based extra tools
 install_extra_tools() {
   log_message "Installing extra tools via pipx..."
 
@@ -111,7 +109,7 @@ install_extra_tools() {
   pipx ensurepath
 }
 
-# Function to clone the dotfiles repository
+# Clone the dotfiles repository
 clone_dotfiles_repo() {
   if [ ! -d "$DOTFILES_DIR" ]; then
     log_message "Cloning dotfiles repository..."
@@ -121,7 +119,7 @@ clone_dotfiles_repo() {
   fi
 }
 
-# Function to create backups and symlinks for dotfiles
+# Create backups and symlinks for dotfiles
 symlink_dotfiles() {
   log_message "Creating symlinks for dotfiles..."
   mkdir -p "$BACKUP_DIR"
@@ -135,15 +133,14 @@ symlink_dotfiles() {
     ln -sf "$DOTFILES_DIR/$file" "$HOME/$dotfile" && log_message "Symlink created for $file." || log_message "Failed to create symlink for $file."
   done
 
-  # Special handling for htop configuration
+  # HTOP configuration to link it in ~/.config/htop
   if [ -f "$DOTFILES_DIR/htoprc" ]; then
-    # For newer versions of htop, link it in ~/.config/htop
     mkdir -p "$HOME/.config/htop"
     ln -sf "$DOTFILES_DIR/htoprc" "$HOME/.config/htop/htoprc" && log_message "Symlink created for htoprc."
   fi
 }
 
-# Function to handle bash_tools include
+# Include bash_tools
 include_bash_tools() {
   if [ -f "$DOTFILES_DIR/$BASH_TOOLS" ]; then
     log_message "Creating symlink for $BASH_TOOLS"
@@ -157,20 +154,40 @@ include_bash_tools() {
   fi
 }
 
+# Git configuration
 update_gitconfig() {
   log_message "Updating Git configuration..."
 
-  # Prompt for Git user name and email
+  # Prompt for Git name and trim spaces (begin and end)
   read -p "Enter your Git username (user only): " git_user
+  git_user=$(echo "$git_user" | sed 's/^[ \t]*//;s/[ \t]*$//')
+
+  # Prompt for Git mail and convert it to lowercase
   read -p "Enter your Git email: " git_email
+  git_email=$(echo "$git_email" | awk '{print tolower($0)}')
+
+  # Prompt for init branch, trim space (begin and end) and validate input
+  read -p "What is your init branch? (master or main) " git_branch
+  git_branch=$(echo "$git_branch" | sed 's/^[ \t]*//;s/[ \t]*$//')
+    if [[ "$git_branch" != "master" && "$git_branch" != "main" ]]; then
+      echo "Invalid branch name. Please enter 'master' or 'main'."
+      exit 1
+    fi
 
   # Create gitconfig
   git config --global user.name "$git_user"
   git config --global user.email "$git_email"
-
+  git config --global init.defaultBranch "$git_branch"
   log_message "Git configuration updated."
+
+  # Check if SSH key is added
+  if ! [ -f "$HOME/.ssh/id_rsa.pub" ] && ! [ -f "$HOME/.ssh/id_ed25519.pub" ]; then
+    log_message "No SSH key found. Create SSH key with 'ssh-keygen -C \"$git_email\"' or 'ssh-keygen -t ed25519 -C \"$git_email\"' and add it to GitHub."
+  fi
 }
 
+
+# Ensure that vim-plug is installed 
 install_vim_plug() {
   local plug_vim_path="$HOME/.vim/autoload/plug.vim"
 
@@ -183,6 +200,7 @@ install_vim_plug() {
   fi
 }
 
+# Installs vim plugins in .vimrc
 install_vim_plugins() {
   if command -v vim &> /dev/null; then
     log_message "Installing Vim plugins..."
@@ -196,14 +214,14 @@ install_vim_plugins() {
 log_message "Script execution started."
 detect_package_manager
 
-# Prompt the user
+# Prompt user
 read -p "Do you want to (i)nstall packages and tools, dotfiles, or (u)pdate dotfiles? [iI1/uU2]: " choice
 case "$choice" in
   [iI1]*)
     install_packages
     install_extra_tools
+    update_gitconfig
     clone_dotfiles_repo
-	update_gitconfig
     symlink_dotfiles
     include_bash_tools
     install_vim_plug
