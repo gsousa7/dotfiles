@@ -44,6 +44,7 @@ alias net='ip -br -c a'
 alias rb="source $HOME/.bashrc"
 alias eb="vim $HOME/.bashrc"
 alias ebt="vim $HOME/.bash_tools"
+alias evrc="vim $HOME/.vimrc"
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
@@ -292,7 +293,7 @@ show_utility_commands() {
 	echo -e "${MAGENTA}cdd${RESET} - Change directory to Windows Desktop on WSL (WSL Only)."
 	echo -e "${MAGENTA}explain${RESET} - Explains the given command or enters interactive mode to explain commands."
 	echo -e "${MAGENTA}tldr${RESET} - Explains the given command and provides examples."
-	echo -e "${MAGENTA}code${RESET} - Launch Visual Studio Code from the command line."
+	echo -e "${MAGENTA}code${RESET} - Launch Visual Studio Code from the command line (can open files directly too)"
 	echo -e "${MAGENTA}data${RESET} - Print the current date and time."
 	echo -e "${MAGENTA}tempolx${RESET} - Get the weather in Lisboa."
 	echo -e "${MAGENTA}temposx${RESET} - Get the weather in Seixal."
@@ -307,6 +308,7 @@ show_utility_commands() {
 	echo -e "${MAGENTA}rb${RESET} - Reload \$HOME/.bashrc"
 	echo -e "${MAGENTA}eb${RESET} - Open \$HOME/.bashrc in vim"
 	echo -e "${MAGENTA}ebt${RESET} - Open \$HOME/.bash_tools in vim"
+	echo -e "${MAGENTA}evrc${RESET} - Open \$HOME/.vimrc in vim"
     echo -e "${MAGENTA}wdir${RESET} - Change directory to \$HOME/work"
     echo -e "${MAGENTA}gdir${RESET} - Change directory to \$HOME/git"
     echo -e "${MAGENTA}ldir${RESET} - Change directory to \$HOME/lab"
