@@ -19,7 +19,6 @@ set t_u7=                       " Disables cursor position reporting
 " Appearance
 " ---------------------------------------------
 set number                   " Show line numbers
-set relativenumber           " Relative line numbers
 set cursorline               " Highlight the current line
 set showmatch                " Highlight matching parenthesis
 set ruler                    " Show cursor position
