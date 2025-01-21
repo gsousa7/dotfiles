@@ -63,7 +63,7 @@ chmod +x install.sh
 - Update dotfiles from remote repository
 
 
-## Usage
+## 2. Usage
 - To install, type **1** (or **I** or **i**) when prompted.
 - To update, type **2** (or **U** or **u**).
 - To view available aliases and functions, run:
@@ -79,7 +79,7 @@ chmod +x install.sh
   vimfo
   ```
 
-## Notes
+## 3. Notes
 - `.bashrc` file will only be modified to load `.bash_tools`, making it easier to manage.
 - To update Python packages use the following commands
 ```bash
