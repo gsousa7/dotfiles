@@ -83,8 +83,10 @@ chmod +x install.sh
 - `.bashrc` file will only be modified to load `.bash_tools`, making it easier to manage.
 - To update Python packages use the following commands
 ```bash
-pip install --upgrade pip
+pip install --upgrade pip pipx
 pipx upgrade yt-dlp tldr spotdl
+pipx ensurepath
+source ~/.bashrc 
 ```
 - Inspired by [bahamas10's dotfiles](https://github.com/bahamas10/dotfiles).
 

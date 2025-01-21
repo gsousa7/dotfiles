@@ -24,7 +24,7 @@ PACKAGES=(
   "telnet" "rsync" "wget" "curl" "bash-completion" "vim" "htop" "tcpdump" "jq"
   "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip"
   "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux"
-  "zip" "unzip" "whois" "sed" "nmap" "ncdu" "mtr" "lolcat"
+  "zip" "unzip" "whois" "sed" "nmap" "ncdu" "mtr" "lolcat" "apg" "cowsay"
 )
 
 # Extra tools to install via pip
