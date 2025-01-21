@@ -7,6 +7,11 @@ This repository includes the following custom configurations:
 - Utility aliases
 - Vim configuration customization (`.vimrc` with theme, linting, shortcuts and tools)
 
+## Table of Contents
+1. [Installation](#1-installation)
+2. [Usage](#2-usage)
+3. [Notes](#3-notes)
+
 
 ## **1. Installation**
 ### Pre-requisites
