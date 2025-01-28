@@ -145,6 +145,30 @@ explain () {
   fi
 }
 
+gdst() {
+    found_repo=false
+    for dir in */; do
+        echo -e "\n${BLUE}=== Checking ${ORANGE}$dir${RESET}${BLUE} ===${RESET}"
+
+        if [ -d "$dir/.git" ]; then
+            found_repo=true
+            output=$(cd "$dir" && git status -s)
+
+            if [[ -z "$output" ]]; then
+                echo -e "${GREEN}No changes${RESET}"
+            else
+                echo -e "${YELLOW}$output${RESET}"
+            fi
+        else
+            echo -e "${MAGENTA}Not initialized${RESET}"
+        fi
+    done
+
+    if ! $found_repo; then
+        echo -e "${RED}No Git repositories found.${RESET}"
+    fi
+}
+
 ## Convert epoch to human readable (print current date if no args)
 epoch() {
 	local num=${1:--1}
@@ -242,6 +266,7 @@ show_git_commands() {
 	echo -e "${MAGENTA}nb${RESET} - Create a new Git branch. Usage: nb ${YELLOW}<branch_name>${RESET}"
 	echo -e "${MAGENTA}gall${RESET} - Add all changes to Git staging area (equal to git add -A)."
 	echo -e "${MAGENTA}gst${RESET} - Show the current status of the Git repository."
+    echo -e "${MAGENTA}gdst${RESET} - Show the current status of the Git repositories existing in current directory"
 	echo -e "${MAGENTA}ga${RESET} - Add file to Git staging area. Usage: ga <file>"
 	echo -e "${MAGENTA}gf${RESET} - Fetch updates from the remote Git repository (git fetch)."
 	echo -e "${MAGENTA}gb${RESET} - Show the list of Git branches."
