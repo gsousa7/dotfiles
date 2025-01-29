@@ -391,7 +391,6 @@ lscom() {
             show_custom_commands
             ;;
         "all"|"")
-            echo -e "${BLUE}Complete list of aliases and functions:${RESET}"
             show_git_commands
             echo
             show_kubernetes_commands
