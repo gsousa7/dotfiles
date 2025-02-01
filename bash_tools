@@ -207,12 +207,12 @@ function getytplistmp4subs() {
 
 ## Get Spotify track
 function getspot() {
-    spotdl --output "${DESKTOPWINSL}Desktop/{artist} - {title}.mp3" "$1"
+    spotdl --output "${DESKTOPWINSL}Desktop/{artist} - {title}" "$1"
 }
 
 ## Get Spotify album
 function getalb() {
-    spotdl --output "${DESKTOPWINSL}Desktop/{artist} - {album}/{artist} - {title}.mp3" "$1"
+    spotdl --output "${DESKTOPWINSL}Desktop/{artist} - {album}/{artist} - {title}" "$1"
 }
 
 # get vim help
