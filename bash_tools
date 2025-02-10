@@ -259,6 +259,60 @@ vimfo() {
     echo -e "${MAGENTA}vim -o file1.txt file2.txt${RESET} - Open with horizontal split"
 }
 
+tmuxfo() {
+    echo -e "${BLUE}tmux Cheat Sheet${RESET}\n"
+
+    # Splitting Windows
+    echo -e "${ORANGE}Splitting Panes:${RESET}"
+    echo -e "${MAGENTA}Ctrl b %${RESET} - Split vertically"
+    echo -e "${MAGENTA}Ctrl b \"${RESET} - Split horizontally\n"
+
+    # Closing Panes
+    echo -e "${ORANGE}Closing Panes:${RESET}"
+    echo -e "${MAGENTA}Ctrl b x${RESET} - Close current pane"
+    echo -e "${MAGENTA}Ctrl b !${RESET} - Break pane into new window\n"
+
+    # Navigation
+    echo -e "${ORANGE}Pane Navigation:${RESET}"
+    echo -e "${MAGENTA}Ctrl b h${RESET} - Move to left pane"
+    echo -e "${MAGENTA}Ctrl b j${RESET} - Move to lower pane"
+    echo -e "${MAGENTA}Ctrl b k${RESET} - Move to upper pane"
+    echo -e "${MAGENTA}Ctrl b l${RESET} - Move to right pane"
+    echo -e "${MAGENTA}Ctrl b q${RESET} - Show pane numbers\n"
+
+    # Resizing
+    echo -e "${ORANGE}Pane Resizing:${RESET}"
+    echo -e "${MAGENTA}Ctrl b Alt h${RESET} - Decrease width"
+    echo -e "${MAGENTA}Ctrl b Alt l${RESET} - Increase width"
+    echo -e "${MAGENTA}Ctrl b Alt j${RESET} - Decrease height"
+    echo -e "${MAGENTA}Ctrl b Alt k${RESET} - Increase height"
+    echo -e "${MAGENTA}Ctrl b =${RESET} - Equalize pane sizes\n"
+
+    # Windows (Tabs)
+    echo -e "${ORANGE}Windows (Tabs):${RESET}"
+    echo -e "${MAGENTA}Ctrl b c${RESET} - Create new window"
+    echo -e "${MAGENTA}Ctrl b n${RESET} - Next window"
+    echo -e "${MAGENTA}Ctrl b p${RESET} - Previous window"
+    echo -e "${MAGENTA}Ctrl b w${RESET} - List windows"
+    echo -e "${MAGENTA}Ctrl b ,${RESET} - Rename window"
+    echo -e "${MAGENTA}Ctrl b &${RESET} - Close window\n"
+
+    # Sessions
+    echo -e "${ORANGE}Sessions:${RESET}"
+    echo -e "${MAGENTA}tmux new -s <mysession>${RESET} - Create a new session"
+    echo -e "${MAGENTA}tmux ls${RESET} - List sessions"
+    echo -e "${MAGENTA}tmux attach -t <mysession>${RESET} - Attach to session"
+    echo -e "${MAGENTA}tmux detach${RESET} - Detach from session"
+    echo -e "${MAGENTA}tmux kill-session -t <mysession>${RESET} - Kill session\n"
+
+    # Launch Commands
+    echo -e "${ORANGE}Launch with Splits:${RESET}"
+    echo -e "${MAGENTA}tmux new-session -d -s <mysession>${RESET} - Start a detached session"
+    echo -e "${MAGENTA}tmux split-window -h${RESET} - Create horizontal split"
+    echo -e "${MAGENTA}tmux split-window -v${RESET} - Create vertical split"
+    echo -e "${MAGENTA}tmux select-layout tiled${RESET} - Arrange panes in a tiled layout\n"
+}
+
 show_git_commands() {
     echo -e "${BLUE}List of Git aliases and functions:${RESET}"
     echo -e "\n${ORANGE}# Git:${RESET}"
