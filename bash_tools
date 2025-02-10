@@ -110,6 +110,14 @@ tempof() {
     curl -s "wttr.in/${1}"
 }
 
+dsk() {
+    if [ -d "/mnt/$1" ]; then
+        cd "/mnt/$1" || return
+    else
+        echo "Drive /mnt/$1 not found."
+    fi
+}
+
 ## lazygit "Commit msg" "branch"
 function lazygit() {
 	if [ -z "$1" ]; then
@@ -391,6 +399,7 @@ show_utility_commands() {
     echo -e "${MAGENTA}wdir${RESET} - Change directory to \$HOME/work"
     echo -e "${MAGENTA}gdir${RESET} - Change directory to \$HOME/git"
     echo -e "${MAGENTA}ldir${RESET} - Change directory to \$HOME/lab"
+    echo -e "${MAGENTA}dsk${RESET} - Change directory to a specified directory in /mnt. Usage: ${YELLOW}dsk <drive>${RESET}"
 }
 
 show_media_commands() {
