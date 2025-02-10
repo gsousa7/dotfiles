@@ -69,7 +69,7 @@ install_packages() {
         log_message "Refreshing package repositories using apt..."
         sudo apt update
 
-    elif [ "$PACKAGE_MANAGER" == "dnf" ]; then
+    elif [[ "$PACKAGE_MANAGER" == "dnf" || "$PACKAGE_MANAGER" == "yum" ]]; then
         PACKAGES+=(
             "man-db"
             "man-pages"
@@ -83,6 +83,12 @@ install_packages() {
 
     log_message "Installing packages using $PACKAGE_MANAGER..."
     sudo "$PACKAGE_MANAGER" install -y "${PACKAGES[@]}" && log_message "Packages installed successfully." || log_message "Failed to install packages."
+    log_message "Configuring vim as main editor"
+    if [ "$PACKAGE_MANAGER" == "apt" ]; then
+      sudo update-alternatives --set editor /usr/bin/vim.basic
+    elif [[ "$PACKAGE_MANAGER" == "dnf" || "$PACKAGE_MANAGER" == "yum" ]]; then
+      sudo alternatives --set editor /usr/bin/vim
+    fi
 }
 
 # Install pip-based extra tools
