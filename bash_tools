@@ -365,7 +365,6 @@ show_kubernetes_commands() {
 	echo -e "${MAGENTA}kgnw${RESET} - Get the list of nodes with wide output (shows additional information)."
 
 	echo -e "\n${BLUE}## Create resources:${RESET}"
-	echo -e "${MAGENTA}kdesc${RESET} - Describe Kubernetes resources. Usage: ${YELLOW}kdesc <resource_type> <resource_name>${RESET}"
 	echo -e "${MAGENTA}kcf${RESET} - Create a Kubernetes resource from a file. ${YELLOW}Usage: kcf <file.yaml>${RESET}"
 	echo -e "${MAGENTA}kaf${RESET} - Apply a Kubernetes resource from a file. ${YELLOW}Usage: kaf <file.yaml>${RESET}"
 
@@ -384,13 +383,14 @@ show_kubernetes_commands() {
 	echo -e "${MAGENTA}kdd${RESET} - Delete a Kubernetes deployment. Usage: ${YELLOW}kdd <deployment_name>${RESET}"
 	echo -e "${MAGENTA}kdn${RESET} - Delete a Kubernetes namespace. Usage: ${YELLOW}kdn <namespace_name>${RESET}"
 	
-	echo -e "\n${BLUE}## Documentation:${RESET}"
+	echo -e "\n${BLUE}## Documentation & Logs:${RESET}"
 	echo -e "${MAGENTA}kexp${RESET} - Show documentation for a Kubernetes resource type or existing resource. Usage: ${YELLOW}kexp <resource>${RESET}"
+	echo -e "${MAGENTA}kdesc${RESET} - Describe Kubernetes resources. Usage: ${YELLOW}kdesc <resource_type> <resource_name>${RESET}"
+	echo -e "${MAGENTA}kl${RESET} - Show logs for a pod. Usage: ${YELLOW}kl <pod_name>${RESET}"
 	
 	echo -e "\n${BLUE}## Others:${RESET}"
 	echo -e "${MAGENTA}ked${RESET} - Edit a Kubernetes resource. Usage: ${YELLOW}ked <resource_type>/<resource_name>${RESET}"
 	echo -e "${MAGENTA}ke${RESET} - Execute a command inside a running pod. Usage: ${YELLOW}ke <pod_name> -- <command>${RESET}"
-	echo -e "${MAGENTA}kl${RESET} - Show logs for a pod. Usage: ${YELLOW}kl <pod_name>${RESET}"
 	echo -e "${MAGENTA}ksetns${RESET} - Jump to namespace for kubectl context. Usage: ${YELLOW}ksetns <namespace>${RESET}"
 }
 
