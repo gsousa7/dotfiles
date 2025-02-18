@@ -79,6 +79,15 @@ alias gs='git switch'
 alias k='kubectl'
 alias ks='kubectl -n kube-system'
 alias kdesc='kubectl describe'
+alias kl='kubectl logs'
+alias ke='kubectl exec -it'
+alias kexp='kubectl explain'
+alias ked='kubectl edit'
+alias ksetns='kubectl config set-context --current --namespace'
+
+## Cluster commands
+alias kci='kubectl cluster-info'
+alias kgnw='kubectl get nodes -o wide'
 
 ## Create resources
 alias kcf='kubectl create -f'
@@ -87,9 +96,11 @@ alias kaf='kubectl apply -f'
 ## Get resources
 alias kgn='kubectl get nodes'
 alias kgp='kubectl get pods'
+alias kgpl='kubectl get pods -l'
 alias kgpa='kubectl get pods --all-namespaces'
 alias kgs='kubectl get services'
 alias kgd='kubectl get deployments'
+alias kgns='kubectl get namespaces'
 
 ## Delete
 alias kd='kubectl delete'
@@ -349,6 +360,10 @@ show_kubernetes_commands() {
 	echo -e "${MAGENTA}k${RESET} - Kubernetes alias for kubectl."
 	echo -e "${MAGENTA}ks${RESET} - Kubernetes alias for kubectl with the kube-system namespace."
 
+	echo -e "\n${BLUE}## Cluster Commands:${RESET}"
+	echo -e "${MAGENTA}kci${RESET} - Display cluster information."
+	echo -e "${MAGENTA}kgnw${RESET} - Get the list of nodes with wide output (shows additional information)."
+
 	echo -e "\n${BLUE}## Create resources:${RESET}"
 	echo -e "${MAGENTA}kdesc${RESET} - Describe Kubernetes resources. Usage: ${YELLOW}kdesc <resource_type> <resource_name>${RESET}"
 	echo -e "${MAGENTA}kcf${RESET} - Create a Kubernetes resource from a file. ${YELLOW}Usage: kcf <file.yaml>${RESET}"
@@ -360,6 +375,7 @@ show_kubernetes_commands() {
 	echo -e "${MAGENTA}kgpa${RESET} - Get the list of pods in all namespaces in the Kubernetes cluster."
 	echo -e "${MAGENTA}kgs${RESET} - Get the list of services in the Kubernetes cluster."
 	echo -e "${MAGENTA}kgd${RESET} - Get the list of deployments in the Kubernetes cluster."
+	echo -e "${MAGENTA}kgns${RESET} - Get the list of namespaces in the Kubernetes cluster."
 
 	echo -e "\n${BLUE}## Delete:${RESET}"
 	echo -e "${MAGENTA}kd${RESET} - Delete a Kubernetes resource. Usage: ${YELLOW}kd <resource_type> <resource_name>${RESET}"
@@ -367,6 +383,15 @@ show_kubernetes_commands() {
 	echo -e "${MAGENTA}kds${RESET} - Delete a Kubernetes service. Usage: ${YELLOW}kds <service_name>${RESET}"
 	echo -e "${MAGENTA}kdd${RESET} - Delete a Kubernetes deployment. Usage: ${YELLOW}kdd <deployment_name>${RESET}"
 	echo -e "${MAGENTA}kdn${RESET} - Delete a Kubernetes namespace. Usage: ${YELLOW}kdn <namespace_name>${RESET}"
+	
+	echo -e "\n${BLUE}## Documentation:${RESET}"
+	echo -e "${MAGENTA}kexp${RESET} - Show documentation for a Kubernetes resource type or existing resource. Usage: ${YELLOW}kexp <resource>${RESET}"
+	
+	echo -e "\n${BLUE}## Others:${RESET}"
+	echo -e "${MAGENTA}ked${RESET} - Edit a Kubernetes resource. Usage: ${YELLOW}ked <resource_type>/<resource_name>${RESET}"
+	echo -e "${MAGENTA}ke${RESET} - Execute a command inside a running pod. Usage: ${YELLOW}ke <pod_name> -- <command>${RESET}"
+	echo -e "${MAGENTA}kl${RESET} - Show logs for a pod. Usage: ${YELLOW}kl <pod_name>${RESET}"
+	echo -e "${MAGENTA}ksetns${RESET} - Jump to namespace for kubectl context. Usage: ${YELLOW}ksetns <namespace>${RESET}"
 }
 
 show_utility_commands() {
