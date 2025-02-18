@@ -51,6 +51,7 @@ alias egrep='egrep --color=auto'
 alias wdir='cd $HOME/work'
 alias gdir='cd $HOME/git'
 alias ldir='cd $HOME/lab'
+alias ddir='cd $HOME/dotfiles'
 
 
 # Git Aliases
@@ -118,7 +119,6 @@ dsk() {
     fi
 }
 
-## lazygit "Commit msg" "branch"
 function lazygit() {
 	if [ -z "$1" ]; then
 		echo "Error: Commit message is required."
@@ -137,7 +137,6 @@ function lazygit() {
 	git push -u origin "$2"
 }
 
-## explain.sh begins
 explain () {
   if [ "$#" -eq 0 ]; then
     while read  -p "Command: " cmd; do
@@ -177,7 +176,6 @@ gdst() {
     fi
 }
 
-## Convert epoch to human readable (print current date if no args)
 epoch() {
 	local num=${1:--1}
 	printf '%(%B %d, %Y %-I:%M:%S %p %Z)T\n' "$num"
@@ -225,10 +223,11 @@ function getalb() {
 
 # get vim help
 vimfo() {
-    echo -e "${BLUE}Quick Vim Commands Reference${RESET}\n"
+    echo -e "${BLUE}Vim Cheatsheet${RESET}\n"
 
     # Basic Commands
-    echo -e "${ORANGE}Basic Commands:${RESET} (No need for 'Esc :')"
+    echo -e "${ORANGE}Basic Commands:${RESET}"
+    echo "${YELLOW}Not required 'Esc :'${RESET}"
     echo -e "${MAGENTA}\\q${RESET}  - Quit"
     echo -e "${MAGENTA}\\w${RESET}  - Save"
     echo -e "${MAGENTA}\\x${RESET}  - Save and quit"
@@ -236,13 +235,13 @@ vimfo() {
 
     # Split Management
     echo -e "${ORANGE}Split Commands:${RESET}"
-    echo -e "${YELLOW}Required 'Esc :' commands:${RESET}"
+    echo -e "${YELLOW}Required 'Esc :':${RESET}"
     echo -e "${MAGENTA}:sp${RESET}   - Create horizontal split (same file)"
     echo -e "${MAGENTA}:new${RESET}  - Create horizontal split (new file)"
     echo -e "${MAGENTA}:vsp${RESET}  - Create vertical split (same file)"
     echo -e "${MAGENTA}:vnew${RESET} - Create vertical split (new file)\n"
 
-    echo -e "${YELLOW}Split Control:${RESET}"
+    echo -e "${ORANGE}Split Control:${RESET}"
     echo -e "${MAGENTA}Ctrl w c${RESET} - Close current split"
     echo -e "${MAGENTA}Ctrl w o${RESET} - Close all splits except current\n"
 
@@ -268,7 +267,7 @@ vimfo() {
 }
 
 tmuxfo() {
-    echo -e "${BLUE}tmux Cheat Sheet${RESET}\n"
+    echo -e "${BLUE}Tmux Cheatsheet${RESET}\n"
 
     # Splitting Windows
     echo -e "${ORANGE}Splitting Panes:${RESET}"
@@ -322,8 +321,7 @@ tmuxfo() {
 }
 
 show_git_commands() {
-    echo -e "${BLUE}List of Git aliases and functions:${RESET}"
-    echo -e "\n${ORANGE}# Git:${RESET}"
+    echo -e "${ORANGE}List of Git aliases and functions:${RESET}"
 	echo -e "${MAGENTA}lazygit${RESET} - Commit and push changes to a specified branch. Usage: ${YELLOW}lazygit '<commit_message>' <branch_name>${RESET}"
 	echo -e "${MAGENTA}nb${RESET} - Create a new Git branch. Usage: nb ${YELLOW}<branch_name>${RESET}"
 	echo -e "${MAGENTA}gall${RESET} - Add all changes to Git staging area (equal to git add -A)."
@@ -347,24 +345,23 @@ show_git_commands() {
 }
 
 show_kubernetes_commands() {
-    echo -e "${BLUE}List of Kubernetes aliases and functions:${RESET}"
-	echo -e "\n${ORANGE}# Kubernetes Alias:${RESET}"
+    echo -e "${ORANGE}List of Kubernetes aliases and functions:${RESET}"
 	echo -e "${MAGENTA}k${RESET} - Kubernetes alias for kubectl."
 	echo -e "${MAGENTA}ks${RESET} - Kubernetes alias for kubectl with the kube-system namespace."
 
-	echo -e "\n${ORANGE}## Create resources:${RESET}"
+	echo -e "\n${BLUE}## Create resources:${RESET}"
 	echo -e "${MAGENTA}kdesc${RESET} - Describe Kubernetes resources. Usage: ${YELLOW}kdesc <resource_type> <resource_name>${RESET}"
 	echo -e "${MAGENTA}kcf${RESET} - Create a Kubernetes resource from a file. ${YELLOW}Usage: kcf <file.yaml>${RESET}"
 	echo -e "${MAGENTA}kaf${RESET} - Apply a Kubernetes resource from a file. ${YELLOW}Usage: kaf <file.yaml>${RESET}"
 
-	echo -e "\n${ORANGE}## Get resources:${RESET}"
+	echo -e "\n${BLUE}## Get resources:${RESET}"
 	echo -e "${MAGENTA}kgn${RESET} - Get the list of nodes in the Kubernetes cluster."
 	echo -e "${MAGENTA}kgp${RESET} - Get the list of pods in the Kubernetes cluster."
 	echo -e "${MAGENTA}kgpa${RESET} - Get the list of pods in all namespaces in the Kubernetes cluster."
 	echo -e "${MAGENTA}kgs${RESET} - Get the list of services in the Kubernetes cluster."
 	echo -e "${MAGENTA}kgd${RESET} - Get the list of deployments in the Kubernetes cluster."
 
-	echo -e "\n${ORANGE}## Delete:${RESET}"
+	echo -e "\n${BLUE}## Delete:${RESET}"
 	echo -e "${MAGENTA}kd${RESET} - Delete a Kubernetes resource. Usage: ${YELLOW}kd <resource_type> <resource_name>${RESET}"
 	echo -e "${MAGENTA}kdp${RESET} - Delete a Kubernetes pod. Usage: ${YELLOW}kdp <pod_name>${RESET}"
 	echo -e "${MAGENTA}kds${RESET} - Delete a Kubernetes service. Usage: ${YELLOW}kds <service_name>${RESET}"
@@ -373,7 +370,7 @@ show_kubernetes_commands() {
 }
 
 show_utility_commands() {
-    echo -e "${BLUE}List of Terminal Utility functions:${RESET}"
+    echo -e "${ORANGE}List of Terminal Utility functions:${RESET}"
 	echo -e "${MAGENTA}ll${RESET} - Long list."
 	echo -e "${MAGENTA}aqui${RESET} - Open the current directory in Windows Explorer (WSL Only)."
 	echo -e "${MAGENTA}fmedia${RESET} - Move all .mkv and .mp4 files to the current directory."
@@ -399,26 +396,28 @@ show_utility_commands() {
     echo -e "${MAGENTA}wdir${RESET} - Change directory to \$HOME/work"
     echo -e "${MAGENTA}gdir${RESET} - Change directory to \$HOME/git"
     echo -e "${MAGENTA}ldir${RESET} - Change directory to \$HOME/lab"
+    echo -e "${MAGENTA}ddir${RESET} - Change directory to \$HOME/lab"
     echo -e "${MAGENTA}dsk${RESET} - Change directory to a specified directory in /mnt. Usage: ${YELLOW}dsk <drive>${RESET}"
+    echo -e "${MAGENTA}vimfo${RESET} - Show custom vim keymaps and cheatsheet"
+    echo -e "${MAGENTA}tmuxfo${RESET} - Show custom tmux keymaps and cheatsheet"
 }
 
 show_media_commands() {
-    echo -e "${BLUE}List of Media Download functions:${RESET}"
-    echo -e "\n${ORANGE}# YouTube (Download audio and video):${RESET}"
+    echo -e "${ORANGE}List of Media Download functions:${RESET}"
+    echo -e "${BLUE}## Youtube (Download audio and/or video):${RESET}"
 	echo -e "${MAGENTA}getyt${RESET} - Download audio from a YouTube video and save it in desktop as MP3. Usage: ${YELLOW}getyt <url>${RESET}"
 	echo -e "${MAGENTA}getytmp4${RESET} - Download audio from a YouTube video and save it in desktop as MP4 1080p. Usage: ${YELLOW}getytmp4 <url>${RESET}"
 	echo -e "${MAGENTA}getytplist${RESET} - Download audio from all videos and save it in desktop in a YouTube playlist. Usage: ${YELLOW}getytplist <url>${RESET}"
 	echo -e "${MAGENTA}getytplistmp4${RESET} - Download all videos and save it in desktop in a YouTube playlist in MP4 format. Usage: ${YELLOW}getytplistmp4 <url>${RESET}"
 	echo -e "${MAGENTA}getytplistmp4subs${RESET} - Download all videos and save it in desktop in a YouTube playlist in MP4 format with subtitles. Usage: ${YELLOW}getytplistmp4subs <url>${RESET}"
 	echo -e "${MAGENTA}getytmp4subs${RESET} - Download a YouTube video and save it in desktop in MP4 format (1080p) with subtitles. Usage: ${YELLOW}getytmp4subs <url>${RESET}"
-	echo -e "\n${ORANGE}# Spotify (Download audio):${RESET}"
+	echo -e "\n${BLUE}## Spotify (Download audio):${RESET}"
 	echo -e "${MAGENTA}getspot${RESET} - Download a song from Spotify and save it in desktop. Usage: ${YELLOW}getspot <url>${RESET}"
 	echo -e "${MAGENTA}getalb${RESET} - Download an album from Spotify and save it in desktop. Usage: ${YELLOW}getalb <url>${RESET}"
 }
 
 show_custom_commands() {
-    echo -e "${BLUE}List of Customization functions:${RESET}"
-    echo -e "\n${ORANGE}# Customization & Misc:${RESET}"
+    echo -e "${ORANGE}List of Customization functions:${RESET}"
     echo -e "${MAGENTA}set_prompt_colors${RESET} - Change theme of Terminal/Prompt 0-29. Usage: ${YELLOW}set_prompt_colors <number 0-29>${RESET}"
 	echo -e "${MAGENTA}colors${RESET} - Print all 256 colors in the terminal."
 }
