@@ -41,6 +41,8 @@ alias temposxf='curl wttr.in/Seixal'
 alias code='"${DESKTOPWINSL}AppData/Local/Programs/Microsoft VS Code/Code.exe"'
 alias dus='du -sh * 2>/dev/null'
 alias net='ip -br -c a'
+alias ippub='curl -s https://ipinfo.io/ip && echo'
+alias ippubf='curl -s https://ipinfo.io && echo'
 alias rb="source $HOME/.bashrc"
 alias eb="vim $HOME/.bashrc"
 alias ebt="vim $HOME/.bash_tools"
@@ -412,6 +414,8 @@ show_utility_commands() {
 	echo -e "${MAGENTA}tempof${RESET} - Get the full weather info in a specified city. Usage: ${YELLOW}tempof <city>${RESET}"
 	echo -e "${MAGENTA}dus${RESET} - Show disk usage of files and directories."
 	echo -e "${MAGENTA}net${RESET} - Show network interfaces and their status."
+    echo -e "${MAGENTA}ippub${RESET} - Show Public IP."
+    echo -e "${MAGENTA}ippubf${RESET} - Show information on ISP and Public IP"
 	echo -e "${MAGENTA}field${RESET} - Extract specific fields from a line. Usage: ${YELLOW}field <column_number> <delimiter>${RESET}"
 	echo -e "${MAGENTA}epoch${RESET} - Convert epoch to human-readable date. Usage: ${YELLOW}epoch <epoch_time>${RESET}"
 	echo -e "${MAGENTA}rb${RESET} - Reload \$HOME/.bashrc"
@@ -421,7 +425,7 @@ show_utility_commands() {
     echo -e "${MAGENTA}wdir${RESET} - Change directory to \$HOME/work"
     echo -e "${MAGENTA}gdir${RESET} - Change directory to \$HOME/git"
     echo -e "${MAGENTA}ldir${RESET} - Change directory to \$HOME/lab"
-    echo -e "${MAGENTA}ddir${RESET} - Change directory to \$HOME/lab"
+    echo -e "${MAGENTA}ddir${RESET} - Change directory to \$HOME/dotfiles"
     echo -e "${MAGENTA}dsk${RESET} - Change directory to a specified directory in /mnt. Usage: ${YELLOW}dsk <drive>${RESET}"
     echo -e "${MAGENTA}vimfo${RESET} - Show custom vim keymaps and cheatsheet"
     echo -e "${MAGENTA}tmuxfo${RESET} - Show custom tmux keymaps and cheatsheet"
