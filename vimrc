@@ -24,7 +24,7 @@ set showmatch                " Highlight matching parenthesis
 set ruler                    " Show cursor position
 set title                    " Show filename in terminal title
 set termguicolors            " Enable 24-bit colors
-colorscheme desert           " Set colorscheme (change as desired)
+
 
 " ---------------------------------------------
 " Indentation
@@ -91,3 +91,8 @@ autocmd BufWritePre * %s/\s\+$//e   " Remove trailing whitespace on save
 set splitright                     " New vertical splits open to the right
 set splitbelow                     " New horizontal splits open below
 
+if v:version < 802
+    packadd! dracula
+endif
+syntax enable
+colorscheme dracula

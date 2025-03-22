@@ -194,8 +194,9 @@ update_gitconfig() {
 }
 
 
-# Ensure that vim-plug is installed 
-install_vim_plug() {
+# Ensure that pre-requisites are meet and installed
+install_vim_prereq() {
+  # Install vim-plug
   local plug_vim_path="$HOME/.vim/autoload/plug.vim"
 
   if [ ! -f "$plug_vim_path" ]; then
@@ -205,6 +206,19 @@ install_vim_plug() {
   else
     log_message "Vim-Plug is already installed."
   fi
+  
+  # Install Dracula theme
+  local dracula_path="$HOME/.vim/pack/themes/start/dracula"
+  
+  if [ ! -d "$dracula_path" ]; then
+    log_message "Installing Dracula theme..."
+    mkdir -p "$HOME/.vim/pack/themes/start"
+    git clone https://github.com/dracula/vim.git "$dracula_path" || log_message "Failed to install Dracula theme."
+    log_message "Dracula theme installed successfully."
+  else
+    log_message "Dracula theme is already installed."
+  fi
+  
 }
 
 # Installs vim plugins in .vimrc
