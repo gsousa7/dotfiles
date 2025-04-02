@@ -218,7 +218,47 @@ install_vim_prereq() {
   else
     log_message "Dracula theme is already installed."
   fi
+
+  # Install fonts
+  declare -a fonts=(
+    BitstreamVeraSansMono
+    CodeNewRoman
+    DroidSansMono
+    FiraCode
+    FiraMono
+    Go-Mono
+    Hack
+    Hermit
+    JetBrainsMono
+    Meslo
+    Noto
+    Overpass
+    ProggyClean
+    RobotoMono
+    SourceCodePro
+    SpaceMono
+    Ubuntu
+    UbuntuMono
+  )
+
+  fonts_version='3.3.0'
+  fonts_dir="/usr/local/share/fonts"
+
+  if [[ ! -d "$fonts_dir" ]]; then
+     mkdir -p "$fonts_dir"
+  fi
+
+  for font in "${fonts[@]}"; do
+     zip_font_file="${font}.zip"
+     download_font_url="https://github.com/ryanoasis/nerd-fonts/releases/download/v${fonts_version}/${zip_font_file}"
+     echo "Downloading $download_font_url"
+     wget "$download_font_url"
+     unzip -o "$zip_font_file" -d "$fonts_dir"
+     rm "$zip_font_file"
+  done
   
+  fc-cache -fv
+  echo "If running in WSL open $fonts_dir and install fonts."
 }
 
 # Installs vim plugins in .vimrc
@@ -229,6 +269,17 @@ install_vim_plugins() {
   else
     log_message "Vim is not installed. Skipping plugin installation."
   fi
+}
+
+install_tmux_plugins() {
+  log_message "Installing tmux plugins..."
+
+  local plugin_path="${HOME}/.config/tmux/plugins"
+  local tpm_path="${plugin_path}/tpm"
+
+  git clone --depth 1 https://github.com/tmux-plugins/tpm "${tpm_path}"
+
+$  "${tpm_path}/bin/install_plugins"
 }
 
 # Main script execution
@@ -247,6 +298,7 @@ case "$choice" in
     include_bash_tools
     install_vim_plug
     install_vim_plugins
+    install_tmux_plugins
     ;;
   [uU2]*)
     log_message "Updating dotfiles..."
