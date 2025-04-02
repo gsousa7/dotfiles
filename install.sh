@@ -296,7 +296,7 @@ case "$choice" in
     clone_dotfiles_repo
     symlink_dotfiles
     include_bash_tools
-    install_vim_plug
+    install_vim_prereq
     install_vim_plugins
     install_tmux_plugins
     ;;
