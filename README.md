@@ -37,24 +37,9 @@ For RHEL-based systems:
 sudo dnf install -y git
 ```
 
-### Clone the repository
+### Download and run the script
 ```bash
-git clone git@github.com:gsousa7/dotfiles.git $HOME/dotfiles
-```
-
-### Navigate into the directory
-```bash
-cd $HOME/dotfiles
-```
-
-### Make the install script executable
-```bash
-chmod +x install.sh
-```
-
-### Run the script
-```bash
-./install.sh
+wget -O- https://raw.githubusercontent.com/gsousa7/dotfiles/main/install.sh | bash
 ```
 
 ### Script description
@@ -79,17 +64,25 @@ chmod +x install.sh
   ```bash
   lscom
   ```
-- To see Vim info, run:
+- To see `vim` info, run:
   ```bash
   vimfo
   ```
+- To see `tmux` info, run:
+  ```bash
+  tmuxfo
+  ```
+- To see Visual Studio Code info, run:
+  ```bash
+  vscfo
+  ```
 
 ## 3. Notes
-- `.bashrc` file will only be modified to load `.bash_tools`, making it easier to manage.
+- `.bashrc` file will only be modified to load `.bash_tools` and trueline prompt, making it easier to manage.
 - To update Python packages use the following commands
 ```bash
 pip install --upgrade pip pipx
-pipx upgrade yt-dlp tldr spotdl
+pipx upgrade-all
 pipx ensurepath
 source ~/.bashrc 
 ```

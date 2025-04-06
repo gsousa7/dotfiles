@@ -1,16 +1,15 @@
 #!/usr/bin/env bash
 
-# This script will backup existing dot files if they exist and install the new ones
+# This script will backup existing dot files if they exist, install prerequisites and tools, and install new dotfiles
 
 # Variables
 DOTFILES_REPO="git@github.com:gsousa7/dotfiles.git"
 DOTFILES_DIR="$HOME/dotfiles"
 TRUELINE_REPO="git@github.com:petobens/trueline.git"
 TRUELINE_DIR="$HOME/trueline"
-BACKUP_DIR="$HOME/dotfiles_backup"
-LOG_FILE="$HOME/dotfiles_install.log"
-
-
+TIMESTAMP="$(date +%Y%m%d_%H%M)"
+BACKUP_DIR="/tmp/dotfiles_$TIMESTAMP"
+LOG_FILE="$BACKUP_DIR/dotfiles_install.log"
 
 # List of dotfiles to handle
 FILES_TO_SYMLINK=(
@@ -28,7 +27,7 @@ PACKAGES=(
   "telnet" "rsync" "wget" "curl" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "ncdu" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree"
 )
 
-# Extra tools to install via pip
+# Extra tools to install via python package manager
 EXTRA_TOOLS=("spotdl" "yt-dlp" "tldr")
 
 # Log function to capture success and failure
@@ -128,7 +127,7 @@ clone_dotfiles_repo() {
   fi
 }
 
-# Clone the dotfiles repository
+# Clone the trueline prompt repository
 clone_trueline_repo() {
   if [ ! -d "$TRUELINE_DIR" ]; then
     log_message "Cloning trueline repository..."
@@ -138,30 +137,34 @@ clone_trueline_repo() {
   fi
 }
 
-# Create backups and symlinks for dotfiles
+# Backup existing dotfiles
 backup_dotfiles() {
-local timestamp
-timestamp="$(date +%Y%m%d_%H%M)"
-backup_dir="/tmp/dotfiles_backup_$timestamp"
-mkdir -p "$backup_dir"
+mkdir -p "$BACKUP_DIR"
  
   for file in "${FILES_TO_SYMLINK[@]}"; do
     local dotfile="$HOME/.$file"
-    if [ -f "$dotfile" ] ; then
-      cp "$dotfile" "$backup_dir/" && echo "Backed up .$file"
+    if [ -f "$dotfile" ] || [ -L "$dotfile"]; then
+      mv "$dotfile" "$BACKUP_DIR" && echo "Backed up .$file"
     else
       echo ".$file not found, skipping"
     fi
   done
 
-  # Special case for htop
-  if [ -f "$HOME/.config/htop/htoprc" ]; then
-    mkdir -p "$backup_dir/.config/htop"
-    mv "$HOME/.config/htop/htoprc" "$backup_dir/.config/htop/" && echo "Backed up htoprc"
+  if [ -f "$BASH_TOOLS" ] || [ -L "$BASH_TOOLS"]; then
+    cp "$$BASH_TOOLS" "$BACKUP_DIR/" && echo "Backed up .$file"
+  else
+    echo ".$BASH_TOOLS not found, skipping"
+  fi
+
+
+  # Backup htoprc
+  if [ -f "$HOME/.config/htop/htoprc" ] || [ -L "$HOME/.config/htop/htoprc" ]; then
+    mkdir -p "$BACKUP_DIR/.config/htop"
+    mv "$HOME/.config/htop/htoprc" "$$BACKUP_DIR/.config/htop/" && echo "Backed up htoprc"
   fi 
 }
 
-
+# Symlink dotfiles from repository to home directory
 symlink_dotfiles() {
   echo "Creating symlinks from $DOTFILES_DIR to home"
 
@@ -169,16 +172,16 @@ symlink_dotfiles() {
     ln -sf "$DOTFILES_DIR/$file" "$HOME/.$file" && echo "Linked $file"
   done
 
-  # Special case for htop
+  # Symlink htoprc
   if [ -f "$DOTFILES_DIR/htoprc" ]; then
     mkdir -p "$HOME/.config/htop"
     ln -sf "$DOTFILES_DIR/htoprc" "$HOME/.config/htop/htoprc" && echo "Linked htoprc"
   fi
 }
 
-# Include bash_tools
+# Include bash_tools on .bashrc
 include_bash_tools() {
-  # Create symlink for bash tools file
+  # Create symlink for bash_tools file
   if [ -f "$DOTFILES_DIR/$BASH_TOOLS" ]; then
     log_message "Creating symlink for $BASH_TOOLS"
     ln -sf "$DOTFILES_DIR/$BASH_TOOLS" "$HOME/.$BASH_TOOLS"
@@ -199,7 +202,7 @@ EOF
     log_message "$DOTFILES_DIR/$BASH_TOOLS not found. Skipping symlink and sourcing."
   fi
 
-  # Source trueline prompt
+  # Include trueline on .bashrc
   local trueline_script="$TRUELINE_DIR/trueline.sh"
   if [ -f "$trueline_script" ]; then
     if ! grep -Fxq "if [ -f \"\$HOME/trueline/trueline.sh\" ]; then" "$HOME/.bashrc"; then
@@ -260,8 +263,7 @@ install_vim_prereq() {
 
   if [ ! -f "$plug_vim_path" ]; then
     log_message "Installing Vim-Plug..."
-    curl -fLo "$plug_vim_path" --create-dirs \
-      https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim || log_message "Failed to install Vim-Plug."
+    curl -fLo "$plug_vim_path" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim || log_message "Failed to install Vim-Plug."
   else
     log_message "Vim-Plug is already installed."
   fi
@@ -279,10 +281,10 @@ install_vim_prereq() {
   fi
 }
 
+# Install Nerd Fonts
 install_fonts() {
   log_message "Installing Nerd Fonts"
 
-  # Function-scoped variables
   local fonts_version="3.3.0"
   local fonts_dir="/usr/local/share/fonts"
   local fonts=(
@@ -337,8 +339,7 @@ install_fonts() {
   log_message "If running in WSL, open $fonts_dir and manually install fonts."
 }
 
-
-# Installs vim plugins in .vimrc
+# Installs vim plugins declared in .vimrc
 install_vim_plugins() {
   if command -v vim &> /dev/null; then
     log_message "Installing Vim plugins..."
@@ -348,6 +349,7 @@ install_vim_plugins() {
   fi
 }
 
+# Install tmux plugins
 install_tmux_plugins() {
   log_message "Installing tmux plugins..."
 
@@ -388,7 +390,7 @@ case "$choice" in
   [uU2]*)
     log_message "Updating dotfiles..."
     cd "$DOTFILES_DIR" && git pull || log_message "Error pulling changes."
-    echo "Reload bash or close and open a new shell"
+    log_message "To apply all changes, restart your shell or run: 'source ~/.bashrc' or 'rb'"
     ;;
   *)
     log_message "Invalid choice. Exiting."
