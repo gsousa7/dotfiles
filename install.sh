@@ -231,21 +231,49 @@ EOF
 update_gitconfig() {
   log_message "Updating Git configuration..."
 
-  # Prompt for Git name and trim spaces (begin and end)
-  read -p "Enter your Git username (user only): " git_user
-  git_user=$(echo "$git_user" | sed 's/^[ \t]*//;s/[ \t]*$//')
+  # Parse command-line arguments
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      -n)
+        git_user="$2"
+        shift 2
+        ;;
+      -m)
+        git_email="$2"
+        shift 2
+        ;;
+      -b)
+        git_branch="$2"
+        shift 2
+        ;;
+      *)
+        log_message "Unknown argument: $1"
+        shift
+        ;;
+    esac
+  done
 
-  # Prompt for Git mail and convert it to lowercase
-  read -p "Enter your Git email: " git_email
-  git_email=$(echo "$git_email" | awk '{print tolower($0)}')
+  # Prompt for Git username if not provided
+  if [ -z "$git_user" ]; then
+    read -p "Enter your Git username (user only): " git_user
+    git_user=$(echo "$git_user" | sed 's/^[ \t]*//;s/[ \t]*$//')
+  fi
 
-  # Prompt for init branch, trim space (begin and end) and validate input
-  read -p "What is your init branch? (master or main) " git_branch
-  git_branch=$(echo "$git_branch" | sed 's/^[ \t]*//;s/[ \t]*$//')
+  # Prompt for Git email if not provided
+  if [ -z "$git_email" ]; then
+    read -p "Enter your Git email: " git_email
+    git_email=$(echo "$git_email" | awk '{print tolower($0)}')
+  fi
+
+  # Prompt for Git branch if not provided
+  if [ -z "$git_branch" ]; then
+    read -p "What is your init branch? (master or main): " git_branch
+    git_branch=$(echo "$git_branch" | sed 's/^[ \t]*//;s/[ \t]*$//')
     if [[ "$git_branch" != "master" && "$git_branch" != "main" ]]; then
       log_message "Invalid branch name. Please enter 'master' or 'main'."
       exit 1
     fi
+  fi
 
   # Create gitconfig
   git config --global user.name "$git_user"
@@ -369,18 +397,67 @@ install_tmux_plugins() {
   "${tpm_path}/bin/install_plugins"
 }
 
+update_everything () {
+  pip install --upgrade pip pipx
+  pipx upgrade-all
+  pipx ensurepath
+  log_message "Updating dotfiles..."
+  cd "$DOTFILES_DIR" && git pull || log_message "Error pulling changes."
+  log_message "To apply all changes, restart your shell or run: 'source ~/.bashrc' or 'rb'"
+}
+
+
 # Main script execution
 log_message "Script execution started."
 detect_package_manager
 
-# Prompt user
-read -p "Do you want to (i)nstall packages and tools, dotfiles, or (u)pdate dotfiles? [iI1/uU2]: " choice
-case "$choice" in
-  [iI1]*)
+# Parse command-line arguments
+action=""
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -i)
+      action="install"
+      shift
+      ;;
+    -u)
+      action="update"
+      shift
+      ;;
+    *)
+      log_message "Unknown argument: $1"
+      exit 1
+      ;;
+  esac
+done
+
+# Perform action based on argument or prompt user
+if [[ -z "$action" ]]; then
+  read -p "Do you want to (i)nstall packages and tools, dotfiles, (u)pdate dotfiles or (q)uit? [i/u/q]: " choice
+  case "$choice" in
+    i)
+      action="install"
+      ;;
+    u)
+      action="update"
+      ;;
+    q)
+      log_message "Exiting without changes."
+      exit 0
+      ;;
+    *)
+      log_message "Invalid choice. Exiting."
+      exit 1
+      ;;
+  esac
+fi
+
+# Execute the selected action
+case "$action" in
+  install)
     install_packages
     install_extra_tools
     install_fonts
-    update_gitconfig
+    update_gitconfig "$@"
     clone_dotfiles_repo
     clone_trueline_repo
     backup_dotfiles
@@ -390,17 +467,18 @@ case "$choice" in
     install_vim_plugins
     install_tmux_plugins
     ;;
-  [uU2]*)
+  update)
     log_message "Updating dotfiles..."
+    update_everything
     cd "$DOTFILES_DIR" && git pull || log_message "Error pulling changes."
     log_message "To apply all changes, restart your shell or run: 'source ~/.bashrc' or 'rb'"
     ;;
   *)
-    log_message "Invalid choice. Exiting."
+    log_message "Invalid action. Exiting."
     exit 1
     ;;
 esac
 
 log_message "Operation complete."
-log_message "To apply all changes, restart your shell or run: 'source ~/.bashrc' or 'rb'"
+log_message "To apply all changes, restart your shell or run: 'source ~/.bashrc'"
 log_message "Backups saved in: $BACKUP_DIR"
