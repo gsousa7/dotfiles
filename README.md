@@ -9,9 +9,8 @@ This repository includes the following custom configurations:
 
 ## Table of Contents
 1. [Installation](#1-installation)
-2. [Usage](#2-usage)
+2. [Dotfiles Usage](#2-dotfiles-usage)
 3. [Notes](#3-notes)
-4. [Troubleshooting](#4-troubleshooting)
 
 
 ## 1. Installation
@@ -54,42 +53,43 @@ sudo dnf install -y git
 - Install `tmux` plugins
 - Update dotfiles from remote repository
 
----
 
 
-### **Actions**
+### Actions
 - `-i`: Install packages, tools, and dotfiles.
 - `-u`: Update dotfiles from the remote repository.
 
-### **Parameters**
+### Parameters
 - `-n`: Git username.
 - `-m`: Git email.
 - `-b`: Git branch (must be `main` or `master`).
 
-### **Download and Run the Script**
+### Download and Run the Script
 
-#### **Interactive Mode**
-Run the script without arguments to be prompted for actions:
+#### Download
+
+Clone this repository or use the following command:
 ```bash
-wget -O- https://raw.githubusercontent.com/gsousa7/dotfiles/main/install.sh | bash
+wget https://raw.githubusercontent.com/gsousa7/dotfiles/main/install.sh -O /tmp/install.sh
 ```
 
-#### **Non-Interactive Mode**
-Run the script with arguments to skip prompts:
-- Install packages, tools, and dotfiles:
-  ```bash
-  wget -O- https://raw.githubusercontent.com/gsousa7/dotfiles/main/install.sh | bash -s -- -i
-  ```
-- Install packages, tools, and dotfiles with Git configuration provided as parameters:
-  ```bash
-  wget -O- https://raw.githubusercontent.com/gsousa7/dotfiles/main/install.sh | bash -s -- -i -n <user> -m <mail@mail.com> -b <branch>
-  ```
-- Update dotfiles from the remote repository (no need to provide parameters):
-  ```bash
-  wget -O- https://raw.githubusercontent.com/gsousa7/dotfiles/main/install.sh | bash -s -- -u
-  ```
+#### Interactive Mode
+Run the script without arguments to be prompted for actions:
+```bash
+/tmp/install.sh
+```
 
----
+#### Non-Interactive Mode
+Run the script with arguments to skip prompts:
+- Install packages, tools, and dotfiles with Git configuration provided as parameters:
+```bash
+/tmp/install.sh -i -n <user> -m <mail@mail.com> -b <branch>
+```
+- Update dotfiles from the remote repository (no need to provide parameters):
+```bash
+/tmp/install.sh -u
+```
+
 
 ## Troubleshooting
 - **Permission Issues**:

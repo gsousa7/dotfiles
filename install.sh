@@ -414,6 +414,10 @@ detect_package_manager
 # Parse command-line arguments
 action=""
 extra_args=()
+git_user=""
+git_email=""
+git_branch=""
+
 while [[ $# -gt 0 ]]; do
   case $1 in
     -i)
@@ -424,8 +428,18 @@ while [[ $# -gt 0 ]]; do
       action="update"
       shift
       ;;
-    -n|-m|-b)
-      # Collect Git configuration arguments
+    -n)
+      git_user="$2"
+      extra_args+=("$1" "$2")
+      shift 2
+      ;;
+    -m)
+      git_email="$2"
+      extra_args+=("$1" "$2")
+      shift 2
+      ;;
+    -b)
+      git_branch="$2"
       extra_args+=("$1" "$2")
       shift 2
       ;;
@@ -435,6 +449,14 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
+
+# Validate mandatory arguments for the install action
+if [[ "$action" == "install" ]]; then
+  if [[ -z "$git_user" || -z "$git_email" || -z "$git_branch" ]]; then
+    log_message "Error: The -i (install) action requires -n (Git username), -m (Git email), and -b (Git branch)."
+    exit 1
+  fi
+fi
 
 # Perform action based on argument or prompt user
 if [[ -z "$action" ]]; then
