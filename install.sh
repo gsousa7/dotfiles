@@ -5,8 +5,12 @@
 # Variables
 DOTFILES_REPO="git@github.com:gsousa7/dotfiles.git"
 DOTFILES_DIR="$HOME/dotfiles"
+TRUELINE_REPO="git@github.com:petobens/trueline.git"
+TRUELINE_DIR="$HOME/trueline"
 BACKUP_DIR="$HOME/dotfiles_backup"
 LOG_FILE="$HOME/dotfiles_install.log"
+
+
 
 # List of dotfiles to handle
 FILES_TO_SYMLINK=(
@@ -21,11 +25,7 @@ BASH_TOOLS="bash_tools"
 
 # List of core packages to install
 PACKAGES=(
-  "telnet" "rsync" "wget" "curl" "bash-completion" "vim" "htop" "tcpdump" "jq"
-  "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip"
-  "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux"
-  "zip" "unzip" "whois" "sed" "nmap" "ncdu" "mtr" "lolcat" "apg" "cowsay"
-  "lsof" "bc"
+  "telnet" "rsync" "wget" "curl" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "ncdu" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc"
 )
 
 # Extra tools to install via pip
@@ -126,6 +126,16 @@ clone_dotfiles_repo() {
   fi
 }
 
+# Clone the dotfiles repository
+clone_trueline_repo() {
+  if [ ! -d "$TRUELINE_DIR" ]; then
+    log_message "Cloning trueline repository..."
+    git clone "$TRUELINE_REPO" "$TRUELINE_DIR" && log_message "Trueline repository cloned successfully." || log_message "Error cloning repository. Exiting."
+  else
+    log_message "Trueline repository already exists. Skipping clone."
+  fi
+}
+
 # Create backups and symlinks for dotfiles
 symlink_dotfiles() {
   log_message "Creating symlinks for dotfiles..."
@@ -147,19 +157,67 @@ symlink_dotfiles() {
   fi
 }
 
+backup_dotfiles() {
+  local backup_dir="$HOME/.dotfiles_backup_$(date +%Y%m%d_%H%M%S)"
+  mkdir -p "$backup_dir"
+
+  log_message "Backing up existing dotfiles to $backup_dir"
+
+  for file in "${FILES_TO_SYMLINK[@]}"; do
+    local target="$HOME/.$file"
+    if [ -f "$target" ] || [ -L "$target" ]; then
+      log_message "Backing up $target"
+      mv "$target" "$backup_dir/"
+    else
+      log_message "$target not found, skipping"
+    fi
+  done
+}
+
+
 # Include bash_tools
 include_bash_tools() {
+  # Create symlink for bash tools file
   if [ -f "$DOTFILES_DIR/$BASH_TOOLS" ]; then
     log_message "Creating symlink for $BASH_TOOLS"
     ln -sf "$DOTFILES_DIR/$BASH_TOOLS" "$HOME/.$BASH_TOOLS"
 
-    if ! grep -q "source \$HOME/.$BASH_TOOLS" "$HOME/.bashrc"; then
+    # Add source line to .bashrc if not present
+    if ! grep -Fxq "if [ -f \"\$HOME/.$BASH_TOOLS\" ]; then" "$HOME/.bashrc"; then
       log_message "Adding include for .$BASH_TOOLS in .bashrc"
-      echo -e "\n# Source Bash tools\nif [ -f \"\$HOME/.$BASH_TOOLS\" ]; then\n    . \"\$HOME/.$BASH_TOOLS\"\nfi" >> "$HOME/.bashrc"
+      cat <<EOF >> "$HOME/.bashrc"
+
+# Source Bash tools
+if [ -f "\$HOME/.$BASH_TOOLS" ]; then
+    . "\$HOME/.$BASH_TOOLS"
+fi
+EOF
       log_message "Include for $BASH_TOOLS added to .bashrc."
     fi
+  else
+    log_message "$DOTFILES_DIR/$BASH_TOOLS not found. Skipping symlink and sourcing."
+  fi
+
+  # Source trueline prompt
+  local trueline_script="$TRUELINE_DIR/trueline.sh"
+  if [ -f "$trueline_script" ]; then
+    if ! grep -Fxq "if [ -f \"\$HOME/trueline/trueline.sh\" ]; then" "$HOME/.bashrc"; then
+      log_message "Adding source for trueline.sh in .bashrc"
+      cat <<EOF >> "$HOME/.bashrc"
+
+# Source Trueline prompt
+if [ -f "\$HOME/trueline/trueline.sh" ]; then
+    . "\$HOME/trueline/trueline.sh"
+fi
+EOF
+      log_message "Source for trueline.sh added to .bashrc."
+    fi
+  else
+    log_message "Trueline script not found at $trueline_script. Skipping."
   fi
 }
+
+
 
 # Git configuration
 update_gitconfig() {
@@ -218,7 +276,9 @@ install_vim_prereq() {
   else
     log_message "Dracula theme is already installed."
   fi
+}
 
+install_fonts() {
   # Install fonts
   declare -a fonts=(
     BitstreamVeraSansMono
@@ -248,17 +308,24 @@ install_vim_prereq() {
      mkdir -p "$fonts_dir"
   fi
 
-  for font in "${fonts[@]}"; do
-     zip_font_file="${font}.zip"
-     download_font_url="https://github.com/ryanoasis/nerd-fonts/releases/download/v${fonts_version}/${zip_font_file}"
-     echo "Downloading $download_font_url"
-     wget "$download_font_url"
-     unzip -o "$zip_font_file" -d "$fonts_dir"
-     rm "$zip_font_file"
-  done
+for font in "${fonts[@]}"; do
+  zip_font_file="${font}.zip"
+  font_installed_check=$(find "$fonts_dir" -iname "${font//-/}*.ttf" | head -n 1)
+
+  if [ -z "$font_installed_check" ]; then
+    log_message "Installing $font Nerd Font..."
+    download_font_url="https://github.com/ryanoasis/nerd-fonts/releases/download/v${fonts_version}/${zip_font_file}"
+    wget -q "$download_font_url"
+    sudo unzip -o "$zip_font_file" -d "$fonts_dir" >/dev/null
+    rm "$zip_font_file"
+  else
+    log_message "$font Nerd Font already installed. Skipping."
+  fi
+done
+
   
   fc-cache -fv
-  echo "If running in WSL open $fonts_dir and install fonts."
+  log_message "If running in WSL, open $fonts_dir and manually install fonts."
 }
 
 # Installs vim plugins in .vimrc
@@ -277,9 +344,14 @@ install_tmux_plugins() {
   local plugin_path="${HOME}/.config/tmux/plugins"
   local tpm_path="${plugin_path}/tpm"
 
-  git clone --depth 1 https://github.com/tmux-plugins/tpm "${tpm_path}"
+  if [ ! -d "$tpm_path" ]; then
+    git clone --depth 1 https://github.com/tmux-plugins/tpm "${tpm_path}"
+    "${tpm_path}/bin/install_plugins"
+  else
+    log_message "Tmux plugin manager already installed. Skipping."
+  fi
 
-$  "${tpm_path}/bin/install_plugins"
+  "${tpm_path}/bin/install_plugins"
 }
 
 # Main script execution
@@ -294,9 +366,12 @@ case "$choice" in
     install_extra_tools
     update_gitconfig
     clone_dotfiles_repo
+    clone_trueline_repo
+    backup_dotfiles
     symlink_dotfiles
     include_bash_tools
     install_vim_prereq
+    install_fonts
     install_vim_plugins
     install_tmux_plugins
     ;;
@@ -312,3 +387,5 @@ case "$choice" in
 esac
 
 log_message "Operation complete."
+log_message "To apply all changes, restart your shell or run: 'source ~/.bashrc' or 'rb'"
+log_message "Backups saved in: $BACKUP_DIR"
