@@ -143,15 +143,15 @@ backup_dotfiles() {
  
   for file in "${FILES_TO_SYMLINK[@]}"; do
     local dotfile="$HOME/.$file"
-    if [ -f "$dotfile" ] || [ -L "$dotfile"]; then
+    if [ -f "$dotfile" ] || [ -L "$dotfile" ]; then
       mv "$dotfile" "$BACKUP_DIR" && log_message "Backed up .$file"
     else
       log_message ".$file not found, skipping"
     fi
   done
 
-  if [ -f "$BASH_TOOLS" ] || [ -L "$BASH_TOOLS"]; then
-    cp "$$BASH_TOOLS" "$BACKUP_DIR/" && log_message "Backed up .$file"
+  if [ -f "$BASH_TOOLS" ] || [ -L "$BASH_TOOLS" ]; then
+    cp "$BASH_TOOLS" "$BACKUP_DIR/" && log_message "Backed up .$file"
   else
     log_message ".$BASH_TOOLS not found, skipping"
   fi
@@ -160,7 +160,7 @@ backup_dotfiles() {
   # Backup htoprc
   if [ -f "$HOME/.config/htop/htoprc" ] || [ -L "$HOME/.config/htop/htoprc" ]; then
     mkdir -p "$BACKUP_DIR/.config/htop"
-    mv "$HOME/.config/htop/htoprc" "$$BACKUP_DIR/.config/htop/" && log_message "Backed up htoprc"
+    mv "$HOME/.config/htop/htoprc" "$BACKUP_DIR/.config/htop/" && log_message "Backed up htoprc"
   fi 
 }
 
