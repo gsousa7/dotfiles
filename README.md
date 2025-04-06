@@ -125,9 +125,6 @@ Run the script with arguments to skip prompts:
   vscfo
   ```
 
-
-
-
 ## 3. Notes
 - `.bashrc` file will only be modified to load `.bash_tools` and trueline prompt, making it easier to manage.
 - If no SSH key is found, the script will prompt you to create one and add it to your GitHub account `ssh-keygen`

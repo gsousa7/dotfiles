@@ -413,6 +413,7 @@ detect_package_manager
 
 # Parse command-line arguments
 action=""
+extra_args=()
 while [[ $# -gt 0 ]]; do
   case $1 in
     -i)
@@ -422,6 +423,11 @@ while [[ $# -gt 0 ]]; do
     -u)
       action="update"
       shift
+      ;;
+    -n|-m|-b)
+      # Collect Git configuration arguments
+      extra_args+=("$1" "$2")
+      shift 2
       ;;
     *)
       log_message "Unknown argument: $1"
@@ -457,7 +463,7 @@ case "$action" in
     install_packages
     install_extra_tools
     install_fonts
-    update_gitconfig "$@"
+    update_gitconfig "${extra_args[@]}" # Pass Git configuration arguments
     clone_dotfiles_repo
     clone_trueline_repo
     backup_dotfiles
