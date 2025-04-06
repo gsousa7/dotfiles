@@ -146,38 +146,38 @@ backup_dotfiles() {
   for file in "${FILES_TO_SYMLINK[@]}"; do
     local dotfile="$HOME/.$file"
     if [ -f "$dotfile" ] || [ -L "$dotfile"]; then
-      mv "$dotfile" "$BACKUP_DIR" && echo "Backed up .$file"
+      mv "$dotfile" "$BACKUP_DIR" && log_message "Backed up .$file"
     else
-      echo ".$file not found, skipping"
+      log_message ".$file not found, skipping"
     fi
   done
 
   if [ -f "$BASH_TOOLS" ] || [ -L "$BASH_TOOLS"]; then
-    cp "$$BASH_TOOLS" "$BACKUP_DIR/" && echo "Backed up .$file"
+    cp "$$BASH_TOOLS" "$BACKUP_DIR/" && log_message "Backed up .$file"
   else
-    echo ".$BASH_TOOLS not found, skipping"
+    log_message ".$BASH_TOOLS not found, skipping"
   fi
 
 
   # Backup htoprc
   if [ -f "$HOME/.config/htop/htoprc" ] || [ -L "$HOME/.config/htop/htoprc" ]; then
     mkdir -p "$BACKUP_DIR/.config/htop"
-    mv "$HOME/.config/htop/htoprc" "$$BACKUP_DIR/.config/htop/" && echo "Backed up htoprc"
+    mv "$HOME/.config/htop/htoprc" "$$BACKUP_DIR/.config/htop/" && log_message "Backed up htoprc"
   fi 
 }
 
 # Symlink dotfiles from repository to home directory
 symlink_dotfiles() {
-  echo "Creating symlinks from $DOTFILES_DIR to home"
+  log_message "Creating symlinks from $DOTFILES_DIR to home"
 
   for file in "${FILES_TO_SYMLINK[@]}"; do
-    ln -sf "$DOTFILES_DIR/$file" "$HOME/.$file" && echo "Linked $file"
+    ln -sf "$DOTFILES_DIR/$file" "$HOME/.$file" && log_message "Linked $file"
   done
 
   # Symlink htoprc
   if [ -f "$DOTFILES_DIR/htoprc" ]; then
     mkdir -p "$HOME/.config/htop"
-    ln -sf "$DOTFILES_DIR/htoprc" "$HOME/.config/htop/htoprc" && echo "Linked htoprc"
+    ln -sf "$DOTFILES_DIR/htoprc" "$HOME/.config/htop/htoprc" && log_message "Linked htoprc"
   fi
 }
 
@@ -241,7 +241,7 @@ update_gitconfig() {
   read -p "What is your init branch? (master or main) " git_branch
   git_branch=$(echo "$git_branch" | sed 's/^[ \t]*//;s/[ \t]*$//')
     if [[ "$git_branch" != "master" && "$git_branch" != "main" ]]; then
-      echo "Invalid branch name. Please enter 'master' or 'main'."
+      log_message "Invalid branch name. Please enter 'master' or 'main'."
       exit 1
     fi
 
