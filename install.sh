@@ -216,8 +216,8 @@ EOF
       cat <<EOF >> "$HOME/.bashrc"
 
 # Source Trueline prompt
-if [ -f "\$HOME/trueline/trueline.sh" ]; then
-    . "\$HOME/trueline/trueline.sh"
+if [ -f "\$HOME/.config/trueline/trueline.sh" ]; then
+    . "\$HOME/.config/trueline/trueline.sh"
 fi
 EOF
       log_message "Source for trueline.sh added to .bashrc."
@@ -226,8 +226,6 @@ EOF
     log_message "Trueline script not found at $trueline_script. Skipping."
   fi
 }
-
-
 
 # Git configuration
 update_gitconfig() {
@@ -260,7 +258,6 @@ update_gitconfig() {
     log_message "No SSH key found. Create SSH key with 'ssh-keygen -C \"$git_email\"' or 'ssh-keygen -t ed25519 -C \"$git_email\"' and add it to GitHub."
   fi
 }
-
 
 # Ensure that pre-requisites are meet and installed
 install_vim_prereq() {
@@ -382,10 +379,10 @@ case "$choice" in
   [iI1]*)
     install_packages
     install_extra_tools
+    install_fonts
     update_gitconfig
     clone_dotfiles_repo
     clone_trueline_repo
-    install_fonts
     backup_dotfiles
     symlink_dotfiles
     include_bash_tools
