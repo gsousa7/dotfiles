@@ -70,7 +70,6 @@ install_packages() {
             "debian-reference-en"
             "fonts-powerline"
         )
-        log_message "Refreshing package repositories using apt..."
         sudo apt update
 
     elif [[ "$PACKAGE_MANAGER" == "dnf" || "$PACKAGE_MANAGER" == "yum" ]]; then
@@ -82,7 +81,6 @@ install_packages() {
             "info"
             "man-pages-devel"
             "system-doc"
-            "powerline-fonts"
         )
     fi
 
