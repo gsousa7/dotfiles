@@ -25,7 +25,7 @@ BASH_TOOLS="bash_tools"
 
 # List of core packages to install
 PACKAGES=(
-  "telnet" "rsync" "wget" "curl" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "ncdu" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc"
+  "telnet" "rsync" "wget" "curl" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "ncdu" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree"
 )
 
 # Extra tools to install via pip
@@ -66,6 +66,7 @@ install_packages() {
             "bash-doc"
             "info"
             "debian-reference-en"
+            "fonts-powerline"
         )
         log_message "Refreshing package repositories using apt..."
         sudo apt update
@@ -79,6 +80,7 @@ install_packages() {
             "info"
             "man-pages-devel"
             "system-doc"
+            "powerline-fonts"
         )
     fi
 
@@ -137,42 +139,45 @@ clone_trueline_repo() {
 }
 
 # Create backups and symlinks for dotfiles
-symlink_dotfiles() {
-  log_message "Creating symlinks for dotfiles..."
-  mkdir -p "$BACKUP_DIR"
+backup_dotfiles() {
+  local timestamp
+  timestamp="$(date +%Y%m%d_%H%M%S)"
+  local backup_dir="$HOME/.dotfiles_backup_$timestamp"
+  mkdir -p "$backup_dir"
+
+  echo "Backing up existing dotfiles to $backup_dir"
 
   for file in "${FILES_TO_SYMLINK[@]}"; do
-    dotfile=".$file"
-    if [ -f "$HOME/$dotfile" ]; then
-      log_message "Backing up $dotfile to $BACKUP_DIR"
-      mv "$HOME/$dotfile" "$BACKUP_DIR/" && log_message "$dotfile backed up."
+    local dotfile="$HOME/.$file"
+    if [ -f "$dotfile" ] || [ -L "$dotfile" ]; then
+      mv "$dotfile" "$backup_dir/" && echo "Backed up .$file"
+    else
+      echo ".$file not found, skipping"
     fi
-    ln -sf "$DOTFILES_DIR/$file" "$HOME/$dotfile" && log_message "Symlink created for $file." || log_message "Failed to create symlink for $file."
   done
 
-  # HTOP configuration to link it in ~/.config/htop
-  if [ -f "$DOTFILES_DIR/htoprc" ]; then
-    mkdir -p "$HOME/.config/htop"
-    ln -sf "$DOTFILES_DIR/htoprc" "$HOME/.config/htop/htoprc" && log_message "Symlink created for htoprc."
+  # Special case for htop
+  if [ -f "$HOME/.config/htop/htoprc" ]; then
+    mkdir -p "$backup_dir/.config/htop"
+    mv "$HOME/.config/htop/htoprc" "$backup_dir/.config/htop/" && echo "Backed up htoprc"
   fi
 }
 
-backup_dotfiles() {
-  local backup_dir="$HOME/.dotfiles_backup_$(date +%Y%m%d_%H%M%S)"
-  mkdir -p "$backup_dir"
 
-  log_message "Backing up existing dotfiles to $backup_dir"
+symlink_dotfiles() {
+  echo "Creating symlinks from $DOTFILES_DIR to home"
 
   for file in "${FILES_TO_SYMLINK[@]}"; do
-    local target="$HOME/.$file"
-    if [ -f "$target" ] || [ -L "$target" ]; then
-      log_message "Backing up $target"
-      mv "$target" "$backup_dir/"
-    else
-      log_message "$target not found, skipping"
-    fi
+    ln -sf "$DOTFILES_DIR/$file" "$HOME/.$file" && echo "Linked $file"
   done
+
+  # Special case for htop
+  if [ -f "$DOTFILES_DIR/htoprc" ]; then
+    mkdir -p "$HOME/.config/htop"
+    ln -sf "$DOTFILES_DIR/htoprc" "$HOME/.config/htop/htoprc" && echo "Linked htoprc"
+  fi
 }
+
 
 
 # Include bash_tools
@@ -279,8 +284,12 @@ install_vim_prereq() {
 }
 
 install_fonts() {
-  # Install fonts
-  declare -a fonts=(
+  log_message "Installing Nerd Fonts"
+
+  # Function-scoped variables
+  local fonts_version="3.3.0"
+  local fonts_dir="/usr/local/share/fonts"
+  local fonts=(
     BitstreamVeraSansMono
     CodeNewRoman
     DroidSansMono
@@ -301,32 +310,37 @@ install_fonts() {
     UbuntuMono
   )
 
-  fonts_version='3.3.0'
-  fonts_dir="/usr/local/share/fonts"
-
+ 
+  # Create fonts directory if it doesn't exist
   if [[ ! -d "$fonts_dir" ]]; then
-     mkdir -p "$fonts_dir"
+    log_message "Creating font directory at $fonts_dir"
+    sudo mkdir -p "$fonts_dir"
   fi
 
-for font in "${fonts[@]}"; do
-  zip_font_file="${font}.zip"
-  font_installed_check=$(find "$fonts_dir" -iname "${font//-/}*.ttf" | head -n 1)
+  # Download and install fonts
+  for font in "${fonts[@]}"; do
+    local zip_file="${font}.zip"
+    local font_check
+    font_check=$(find "$fonts_dir" -iname "${font//-/}*.ttf" | head -n 1)
 
-  if [ -z "$font_installed_check" ]; then
-    log_message "Installing $font Nerd Font..."
-    download_font_url="https://github.com/ryanoasis/nerd-fonts/releases/download/v${fonts_version}/${zip_font_file}"
-    wget -q "$download_font_url"
-    sudo unzip -o "$zip_font_file" -d "$fonts_dir" >/dev/null
-    rm "$zip_font_file"
-  else
-    log_message "$font Nerd Font already installed. Skipping."
-  fi
-done
+    if [[ -z "$font_check" ]]; then
+      log_message "Installing $font Nerd Font..."
+      local url="https://github.com/ryanoasis/nerd-fonts/releases/download/v${fonts_version}/${zip_file}"
+      wget -q "$url"
+      sudo unzip -o "$zip_file" -d "$fonts_dir" >/dev/null
+      rm -f "$zip_file"
+    else
+      log_message "$font Nerd Font already installed. Skipping."
+    fi
+  done
 
-  
-  fc-cache -fv
+  # Rebuild font cache
+  sudo fc-cache -fv
+
+  log_message "Fonts installed."
   log_message "If running in WSL, open $fonts_dir and manually install fonts."
 }
+
 
 # Installs vim plugins in .vimrc
 install_vim_plugins() {
