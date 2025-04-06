@@ -11,6 +11,9 @@ TIMESTAMP="$(date +%Y%m%d_%H%M)"
 BACKUP_DIR="/tmp/dotfiles_$TIMESTAMP"
 LOG_FILE="$BACKUP_DIR/dotfiles_install.log"
 
+# Create backup and log directory
+mkdir -p "$BACKUP_DIR"
+
 # List of dotfiles to handle
 FILES_TO_SYMLINK=(
   "bash_completion"
@@ -139,7 +142,6 @@ clone_trueline_repo() {
 
 # Backup existing dotfiles
 backup_dotfiles() {
-mkdir -p "$BACKUP_DIR"
  
   for file in "${FILES_TO_SYMLINK[@]}"; do
     local dotfile="$HOME/.$file"
