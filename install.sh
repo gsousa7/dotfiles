@@ -140,17 +140,15 @@ clone_trueline_repo() {
 
 # Create backups and symlinks for dotfiles
 backup_dotfiles() {
-  local timestamp
-  timestamp="$(date +%Y%m%d_%H%M%S)"
-  local backup_dir="$HOME/.dotfiles_backup_$timestamp"
-  mkdir -p "$backup_dir"
-
-  echo "Backing up existing dotfiles to $backup_dir"
-
+local timestamp
+timestamp="$(date +%Y%m%d_%H%M)"
+backup_dir="/tmp/dotfiles_backup_$timestamp"
+mkdir -p "$backup_dir"
+ 
   for file in "${FILES_TO_SYMLINK[@]}"; do
     local dotfile="$HOME/.$file"
-    if [ -f "$dotfile" ] || [ -L "$dotfile" ]; then
-      mv "$dotfile" "$backup_dir/" && echo "Backed up .$file"
+    if [ -f "$dotfile" ] ; then
+      cp "$dotfile" "$backup_dir/" && echo "Backed up .$file"
     else
       echo ".$file not found, skipping"
     fi
@@ -160,7 +158,7 @@ backup_dotfiles() {
   if [ -f "$HOME/.config/htop/htoprc" ]; then
     mkdir -p "$backup_dir/.config/htop"
     mv "$HOME/.config/htop/htoprc" "$backup_dir/.config/htop/" && echo "Backed up htoprc"
-  fi
+  fi 
 }
 
 
@@ -177,8 +175,6 @@ symlink_dotfiles() {
     ln -sf "$DOTFILES_DIR/htoprc" "$HOME/.config/htop/htoprc" && echo "Linked htoprc"
   fi
 }
-
-
 
 # Include bash_tools
 include_bash_tools() {
@@ -381,11 +377,11 @@ case "$choice" in
     update_gitconfig
     clone_dotfiles_repo
     clone_trueline_repo
+    install_fonts
     backup_dotfiles
     symlink_dotfiles
     include_bash_tools
     install_vim_prereq
-    install_fonts
     install_vim_plugins
     install_tmux_plugins
     ;;
