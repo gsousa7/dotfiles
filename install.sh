@@ -6,10 +6,11 @@
 DOTFILES_REPO="git@github.com:gsousa7/dotfiles.git"
 DOTFILES_DIR="$HOME/dotfiles"
 TRUELINE_REPO="git@github.com:petobens/trueline.git"
-TRUELINE_DIR="$HOME/trueline"
+TRUELINE_DIR="$HOME/.config/trueline"
 TIMESTAMP="$(date +%Y%m%d_%H%M)"
 BACKUP_DIR="/tmp/dotfiles_$TIMESTAMP"
 LOG_FILE="$BACKUP_DIR/dotfiles_install.log"
+ORIGINAL_BASHRC="$HOME/.bashrc"
 
 # Create backup and log directory
 mkdir -p "$BACKUP_DIR"
@@ -150,12 +151,17 @@ backup_dotfiles() {
     fi
   done
 
-  if [ -f "$BASH_TOOLS" ] || [ -L "$BASH_TOOLS" ]; then
-    cp "$BASH_TOOLS" "$BACKUP_DIR/" && log_message "Backed up .$file"
+  if [ -f "$HOME/$BASH_TOOLS" ] || [ -L "$BASH_TOOLS" ]; then
+    mv "$BASH_TOOLS" "$BACKUP_DIR/" && log_message "Backed up .$BASH_TOOLS"
   else
     log_message ".$BASH_TOOLS not found, skipping"
   fi
 
+  if [ -f "$ORIGINAL_BASHRC" ] || [ -L "$ORIGINAL_BASHRC" ]; then
+    cp "$ORIGINAL_BASHRC" "$BACKUP_DIR/" && log_message "Backed up .bashrc"
+  else
+    log_message ".bashrc not found, skipping"
+  fi
 
   # Backup htoprc
   if [ -f "$HOME/.config/htop/htoprc" ] || [ -L "$HOME/.config/htop/htoprc" ]; then
@@ -205,7 +211,7 @@ EOF
   # Include trueline on .bashrc
   local trueline_script="$TRUELINE_DIR/trueline.sh"
   if [ -f "$trueline_script" ]; then
-    if ! grep -Fxq "if [ -f \"\$HOME/trueline/trueline.sh\" ]; then" "$HOME/.bashrc"; then
+    if ! grep -Fxq "if [ -f \"\$HOME/.config/trueline/trueline.sh\" ]; then" "$HOME/.bashrc"; then
       log_message "Adding source for trueline.sh in .bashrc"
       cat <<EOF >> "$HOME/.bashrc"
 
