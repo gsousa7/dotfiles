@@ -1,11 +1,14 @@
 # Personal and Professional Dotfiles Repository
 This repository includes the following custom configurations:
 - Bash configuration customization (prompt, history, colors)
-  - `.bash_completion`, `.bashrc`, `.htoprc` and `.tmux.conf`
+  - `.bash_completion`, `.bashrc` and `.bash_tools`
 - Git aliases
 - Kubernetes aliases
 - Utility aliases and functions
-- Vim configuration customization (`.vimrc` with theme, linting, shortcuts and tools)
+- htop, tmux and vim configuration customization 
+  - `.htoprc` with theme and better visibility
+  - `.tmux.conf` with theme and better visibility
+  - `.vimrc` with theme, linting, shortcuts and tools
 
 ## Table of Contents
 1. [Installation](#1-installation)
@@ -53,8 +56,6 @@ sudo dnf install -y git
 - Install `tmux` plugins
 - Update dotfiles from remote repository
 
-
-
 ### Actions
 - `-i`: Install packages, tools, and dotfiles.
 - `-u`: Update dotfiles from the remote repository.
@@ -72,6 +73,7 @@ Clone this repository or use the following command:
 ```bash
 wget https://raw.githubusercontent.com/gsousa7/dotfiles/main/install.sh -O /tmp/install.sh
 ```
+Grant the correct permission to the file, example `chmod +x /tmp/install.sh`
 
 #### Interactive Mode
 Run the script without arguments to be prompted for actions:
@@ -93,14 +95,14 @@ Run the script with arguments to skip prompts:
 
 ## Troubleshooting
 - **Permission Issues**:
-   Run the script with sufficient privileges (e.g., `sudo` if required).
+   Grant sudo permissions to the user
 
 - **Font Issues**:
    If fonts are not applied, rebuild the font cache:
    ```bash
    sudo fc-cache -fv
    ```
-
+   
 ---
 
 ## 2. Dotfiles usage
@@ -126,7 +128,7 @@ Run the script with arguments to skip prompts:
   ```
 
 ## 3. Notes
-- `.bashrc` file will only be modified to load `.bash_tools` and trueline prompt, making it easier to manage.
+- `.bashrc` file will only be modified to load `.bash_tools` and starship, making it easier to manage.
 - If no SSH key is found, the script will prompt you to create one and add it to your GitHub account `ssh-keygen`
 - If running in WSL, you may need to manually install the fonts from `/usr/local/share/fonts`.
 - Inspired by [bahamas10's dotfiles](https://github.com/bahamas10/dotfiles) and [ChrisTitusTech dotfiles](https://github.com/christitustech/mybash). 

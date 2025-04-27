@@ -5,22 +5,21 @@
 # Variables
 DOTFILES_REPO="git@github.com:gsousa7/dotfiles.git"
 DOTFILES_DIR="$HOME/dotfiles"
-TRUELINE_REPO="git@github.com:petobens/trueline.git"
-TRUELINE_DIR="$HOME/.config/trueline"
 TIMESTAMP="$(date +%Y%m%d_%H%M)"
 BACKUP_DIR="/tmp/dotfiles_$TIMESTAMP"
 LOG_FILE="$BACKUP_DIR/dotfiles_install.log"
 ORIGINAL_BASHRC="$HOME/.bashrc"
+STARSHIP_CONFIG="$HOME/.config/starship.toml"
+THEMES_DIR="$HOME/.config/starship/themes"
 
 # Create backup and log directory
 mkdir -p "$BACKUP_DIR"
+mkdir -p "$HOME/.config/ansible"
 
 # List of dotfiles to handle
 FILES_TO_SYMLINK=(
   "bash_completion"
-  "htoprc"
   "vimrc"
-  "tmux.conf"
 )
 
 # Bash tools file to include
@@ -28,7 +27,7 @@ BASH_TOOLS="bash_tools"
 
 # List of core packages to install
 PACKAGES=(
-  "telnet" "rsync" "wget" "curl" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "ncdu" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree"
+  "telnet" "rsync" "wget" "curl" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "ncdu" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree" "xclip" "fonts-powerline"
 )
 
 # Extra tools to install via python package manager
@@ -38,6 +37,7 @@ EXTRA_TOOLS=("spotdl" "yt-dlp" "tldr")
 log_message() {
   echo "$1" | tee -a "$LOG_FILE"
 }
+
 
 # Detect package manager
 detect_package_manager() {
@@ -70,6 +70,8 @@ install_packages() {
             "info"
             "debian-reference-en"
             "fonts-powerline"
+            "shellcheck"
+            "shfmt"
         )
         sudo apt update
 
@@ -129,16 +131,6 @@ clone_dotfiles_repo() {
   fi
 }
 
-# Clone the trueline prompt repository
-clone_trueline_repo() {
-  if [ ! -d "$TRUELINE_DIR" ]; then
-    log_message "Cloning trueline repository..."
-    git clone "$TRUELINE_REPO" "$TRUELINE_DIR" && log_message "Trueline repository cloned successfully." || log_message "Error cloning repository. Exiting."
-  else
-    log_message "Trueline repository already exists. Skipping clone."
-  fi
-}
-
 # Backup existing dotfiles
 backup_dotfiles() {
  
@@ -178,11 +170,13 @@ symlink_dotfiles() {
     ln -sf "$DOTFILES_DIR/$file" "$HOME/.$file" && log_message "Linked $file"
   done
 
-  # Symlink htoprc
-  if [ -f "$DOTFILES_DIR/htoprc" ]; then
-    mkdir -p "$HOME/.config/htop"
-    ln -sf "$DOTFILES_DIR/htoprc" "$HOME/.config/htop/htoprc" && log_message "Linked htoprc"
-  fi
+  # Symlink tmux config to .config directory
+  mkdir -p "$HOME/.config/tmux"
+  ln -sf "$DOTFILES_DIR/tmux.conf" "$HOME/.config/tmux/tmux.conf" && log_message "Linked tmux.conf to .config"
+  
+  # Symlink htop config to .config directory
+  mkdir -p "$HOME/.config/htop"
+  ln -sf "$DOTFILES_DIR/htoprc" "$HOME/.config/htop/htoprc" && log_message "Linked htoprc to .config"
 }
 
 # Include bash_tools on .bashrc
@@ -206,24 +200,6 @@ EOF
     fi
   else
     log_message "$DOTFILES_DIR/$BASH_TOOLS not found. Skipping symlink and sourcing."
-  fi
-
-  # Include trueline on .bashrc
-  local trueline_script="$TRUELINE_DIR/trueline.sh"
-  if [ -f "$trueline_script" ]; then
-    if ! grep -Fxq "if [ -f \"\$HOME/.config/trueline/trueline.sh\" ]; then" "$HOME/.bashrc"; then
-      log_message "Adding source for trueline.sh in .bashrc"
-      cat <<EOF >> "$HOME/.bashrc"
-
-# Source Trueline prompt
-if [ -f "\$HOME/.config/trueline/trueline.sh" ]; then
-    . "\$HOME/.config/trueline/trueline.sh"
-fi
-EOF
-      log_message "Source for trueline.sh added to .bashrc."
-    fi
-  else
-    log_message "Trueline script not found at $trueline_script. Skipping."
   fi
 }
 
@@ -368,6 +344,7 @@ install_fonts() {
 
   log_message "Fonts installed."
   log_message "If running in WSL, open $fonts_dir and manually install fonts."
+  log_message "Change the font in your terminal and Visual Studio Code to a nerd font."
 }
 
 # Installs vim plugins declared in .vimrc
@@ -384,17 +361,23 @@ install_vim_plugins() {
 install_tmux_plugins() {
   log_message "Installing tmux plugins..."
 
-  local plugin_path="${HOME}/.config/tmux/plugins"
-  local tpm_path="${plugin_path}/tpm"
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  log_message "Run tmux and press Ctrl b + I to install plugins."
+}
 
-  if [ ! -d "$tpm_path" ]; then
-    git clone --depth 1 https://github.com/tmux-plugins/tpm "${tpm_path}"
-    "${tpm_path}/bin/install_plugins"
+install_starship() {
+  log_message "Installing Starship prompt..."
+  if ! command -v starship &> /dev/null; then
+    curl -sS https://starship.rs/install.sh | sh
+    log_message "Starship installed successfully."
+    echo 'eval "$(starship init bash)' >> ~/.bashrc
+    log_message "Starship prompt added to .bashrc."
   else
-    log_message "Tmux plugin manager already installed. Skipping."
+    log_message "Starship is already installed."
   fi
-
-  "${tpm_path}/bin/install_plugins"
+  ln -sf "$DOTFILES_DIR/starship.toml" "$HOME/.config/starship.toml"
+  log_message "Starship configuration file linked."
+  
 }
 
 update_everything () {
@@ -487,7 +470,6 @@ case "$action" in
     install_fonts
     update_gitconfig "${extra_args[@]}" # Pass Git configuration arguments
     clone_dotfiles_repo
-    clone_trueline_repo
     backup_dotfiles
     symlink_dotfiles
     include_bash_tools

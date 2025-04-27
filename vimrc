@@ -54,7 +54,6 @@ Plug 'junegunn/vim-plug'              " Plugin manager
 Plug 'vim-airline/vim-airline'        " Status line
 Plug 'vim-airline/vim-airline-themes' " Airline themes
 Plug 'sheerun/vim-polyglot'           " Syntax highlighting for many languages
-Plug 'scrooloose/nerdcommenter'       " Easy commenting
 Plug 'dense-analysis/ale'             " Linting and fixing
 
 call plug#end()
