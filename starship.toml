@@ -1,18 +1,18 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 format = """
-[](color_orange)\
+[](color_1)\
 $os\
 $username\
-[](bg:color_yellow fg:color_orange)\
+[](bg:color_2 fg:color_1)\
 $directory\
-[](fg:color_yellow bg:color_aqua)\
+[](fg:color_2 bg:color_3)\
 $git_branch\
 $git_status\
-[](fg:color_aqua bg:color_blue)\
+[](fg:color_3 bg:color_4)\
 $kubernetes\
 $python\
-[](fg:color_blue bg:color_bg3)\
+[](fg:color_4 bg:color_bg3)\
 $docker_context\
 $terraform\
 [](fg:color_bg3 bg:color_bg1)\
@@ -21,23 +21,83 @@ $status\
 [ ](fg:color_bg1)\
 """
 
-palette = 'gruvbox_dark'
+palette = "gruvbox_dark"
 
 [palettes.gruvbox_dark]
 color_fg0 = '#fbf1c7'
 color_bg1 = '#3c3836'
 color_bg3 = '#665c54'
-color_blue = '#458588'
-color_aqua = '#689d6a'
-color_green = '#98971a'
-color_orange = '#d65d0e'
-color_purple = '#b16286'
-color_red = '#cc241d'
-color_yellow = '#d79921'
+color_4 = '#458588'
+color_3 = '#689d6a'
+color_5 = '#98971a'
+color_1 = '#d65d0e'
+color_6 = '#b16286'
+color_7 = '#cc241d'
+color_2 = '#d79921'
 
-[os]
+[palettes.gruvbox_light]
+color_fg0 = '#3c3836'
+color_bg1 = '#fbf1c7'
+color_bg3 = '#ebdbb2'
+color_blue = '#83a598'
+color_aqua = '#8ec07c'
+color_green = '#b8bb26'
+color_orange = '#fe8019'
+color_purple = '#d3869b'
+color_red = '#fb4934'
+color_yellow = '#fabd2f'
+
+[palettes.nord]
+color_fg0 = '#ECEFF4'
+color_bg1 = '#2E3440'
+color_bg3 = '#4C566A'
+color_blue = '#81A1C1'
+color_aqua = '#88C0D0'
+color_green = '#A3BE8C'
+color_orange = '#D08770'
+color_purple = '#B48EAD'
+color_red = '#BF616A'
+color_yellow = '#EBCB8B'
+
+[palettes.dracula]
+color_fg0 = '#F8F8F2'
+color_bg1 = '#282A36'
+color_bg3 = '#44475A'
+color_blue = '#6272A4'
+color_aqua = '#8BE9FD'
+color_green = '#50FA7B'
+color_orange = '#FFB86C'
+color_purple = '#BD93F9'
+color_red = '#FF5555'
+color_yellow = '#F1FA8C'
+
+[palettes.solarized_dark]
+color_fg0 = '#839496'
+color_bg1 = '#002B36'
+color_bg3 = '#073642'
+color_blue = '#268BD2'
+color_aqua = '#2AA198'
+color_green = '#859900'
+color_orange = '#CB4B16'
+color_purple = '#6C71C4'
+color_red = '#DC322F'
+color_yellow = '#B58900'
+
+[palettes.solarized_light]
+color_fg0 = '#657B83'
+color_bg1 = '#FDF6E3'
+color_bg3 = '#EEE8D5'
+color_blue = '#268BD2'
+color_aqua = '#2AA198'
+color_green = '#859900'
+color_orange = '#CB4B16'
+color_purple = '#6C71C4'
+color_red = '#DC322F'
+color_yellow = '#B58900'
+
+os]
 disabled = false
-style = "bg:color_orange fg:color_fg0"
+style = "bg:color_1 fg:color_fg0"
 
 [os.symbols]
 Windows = "󰍲"
@@ -64,12 +124,12 @@ Pop = ""
 
 [username]
 show_always = true
-style_user = "bg:color_orange fg:color_fg0"
-style_root = "bg:color_orange fg:color_fg0"
+style_user = "bg:color_1 fg:color_fg0"
+style_root = "bg:color_1 fg:color_fg0"
 format = '[ $user ]($style)'
 
 [directory]
-style = "fg:color_fg0 bg:color_yellow"
+style = "fg:color_fg0 bg:color_2"
 format = "[ $path ]($style)"
 truncation_length = 3
 truncation_symbol = "…/"
@@ -83,16 +143,16 @@ truncation_symbol = "…/"
 
 [git_branch]
 symbol = ""
-style = "fg:color_fg0 bg:color_aqua"
+style = "fg:color_fg0 bg:color_3"
 format = '[ $symbol $branch ]($style)'
 
 [git_status]
-style = "fg:color_fg0 bg:color_aqua"
+style = "fg:color_fg0 bg:color_3"
 format = '[($all_status$ahead_behind )]($style)'
 
 [python]
 symbol = ""
-style = "fg:color_fg0 bg:color_blue"
+style = "fg:color_fg0 bg:color_4"
 format = '[ $symbol( $version) ]($style)'
 
 [docker_context]

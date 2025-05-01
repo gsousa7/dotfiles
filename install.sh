@@ -139,20 +139,20 @@ backup_dotfiles() {
     if [ -f "$dotfile" ] || [ -L "$dotfile" ]; then
       mv "$dotfile" "$BACKUP_DIR" && log_message "Backed up .$file"
     else
-      log_message ".$file not found, skipping"
+      log_message ".$file not found, skipping backup"
     fi
   done
 
   if [ -f "$HOME/$BASH_TOOLS" ] || [ -L "$BASH_TOOLS" ]; then
     mv "$BASH_TOOLS" "$BACKUP_DIR/" && log_message "Backed up .$BASH_TOOLS"
   else
-    log_message ".$BASH_TOOLS not found, skipping"
+    log_message ".$BASH_TOOLS not found, skipping backup"
   fi
 
   if [ -f "$ORIGINAL_BASHRC" ] || [ -L "$ORIGINAL_BASHRC" ]; then
     cp "$ORIGINAL_BASHRC" "$BACKUP_DIR/" && log_message "Backed up .bashrc"
   else
-    log_message ".bashrc not found, skipping"
+    log_message ".bashrc not found, skipping backup"
   fi
 
   # Backup htoprc
@@ -370,7 +370,7 @@ install_starship() {
   if ! command -v starship &> /dev/null; then
     curl -sS https://starship.rs/install.sh | sh
     log_message "Starship installed successfully."
-    echo 'eval "$(starship init bash)' >> ~/.bashrc
+    echo 'eval "$(starship init bash)"' >> ~/.bashrc
     log_message "Starship prompt added to .bashrc."
   else
     log_message "Starship is already installed."
@@ -492,3 +492,6 @@ esac
 log_message "Operation complete."
 log_message "To apply all changes, restart your shell or run: 'source ~/.bashrc'"
 log_message "Backups saved in: $BACKUP_DIR"
+log_message "If in WSL instead of OS with Linux, change the variable DESKTOPWINSL to your Windows Desktop path, example: /mnt/c/Users/<Windows_User>/"
+log_message "If in WSL instead of OS with Linux, install manually the fonts in $fonts_dir and delete the fonts zip files."
+

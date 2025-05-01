@@ -265,6 +265,41 @@ function getalb() {
     spotdl --output "${DESKTOPWINSL}Desktop/{artist} - {album}/{artist} - {title}" --format mp3 --bitrate 320k "$1"
 }
 
+pcolor() {
+  # List of available palettes
+  echo "Available palettes:"
+  echo "1) gruvbox_dark"
+  echo "2) gruvbox_light"
+  echo "3) nord"
+  echo "4) dracula"
+  echo "5) solarized_dark"
+  echo "6) solarized_light"
+
+  # Prompt the user to select a palette
+  read -p "Enter the number of the palette you want to use: " choice
+
+  # Map the user's choice to a palette
+  local palette=""
+  case $choice in
+    1) palette="gruvbox_dark" ;;
+    2) palette="gruvbox_light" ;;
+    3) palette="nord" ;;
+    4) palette="dracula" ;;
+    5) palette="solarized_dark" ;;
+    6) palette="solarized_light" ;;
+    *)
+      echo "Invalid choice. Exiting."
+      return 1
+      ;;
+  esac
+
+  # Use starship config to set the palette
+  starship config palette "$palette"
+
+  # Notify the user
+  echo "Starship palette updated to $palette. Restart your terminal to see the changes."
+}
+
 # get vim help
 vimfo() {
     echo -e "${BLUE}Vim Cheatsheet${RESET}\n"
@@ -312,41 +347,42 @@ vimfo() {
 
 tmuxfo() {
     echo -e "${BLUE}Tmux Cheatsheet${RESET}\n"
+    echo -e "${MAGENTA}Ctrl a${RESET} - Leader key"
 
     # Splitting Panes
     echo -e "${ORANGE}Splitting Panes:${RESET}"
-    echo -e "${MAGENTA}Ctrl b %${RESET} - Split vertically"
-    echo -e "${MAGENTA}Ctrl b \"${RESET} - Split horizontally\n"
+    echo -e "${MAGENTA}Ctrl a |${RESET} - Split vertically"
+    echo -e "${MAGENTA}Ctrl a -${RESET} - Split horizontally\n"
 
     # Closing Panes
     echo -e "${ORANGE}Closing Panes:${RESET}"
-    echo -e "${MAGENTA}Ctrl b x${RESET} - Close current pane"
-    echo -e "${MAGENTA}Ctrl b !${RESET} - Break pane into new window\n"
+    echo -e "${MAGENTA}Ctrl a x${RESET} - Close current pane"
+    echo -e "${MAGENTA}Ctrl a !${RESET} - Break pane into new window\n"
 
     # Pane Navigation
     echo -e "${ORANGE}Pane Navigation:${RESET}"
-    echo -e "${MAGENTA}Ctrl b h${RESET} - Move to left pane"
-    echo -e "${MAGENTA}Ctrl b j${RESET} - Move to lower pane"
-    echo -e "${MAGENTA}Ctrl b k${RESET} - Move to upper pane"
-    echo -e "${MAGENTA}Ctrl b l${RESET} - Move to right pane"
-    echo -e "${MAGENTA}Ctrl b q${RESET} - Show pane numbers\n"
+    echo -e "${MAGENTA}Alt left arrow${RESET} - Move to left pane"
+    echo -e "${MAGENTA}Alt down arrow${RESET} - Move to lower pane"
+    echo -e "${MAGENTA}Alt up arrow${RESET} - Move to upper pane"
+    echo -e "${MAGENTA}Alt right arrow${RESET} - Move to right pane"
+    echo -e "${MAGENTA}Ctrl a q${RESET} - Show pane numbers\n"
 
     # Pane Resizing
     echo -e "${ORANGE}Pane Resizing:${RESET}"
-    echo -e "${MAGENTA}Ctrl b Alt h${RESET} - Decrease width"
-    echo -e "${MAGENTA}Ctrl b Alt l${RESET} - Increase width"
-    echo -e "${MAGENTA}Ctrl b Alt j${RESET} - Decrease height"
-    echo -e "${MAGENTA}Ctrl b Alt k${RESET} - Increase height"
-    echo -e "${MAGENTA}Ctrl b =${RESET} - Equalize pane sizes\n"
+    echo -e "${MAGENTA}Alt Shift left arrow${RESET} - Decrease width"
+    echo -e "${MAGENTA}Alt Shift right arrow{RESET} - Increase width"
+    echo -e "${MAGENTA}Alt Shift down arrow${RESET} - Decrease height"
+    echo -e "${MAGENTA}Alt Shift up arrow${RESET} - Increase height"
+    echo -e "${MAGENTA}Ctrl a =${RESET} - Equalize pane sizes\n"
 
     # Windows (Tabs)
     echo -e "${ORANGE}Windows (Tabs):${RESET}"
-    echo -e "${MAGENTA}Ctrl b c${RESET} - Create new window"
-    echo -e "${MAGENTA}Ctrl b n${RESET} - Next window"
-    echo -e "${MAGENTA}Ctrl b p${RESET} - Previous window"
-    echo -e "${MAGENTA}Ctrl b w${RESET} - List windows"
-    echo -e "${MAGENTA}Ctrl b ,${RESET} - Rename current window"
-    echo -e "${MAGENTA}Ctrl b &${RESET} - Close current window\n"
+    echo -e "${MAGENTA}Ctrl a c${RESET} - Create new window"
+    echo -e "${MAGENTA}Ctrl a n${RESET} - Next window"
+    echo -e "${MAGENTA}Ctrl a p${RESET} - Previous window"
+    echo -e "${MAGENTA}Ctrl a w${RESET} - List windows"
+    echo -e "${MAGENTA}Ctrl a ,${RESET} - Rename current window"
+    echo -e "${MAGENTA}Ctrl a &${RESET} - Close current window\n"
 
     #Sessions
     echo -e "${ORANGE}Sessions:${RESET}"
@@ -371,9 +407,9 @@ tmuxfo() {
     # Copy Mode
     echo -e "${ORANGE}Copying:${RESET}"
     echo -e "Use ${MAGENTA}Shift + mouse drag${RESET} to highlight and copy from the terminal"
-    echo -e "Use ${MAGENTA}Ctrl b [${RESET} to enter copy mode (if mouse isn't working), to exit press ${MAGENTA}q${RESET}"
+    echo -e "Use ${MAGENTA}Ctrl a [${RESET} to enter copy mode (if mouse isn't working), to exit press ${MAGENTA}q${RESET}"
     echo -e "Then ${MAGENTA}Space${RESET} to start selection, and ${MAGENTA}Enter${RESET} to copy"
-    echo -e "Paste with ${MAGENTA}Ctrl b ]${RESET}\n"
+    echo -e "Paste with ${MAGENTA}Ctrl a ]${RESET}\n"
 }
 
 
@@ -499,7 +535,7 @@ show_utility_commands() {
     echo -e "${MAGENTA}dsk${RESET} - Change directory to a specified directory in /mnt. Usage: ${YELLOW}dsk <drive>${RESET}"
     echo -e "${MAGENTA}vimfo${RESET} - Show custom vim keymaps and cheatsheet"
     echo -e "${MAGENTA}tmuxfo${RESET} - Show custom tmux keymaps and cheatsheet"
-    echo -e "${MAGENTA}vscfoo${RESET} - Show Visual Studio Code keymaps and cheatsheet"
+    echo -e "${MAGENTA}vscfo${RESET} - Show Visual Studio Code keymaps and cheatsheet"
     echo -e "${MAGENTA}svim${RESET} - Edit files with sudo. Equal to 'sudoedit' and 'sudo -e'"
     echo -e "${MAGENTA}colors${RESET} - Print all 256 colors in the terminal."
 }
@@ -531,10 +567,13 @@ show_help() {
     echo -e "${YELLOW}Available sections:${RESET}"
     echo "- git            (Git commands)"
     echo "- kubernetes     (or k8s - Kubernetes commands)"
-    echo "- utils          (or utilities, terminal - Terminal utilities)"
+    echo "- utils          (or cli, utility, utilities, terminal - Terminal utilities)"
     echo "- youtube        (or yt, spotify, media - Media download commands)"
-    echo "- starship       (or theme, skin - Starship prompt customization)"
-    echo "- all            (Show all commands)"
+    echo "- starship       (or theme, prompt, ps1, custom, customization, skin - Starship prompt customization)"
+    echo "- vim            (or vi, editor - Vim commands)"
+    echo "- tmux           (Tmux commands)"
+    echo "- vsc            (or vscode, code - VS Code commands)"
+    echo "- all            (Show all sections)"
 }
 
 # Main lscom function
@@ -554,10 +593,19 @@ lscom() {
     "youtube" | "yt" | "spotify" | "media")
         show_media_commands
         ;;
-    "starship" | "Starship" | "prompt" | "ps1" | "custom" | "customization" | "misc" | "theme" | "skin")
+    "starship" | "prompt" | "ps1" | "custom" | "customization" | "theme" | "skin")
         show_starship_commands
         ;;
-    "all" | "")
+    "vim" | "vi" | "editor")
+        vimfo
+        ;;
+    "tmux")
+        tmuxfo
+        ;;
+    "vsc" | "vscode" | "code")
+        vscfoo
+        ;;
+    "all" | "full" | "")
         show_git_commands
         echo
         show_kubernetes_commands
@@ -567,6 +615,12 @@ lscom() {
         show_media_commands
         echo
         show_starship_commands
+        echo
+        vimfo
+        echo
+        tmuxfo
+        echo
+        vscfoo
         ;;
     *)
         show_help
@@ -574,12 +628,11 @@ lscom() {
     esac
 }
 
-# Load external files
-. ~/.bash_aliases 2>/dev/null || true
-. ~/.bashrc.local 2>/dev/null || true
+# Load external files - uncomment if you have them
+#. ~/.bash_aliases 2>/dev/null || true
+#. ~/.bashrc.local 2>/dev/null || true
 
 # load completion
-. /etc/bash/bash_completion 2>/dev/null ||
-    . ~/.bash_completion 2>/dev/null
+. /etc/bash/bash_completion 2>/dev/null || . ~/.bash_completion 2>/dev/null
 
 true
