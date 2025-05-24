@@ -18,7 +18,7 @@ This repository includes the following custom configurations:
 
 ## 1. Installation
 
-The installation script can run interactivly and non-intereactvly
+The installation script can run interactively and non-interactively
 
 ### Pre-requisites
 The following are required for this configuration to work:

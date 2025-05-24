@@ -1,3 +1,5 @@
+# Starship Full configuration
+
 "$schema" = 'https://starship.rs/config-schema.json'
 
 format = """
@@ -9,6 +11,7 @@ $directory\
 [](fg:color_2 bg:color_3)\
 $git_branch\
 $git_status\
+$git_state\
 [](fg:color_3 bg:color_4)\
 $kubernetes\
 $python\
@@ -38,64 +41,64 @@ color_2 = '#d79921'
 [palettes.gruvbox_light]
 color_fg0 = '#3c3836'
 color_bg1 = '#fbf1c7'
-color_bg3 = '#ebdbb2'
-color_blue = '#83a598'
-color_aqua = '#8ec07c'
-color_green = '#b8bb26'
-color_orange = '#fe8019'
-color_purple = '#d3869b'
-color_red = '#fb4934'
-color_yellow = '#fabd2f'
+color_bg3 = '#d5c4a1'
+color_4   = '#076678'
+color_3   = '#427b58'
+color_5   = '#b57614'
+color_1   = '#af3a03'
+color_6   = '#8f3f71'
+color_7   = '#9d0006'
+color_2   = '#b57614'
 
 [palettes.nord]
 color_fg0 = '#ECEFF4'
 color_bg1 = '#2E3440'
 color_bg3 = '#4C566A'
-color_blue = '#81A1C1'
-color_aqua = '#88C0D0'
-color_green = '#A3BE8C'
-color_orange = '#D08770'
-color_purple = '#B48EAD'
-color_red = '#BF616A'
-color_yellow = '#EBCB8B'
+color_4   = '#5E81AC'
+color_3   = '#A3BE8C'
+color_5   = '#EBCB8B'
+color_1   = '#BF616A'
+color_6   = '#B48EAD'
+color_7   = '#D08770'
+color_2   = '#88C0D0'
 
 [palettes.dracula]
 color_fg0 = '#F8F8F2'
 color_bg1 = '#282A36'
 color_bg3 = '#44475A'
-color_blue = '#6272A4'
-color_aqua = '#8BE9FD'
-color_green = '#50FA7B'
-color_orange = '#FFB86C'
-color_purple = '#BD93F9'
-color_red = '#FF5555'
-color_yellow = '#F1FA8C'
+color_4   = '#8BE9FD'
+color_3   = '#50FA7B'
+color_5   = '#F1FA8C'
+color_1   = '#FF79C6'
+color_6   = '#BD93F9'
+color_7   = '#FF5555'
+color_2   = '#FFB86C'
 
 [palettes.solarized_dark]
 color_fg0 = '#839496'
-color_bg1 = '#002B36'
+color_bg1 = '#002b36'
 color_bg3 = '#073642'
-color_blue = '#268BD2'
-color_aqua = '#2AA198'
-color_green = '#859900'
-color_orange = '#CB4B16'
-color_purple = '#6C71C4'
-color_red = '#DC322F'
-color_yellow = '#B58900'
+color_4   = '#268bd2'
+color_3   = '#859900'
+color_5   = '#b58900'
+color_1   = '#cb4b16'
+color_6   = '#6c71c4'
+color_7   = '#dc322f'
+color_2   = '#2aa198'
 
 [palettes.solarized_light]
-color_fg0 = '#657B83'
-color_bg1 = '#FDF6E3'
-color_bg3 = '#EEE8D5'
-color_blue = '#268BD2'
-color_aqua = '#2AA198'
-color_green = '#859900'
-color_orange = '#CB4B16'
-color_purple = '#6C71C4'
-color_red = '#DC322F'
-color_yellow = '#B58900'
+color_fg0 = '#657b83'
+color_bg1 = '#fdf6e3'
+color_bg3 = '#eee8d5'
+color_4   = '#268bd2'
+color_3   = '#859900'
+color_5   = '#b58900'
+color_1   = '#cb4b16'
+color_6   = '#6c71c4'
+color_7   = '#dc322f'
+color_2   = '#2aa198'
 
-os]
+[os]
 disabled = false
 style = "bg:color_1 fg:color_fg0"
 
@@ -140,6 +143,13 @@ truncation_symbol = "…/"
 "Music" = "󰝚 "
 "Pictures" = " "
 "Developer" = "󰲋 "
+"Git" = "󰲋 "
+"Projects" = " "
+"Videos" = "󰕧 "
+"Desktop" = " "
+"Scripts" = " "
+"Configs" = " "
+"Data" = " "
 
 [git_branch]
 symbol = ""
@@ -149,6 +159,21 @@ format = '[ $symbol $branch ]($style)'
 [git_status]
 style = "fg:color_fg0 bg:color_3"
 format = '[($all_status$ahead_behind )]($style)'
+up_to_date = '✓'
+conflicted = '🏳'
+stashed = '📦'
+modified = '📝'
+deleted = '🗑'
+ahead = '⇡${count}'
+diverged = '⇕⇡${ahead_count}⇣${behind_count}'
+behind = '⇣${count}'
+untracked = '🤷'
+staged = '[++\($count\)](green)'
+renamed = '👅'
+
+[git_state]
+style = "fg:color_fg0 bg:color_3"
+format = '[ $state( $progress_current/$progress_total) ]($style)'
 
 [python]
 symbol = ""
@@ -159,6 +184,8 @@ format = '[ $symbol( $version) ]($style)'
 symbol = ""
 style = "fg:color_fg0 bg:color_bg3"
 format = '[ $symbol( $context) ]($style)'
+detect_files = ['docker-compose.yml', 'docker-compose.yaml', 'Dockerfile']
+detect_extensions = ['Dockerfile']
 
 [conda]
 style = "fg:color_fg0 bg:color_bg3"

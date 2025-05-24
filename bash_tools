@@ -1,22 +1,22 @@
+# General settings
 export EDITOR='vim'
 export HISTSIZE=5000
 export HISTFILESIZE=5000
-export GREP_COLOR='1;36'
 export GREP_COLORS='mt=1;36'
-export GREP_OPTIONS='--color=auto'
 export PAGER='less'
 export TZ='Europe/Lisbon'
 export DESKTOPWINSL='/mnt/c/Users/Gonçalo Sousa/'
 export HISTCONTROL='ignoredups'
-export HISTSIZE=5000
-export HISTFILESIZE=5000
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
+
+
+# Ansible
 export ANSIBLE_CONFIG="$HOME/.config/ansible/config.ini"
 export ANSIBLE_INVENTORY="$HOME/.config/ansible/inventory.yaml"
 
 
-#Color Man pages
+# Color Man pages
 export LESS_TERMCAP_mb=$'\e[1;32m'
 export LESS_TERMCAP_md=$'\e[1;32m'
 export LESS_TERMCAP_me=$'\e[0m'
@@ -26,13 +26,20 @@ export LESS_TERMCAP_ue=$'\e[0m'
 export LESS_TERMCAP_us=$'\e[1;4;31m'
 
 
+# Dotfiles
+DOTFILES_REPO="git@github.com:gsousa7/dotfiles.git"
+DOTFILES_DIR="$HOME/dotfiles"
 
+
+# Colors
 MAGENTA="\e[35m"
 YELLOW="\e[33m"
 BLUE="\e[34m"
 GREEN="\e[32m"
 RESET="\e[0m"
 ORANGE="\e[38;5;214m"
+RED="\e[31m"
+
 
 # Custom Alias
 alias ll='ls -la'
@@ -44,7 +51,6 @@ alias tempolx='curl wttr.in/Lisboa\?format=4'
 alias temposx='curl wttr.in/Seixal\?format=4'
 alias tempolxf='curl wttr.in/Lisboa'
 alias temposxf='curl wttr.in/Seixal'
-alias code='"${DESKTOPWINSL}AppData/Local/Programs/Microsoft VS Code/Code.exe"'
 alias dus='du -sh * 2>/dev/null'
 alias net='ip -br -c a'
 alias ippub='curl -s https://ipinfo.io/ip && echo'
@@ -62,6 +68,9 @@ alias ldir='cd $HOME/lab'
 alias ddir='cd $HOME/dotfiles'
 alias svim='sudoedit'
 alias v='vim'
+alias ..='cd ..'
+alias ...='cd ../..'
+
 
 # Git Aliases and functions
 alias nb='git checkout -b'
@@ -73,18 +82,21 @@ alias gb='git branch'
 alias gc='git commit -m'
 alias gcl='git clone'
 alias gi='git init'
-alias gl='git log'
+alias gl='git log --graph --all --pretty=format:"%C(magenta)%h %C(white) %an  %ar%C(blue)  %D%n%s%n"'
+alias gsts='git status --short'
 alias gls='git log --graph --oneline --decorate --all'
 alias glpd='git log --graph --oneline --decorate --all -p --pretty=format:"%C(auto)%h %C(cyan)%an <%ae> %C(yellow)%ad %C(reset)%s %C(auto)%d %C(reset)"'
 alias glps='git log --graph --oneline --decorate --all --stat --pretty=format:"%C(auto)%h %C(cyan)%an <%ae> %C(yellow)%ad %C(reset)%s %C(auto)%d %C(reset)"'
 alias glp='git log --graph --oneline --decorate --all --pretty=format:"%C(auto)%h %C(cyan)%an <%ae> %C(yellow)%ad %C(reset)%s %C(auto)%d %C(reset)" --date=format:"%d/%m/%Y %H:%M:%S"'
 alias gstr='git log --oneline --simplify-by-decoration --graph --all'
 alias gp='git push origin'
-alias gst='git status'
 alias gu='git pull' # gu = git update
 alias gs='git switch'
+alias gdif="git diff --output-indicator-new=' ' --output-indicator-old=' '"
+alias gdiff="git diff --output-indicator-new=' ' --output-indicator-old=' ' --color-words"
 
-function lazygit() {
+# Git oneliner to add commit and push
+lazygit() {
     if [ -z "$1" ]; then
         echo "Error: Commit message is required."
         echo "Usage: lazygit '<commit_message>' <branch_name>"
@@ -102,6 +114,7 @@ function lazygit() {
     git push -u origin "$2"
 }
 
+# Git status for multiple repositories
 gdst() {
     found_repo=false
     for dir in */; do
@@ -122,9 +135,10 @@ gdst() {
     done
 
     if ! $found_repo; then
-        echo -e "${RED}No Git repositories found.${RESET}"
+        echo -e "${MAGENTA}No Git repositories found.${RESET}"
     fi
 }
+
 
 # tmux alias
 alias t='tmux'                    
@@ -132,13 +146,14 @@ alias ta='tmux attach -t'
 alias td='tmux detach'         
 alias tl='tmux list-sessions'     
 alias tn='tmux new -s'            
-alias tk='tmux kill-session -t'   
+alias tks='tmux kill-session -t'   
 alias ts='tmux switch -t'         
-alias tks='tmux kill-server'      
+alias tkss='tmux kill-server'      
 alias trew='tmux rename-window'
-alias tres='tmux rename-sessiont -t'
+alias tres='tmux rename-session -t'
 alias tw='tmux list-windows'      
 alias tns='tmux new-session -A -s'
+alias tslt='tmux select-layout tiled'
 
 
 # Kubernetes Alias
@@ -171,9 +186,9 @@ alias kgns='kubectl get namespaces'
 ## Delete
 alias kd='kubectl delete'
 alias kdp='kubectl delete pod'
-alias kds='kubectl delete services'
-alias kdd='kubectl delete deployments'
-alias kdn='kubectl delete namespaces'
+alias kds='kubectl delete service'
+alias kdd='kubectl delete deployment'
+alias kdn='kubectl delete namespace'
 
 # Custom functions
 field() {
@@ -219,117 +234,151 @@ fmtsh() {
   shfmt -i 2 -sr -ci -w "$1"
 }
 
-
 epoch() {
     local num=${1:--1}
     printf '%(%B %d, %Y %-I:%M:%S %p %Z)T\n' "$num"
 }
 
-# Get mp3 file of youtube
-function getyt() {
+# youtube-dl functions
+## Get mp3 file of youtube
+getyt() {
     yt-dlp --extract-audio --audio-format mp3 --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
 }
 
 ## Get mp4 file of youtube
-function getytmp4() {
+getytmp4() {
     yt-dlp -f 'bestvideo[height=1080]+bestaudio/best[height=1080]' --merge-output-format mp4 --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
 }
 
 ## Get mp3 file of youtube playlist
-function getytplist() {
+getytplist() {
     yt-dlp -x --audio-format mp3 --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
 }
 
 ## Get mp4 file of youtube playlist
-function getytplistmp4() {
+getytplistmp4() {
     yt-dlp -f 'bestvideo+bestaudio' --merge-output-format mp4 --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
 }
 
 ## Get mp4 file of youtube with subs
-function getytmp4subs() {
+getytmp4subs() {
     yt-dlp -f 'bestvideo[height=1080]+bestaudio/best[height=1080]' --merge-output-format mp4 --write-subs --embed-subs --sub-lang en --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
 }
 
 ## Get mp4 file of youtube playlist with subs
-function getytplistmp4subs() {
+getytplistmp4subs() {
     yt-dlp -f 'bestvideo+bestaudio' --merge-output-format mp4 --write-subs --embed-subs --sub-lang en --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
 }
 
+# spotify functions
 ## Get Spotify track
-function getspot() {
+getspot() {
     spotdl --output "${DESKTOPWINSL}Desktop/{artist} - {title}" --format mp3 --bitrate 320k "$1"
 }
 
 ## Get Spotify album
-function getalb() {
+getalb() {
     spotdl --output "${DESKTOPWINSL}Desktop/{artist} - {album}/{artist} - {title}" --format mp3 --bitrate 320k "$1"
 }
 
+# Get Spotify playlist
+getplay() {
+    spotdl --output "${DESKTOPWINSL}Desktop/{playlist}/{artist} - {title}" --format mp3 --bitrate 320k "$1"
+}
+
+# List starship palettes and set oneS
 pcolor() {
-  # List of available palettes
-  echo "Available palettes:"
-  echo "1) gruvbox_dark"
-  echo "2) gruvbox_light"
-  echo "3) nord"
-  echo "4) dracula"
-  echo "5) solarized_dark"
-  echo "6) solarized_light"
+    if [ "$(readlink ~/.config/starship.toml)" != "$HOME/dotfiles/starship_full.toml" ]; then
+        echo "Palette can only be changed when the full Starship configuration is active."
+        return 1
+    fi
 
-  # Prompt the user to select a palette
-  read -p "Enter the number of the palette you want to use: " choice
+    echo "Available palettes:"
+    echo "1) gruvbox_dark"
+    echo "2) gruvbox_light"
+    echo "3) nord"
+    echo "4) dracula"
+    echo "5) solarized_dark"
+    echo "6) solarized_light"
 
-  # Map the user's choice to a palette
-  local palette=""
-  case $choice in
-    1) palette="gruvbox_dark" ;;
-    2) palette="gruvbox_light" ;;
-    3) palette="nord" ;;
-    4) palette="dracula" ;;
-    5) palette="solarized_dark" ;;
-    6) palette="solarized_light" ;;
-    *)
-      echo "Invalid choice. Exiting."
-      return 1
-      ;;
-  esac
+    read -p "Enter the number of the palette you want to use: " choice
 
-  # Use starship config to set the palette
-  starship config palette "$palette"
+    local palette=""
+    case $choice in
+        1) palette="gruvbox_dark" ;;
+        2) palette="gruvbox_light" ;;
+        3) palette="nord" ;;
+        4) palette="dracula" ;;
+        5) palette="solarized_dark" ;;
+        6) palette="solarized_light" ;;
+        *)
+            echo "Invalid choice. Exiting."
+            return 1
+            ;;
+    esac
 
-  # Notify the user
-  echo "Starship palette updated to $palette. Restart your terminal to see the changes."
+    starship config palette "$palette"
+    echo "Starship palette updated to $palette. Restart your terminal to see the changes."
+}
+
+
+pskinf() {
+    # Unlink if symlink or remove if file exists
+    [ -L ~/.config/starship.toml ] && unlink ~/.config/starship.toml
+    [ -f ~/.config/starship.toml ] && rm ~/.config/starship.toml
+	
+    # Link to full config
+    ln -sf ~/dotfiles/starship_full.toml ~/.config/starship.toml
+	
+    echo "Switched to full Starship prompt."
+}
+
+pskins() {
+    # Unlink if symlink or remove if file exists
+    [ -L ~/.config/starship.toml ] && unlink ~/.config/starship.toml
+    [ -f ~/.config/starship.toml ] && rm ~/.config/starship.toml
+	
+    # Link to simple config
+    ln -sf ~/dotfiles/starship_simple.toml ~/.config/starship.toml
+	
+    echo "Switched to simple Starship prompt."
 }
 
 # get vim help
 vimfo() {
+    echo ""
     echo -e "${BLUE}Vim Cheatsheet${RESET}\n"
 
     # Basic Commands
     echo -e "${ORANGE}Basic Commands:${RESET}"
-    echo "${YELLOW}Not required 'Esc :'${RESET}"
-    echo -e "${MAGENTA}\\q${RESET}  - Quit"
-    echo -e "${MAGENTA}\\w${RESET}  - Save"
-    echo -e "${MAGENTA}\\x${RESET}  - Save and quit"
-    echo -e "${MAGENTA}\\/${RESET}  - Clear highlights\n"
+    echo -e "${YELLOW}Not required 'Esc :'${RESET}"
+    echo -e "${MAGENTA}\q      ${RESET}- Quit"
+    echo -e "${MAGENTA}\w      ${RESET}- Save"
+    echo -e "${MAGENTA}\x      ${RESET}- Save and quit"
+    echo -e "${MAGENTA}\/      ${RESET}- Clear highlights"
+    echo
 
     # Split Management
     echo -e "${ORANGE}Split Commands:${RESET}"
-    echo -e "${YELLOW}Required 'Esc :':${RESET}"
-    echo -e "${MAGENTA}:sp${RESET}   - Create horizontal split (same file)"
-    echo -e "${MAGENTA}:new${RESET}  - Create horizontal split (new file)"
-    echo -e "${MAGENTA}:vsp${RESET}  - Create vertical split (same file)"
-    echo -e "${MAGENTA}:vnew${RESET} - Create vertical split (new file)\n"
+    echo -e "${YELLOW}Required 'Esc :'${RESET}"
+    echo -e "${MAGENTA}:sp     ${RESET}- Create horizontal split (same file)"
+    echo -e "${MAGENTA}:new    ${RESET}- Create horizontal split (new file)"
+    echo -e "${MAGENTA}:vsp    ${RESET}- Create vertical split (same file)"
+    echo -e "${MAGENTA}:vnew   ${RESET}- Create vertical split (new file)"
+    echo
 
     echo -e "${ORANGE}Split Control:${RESET}"
     echo -e "${MAGENTA}Ctrl w c${RESET} - Close current split"
-    echo -e "${MAGENTA}Ctrl w o${RESET} - Close all splits except current\n"
+    echo -e "${MAGENTA}Ctrl w o${RESET} - Close all splits except current"
+    echo
 
     # Navigation
     echo -e "${ORANGE}Split Navigation:${RESET}"
-    echo -e "${MAGENTA}Ctrl h${RESET} - Move to left split"
-    echo -e "${MAGENTA}Ctrl j${RESET} - Move to down split"
-    echo -e "${MAGENTA}Ctrl k${RESET} - Move to up split"
-    echo -e "${MAGENTA}Ctrl l${RESET} - Move to right split\n"
+    echo -e "${MAGENTA}Ctrl h  ${RESET}- Move to left split"
+    echo -e "${MAGENTA}Ctrl j  ${RESET}- Move to down split"
+    echo -e "${MAGENTA}Ctrl k  ${RESET}- Move to up split"
+    echo -e "${MAGENTA}Ctrl l  ${RESET}- Move to right split"
+    echo
 
     # Resizing
     echo -e "${ORANGE}Split Resizing:${RESET}"
@@ -337,233 +386,338 @@ vimfo() {
     echo -e "${MAGENTA}Ctrl w -${RESET} - Decrease height"
     echo -e "${MAGENTA}Ctrl w >${RESET} - Increase width"
     echo -e "${MAGENTA}Ctrl w <${RESET} - Decrease width"
-    echo -e "${MAGENTA}Ctrl w =${RESET} - Equalize split sizes\n"
+    echo -e "${MAGENTA}Ctrl w =${RESET} - Equalize split sizes"
+    echo
 
     # Launch Commands
     echo -e "${ORANGE}Launch with Splits:${RESET}"
     echo -e "${MAGENTA}vim -O file1.txt file2.txt${RESET} - Open with vertical split"
     echo -e "${MAGENTA}vim -o file1.txt file2.txt${RESET} - Open with horizontal split"
+    echo
 }
 
+# Tmux help
 tmuxfo() {
+    echo ""
     echo -e "${BLUE}Tmux Cheatsheet${RESET}\n"
-    echo -e "${MAGENTA}Ctrl a${RESET} - Leader key"
+    echo -e "${MAGENTA}Ctrl a${RESET}                  - Leader key"
+    echo
 
-    # Splitting Panes
-    echo -e "${ORANGE}Splitting Panes:${RESET}"
-    echo -e "${MAGENTA}Ctrl a |${RESET} - Split vertically"
-    echo -e "${MAGENTA}Ctrl a -${RESET} - Split horizontally\n"
+    echo -e "${ORANGE}Session management${RESET}"
+    echo -e "${MAGENTA}tmux new -s <name>${RESET} or ${MAGENTA}tn${RESET}                  - Create new session"
+    echo -e "${MAGENTA}tmux new-session -A -s <name>${RESET} or ${MAGENTA}tns${RESET}      - Create session if not exists or attach"
+    echo -e "${MAGENTA}tmux ls${RESET} or ${MAGENTA}tls${RESET}                            - List sessions"
+    echo -e "${MAGENTA}tmux attach -t <name>${RESET} or ${MAGENTA}ta${RESET}               - Attach to session"
+    echo -e "${MAGENTA}tmux switch -t <name>${RESET} or ${MAGENTA}ts${RESET}               - Switch to another session"
+    echo -e "${MAGENTA}tmux rename-session -t <old> <new>${RESET} or ${MAGENTA}tres${RESET} - Rename session"
+    echo -e "${MAGENTA}tmux kill-session -t <name>${RESET} or ${MAGENTA}tks${RESET}        - Kill session"
+    echo -e "${MAGENTA}tmux kill-server${RESET} or ${MAGENTA}tkss${RESET}                  - Kill tmux server"
+    echo -e "${MAGENTA}Ctrl a \$${RESET}                 - Rename current session"
+    echo -e "${MAGENTA}Ctrl a d${RESET}                  - Detach from session"
+    echo -e "${MAGENTA}Ctrl a s${RESET}                  - List and select sessions"
+    echo -e "${MAGENTA}Ctrl a Ctrl t${RESET}             - Choose session from tree"
+    echo
 
-    # Closing Panes
-    echo -e "${ORANGE}Closing Panes:${RESET}"
-    echo -e "${MAGENTA}Ctrl a x${RESET} - Close current pane"
-    echo -e "${MAGENTA}Ctrl a !${RESET} - Break pane into new window\n"
+    echo -e "${ORANGE}Window management${RESET}"
+    echo -e "${MAGENTA}Ctrl a c${RESET}                  - Create new window"
+    echo -e "${MAGENTA}Ctrl a X${RESET}                  - Close current window"
+    echo -e "${MAGENTA}Ctrl a n${RESET} or ${MAGENTA}Alt n${RESET}         - Next window"
+    echo -e "${MAGENTA}Ctrl a p${RESET} or ${MAGENTA}Alt p${RESET}         - Previous window"
+    echo -e "${MAGENTA}Ctrl a w${RESET}                  - List windows"
+    echo -e "${MAGENTA}Ctrl a ,${RESET} or ${MAGENTA}trew${RESET}          - Rename current window"
+    echo -e "${MAGENTA}Ctrl a Ctrl m${RESET}             - Move window to specific index"
+    echo -e "${MAGENTA}Alt <1-9>${RESET}                 - Jump to window <1-9>"
+    echo -e "${MAGENTA}tmux list-windows${RESET} or ${MAGENTA}tw${RESET}    - List windows"
+    echo
 
-    # Pane Navigation
-    echo -e "${ORANGE}Pane Navigation:${RESET}"
-    echo -e "${MAGENTA}Alt left arrow${RESET} - Move to left pane"
-    echo -e "${MAGENTA}Alt down arrow${RESET} - Move to lower pane"
-    echo -e "${MAGENTA}Alt up arrow${RESET} - Move to upper pane"
-    echo -e "${MAGENTA}Alt right arrow${RESET} - Move to right pane"
-    echo -e "${MAGENTA}Ctrl a q${RESET} - Show pane numbers\n"
+    echo -e "${ORANGE}Pane creation and layout${RESET}"
+    echo -e "${MAGENTA}Ctrl a |${RESET} or ${MAGENTA}Alt \\${RESET}        - Split vertically"
+    echo -e "${MAGENTA}Ctrl a -${RESET} or ${MAGENTA}Alt -${RESET}         - Split horizontally"
+    echo -e "${MAGENTA}Ctrl a space${RESET}              - Cycle through layouts"
+    echo -e "${MAGENTA}Ctrl a =${RESET}                  - Equalize pane sizes"
+    echo
 
-    # Pane Resizing
-    echo -e "${ORANGE}Pane Resizing:${RESET}"
-    echo -e "${MAGENTA}Alt Shift left arrow${RESET} - Decrease width"
-    echo -e "${MAGENTA}Alt Shift right arrow{RESET} - Increase width"
-    echo -e "${MAGENTA}Alt Shift down arrow${RESET} - Decrease height"
-    echo -e "${MAGENTA}Alt Shift up arrow${RESET} - Increase height"
-    echo -e "${MAGENTA}Ctrl a =${RESET} - Equalize pane sizes\n"
+    echo -e "${ORANGE}Pane navigation${RESET}"
+    echo -e "${MAGENTA}Alt left/right/up/down arrow${RESET} - Move between panes"
+    echo -e "${MAGENTA}Ctrl a q${RESET}                  - Show pane numbers (press number to select)"
+    echo -e "${MAGENTA}Ctrl a z${RESET}                  - Toggle pane zoom (fullscreen)"
+    echo -e "${MAGENTA}Ctrl a {${RESET}                  - Swap pane with previous"
+    echo -e "${MAGENTA}Ctrl a }${RESET}                  - Swap pane with next"
+    echo -e "${MAGENTA}Ctrl a Ctrl s${RESET}             - Synchronize panes (send input to all panes)"
+    echo
 
-    # Windows (Tabs)
-    echo -e "${ORANGE}Windows (Tabs):${RESET}"
-    echo -e "${MAGENTA}Ctrl a c${RESET} - Create new window"
-    echo -e "${MAGENTA}Ctrl a n${RESET} - Next window"
-    echo -e "${MAGENTA}Ctrl a p${RESET} - Previous window"
-    echo -e "${MAGENTA}Ctrl a w${RESET} - List windows"
-    echo -e "${MAGENTA}Ctrl a ,${RESET} - Rename current window"
-    echo -e "${MAGENTA}Ctrl a &${RESET} - Close current window\n"
+    echo -e "${ORANGE}Pane resizing${RESET}"
+    echo -e "${MAGENTA}Alt Shift left arrow${RESET}      - Decrease width by 5"
+    echo -e "${MAGENTA}Alt Shift right arrow${RESET}     - Increase width by 5"
+    echo -e "${MAGENTA}Alt Shift down arrow${RESET}      - Decrease height by 2"
+    echo -e "${MAGENTA}Alt Shift up arrow${RESET}        - Increase height by 2"
+    echo
 
-    #Sessions
-    echo -e "${ORANGE}Sessions:${RESET}"
-    echo -e "${MAGENTA}tmux new -s <name>${RESET} or ${MAGENTA}tn${RESET} - Create a new session"
-    echo -e "${MAGENTA}tmux detach${RESET} or ${MAGENTA}td${RESET} - Detach from current session"
-    echo -e "${MAGENTA}tmux ls${RESET} or ${MAGENTA}tl${RESET} - List sessions"
-    echo -e "${MAGENTA}tmux attach -t <name>${RESET} or ${MAGENTA}ta${RESET} - Attach to session"
-    echo -e "${MAGENTA}tmux detach${RESET} - Detach from current session"
-    echo -e "${MAGENTA}tmux rename-session -t <old_name> <new_name>${RESET} or ${MAGENTA}tres${RESET} - Rename session" 
-    echo -e "${MAGENTA}tmux kill-session -t <name>${RESET} or ${MAGENTA}tk${RESET} - Kill a session"
-    echo -e "${MAGENTA}tmux switch -t <name>${RESET} or ${MAGENTA}ts${RESET} - Switch to another session\n"
+    echo -e "${ORANGE}Pane management${RESET}"
+    echo -e "${MAGENTA}Ctrl a x${RESET}                  - Close current pane"
+    echo -e "${MAGENTA}Ctrl a !${RESET}                  - Break pane into new window"
+    echo
 
-    # Launching with Splits
-    echo -e "${ORANGE}Launch with Splits:${RESET}"
-    echo -e "${MAGENTA}tmux new-session -d -s <name>${RESET} - Start a detached session"
-    echo -e "${MAGENTA}tmux new-session -A -s <name>${RESET} or ${MAGENTA}tns${RESET} - Create if not exists, or attach"
-    echo -e "${MAGENTA}tmux split-window -h${RESET} - Split horizontally"
-    echo -e "${MAGENTA}tmux split-window -v${RESET} - Split vertically"
-    echo -e "${MAGENTA}tmux select-layout tiled${RESET} - Tile all panes"
-    echo -e "${MAGENTA}tmux kill-server${RESET} or ${MAGENTA}tks${RESET} - Kill the tmux server\n"
+    echo -e "${ORANGE}Copy mode and clipboard${RESET}"
+    echo -e "${MAGENTA}Ctrl a [${RESET}                  - Enter copy mode"
+    echo -e "${MAGENTA}Ctrl c${RESET} or ${MAGENTA}q${RESET}             - Exit copy mode"
+    echo -e "${MAGENTA}Space${RESET}                     - Start selection in copy mode"
+    echo -e "${MAGENTA}Enter${RESET}                     - Copy selection in copy mode"
+    echo -e "${MAGENTA}Ctrl a ]${RESET}                  - Paste copied text"
+    echo -e "${MAGENTA}Shift + mouse drag${RESET}        - Highlight and copy text"
+    echo -e "${MAGENTA}v${RESET}                         - Start selection in vi mode"
+    echo -e "${MAGENTA}y${RESET}                         - Copy selection to system clipboard (tmux-yank)"
+    echo -e "${MAGENTA}Y${RESET}                         - Copy current line to system clipboard (tmux-yank)"
+    echo -e "${MAGENTA}Ctrl a y${RESET}                  - Copy current pane working directory"
+    echo
 
-    # Copy Mode
-    echo -e "${ORANGE}Copying:${RESET}"
-    echo -e "Use ${MAGENTA}Shift + mouse drag${RESET} to highlight and copy from the terminal"
-    echo -e "Use ${MAGENTA}Ctrl a [${RESET} to enter copy mode (if mouse isn't working), to exit press ${MAGENTA}q${RESET}"
-    echo -e "Then ${MAGENTA}Space${RESET} to start selection, and ${MAGENTA}Enter${RESET} to copy"
-    echo -e "Paste with ${MAGENTA}Ctrl a ]${RESET}\n"
+    echo -e "${ORANGE}Configuration${RESET}"
+    echo -e "${MAGENTA}Ctrl a r${RESET}                  - Reload tmux configuration file"
+    echo -e "${MAGENTA}Ctrl a :${RESET}                  - Enter command mode"
+    echo
+
+    echo -e "${ORANGE}Plugin management - TPM${RESET}"
+    echo -e "${MAGENTA}Ctrl a Ctrl i${RESET}             - Install plugins"
+    echo -e "${MAGENTA}Ctrl a Ctrl u${RESET}             - Update plugins"
+    echo -e "${MAGENTA}Ctrl a Alt u${RESET}              - Uninstall removed plugins"
+    echo -e "${MAGENTA}Ctrl a Ctrl S${RESET}             - Save tmux session (tmux-resurrect)"
+    echo -e "${MAGENTA}Ctrl a Ctrl r${RESET}             - Restore tmux session (tmux-resurrect)"
+    echo -e "${MAGENTA}Ctrl a Ctrl b${RESET}             - Backup tmux session (tmux-resurrect)"
+    echo
+
+    echo -e "${ORANGE}Advanced session commands${RESET}"
+    echo -e "${MAGENTA}tmux new-session -d -s <name>${RESET}         - Start a detached session"
+    echo -e "${MAGENTA}tmux select-layout tiled${RESET} or ${MAGENTA}tslt${RESET} - Tile all panes"
+    echo
 }
 
+# VS Code help
+vscfo() {
+    echo ""
+    echo -e "${ORANGE}Navigation:${RESET}"
+    echo -e "${MAGENTA}Ctrl p             ${RESET} - Quick Open - Rapidly find and open files"
+    echo -e "${MAGENTA}Ctrl Shift p       ${RESET} - Open Command Palette"
+    echo -e "${MAGENTA}Ctrl Shift ç       ${RESET} - Open Terminal"
+    echo
 
-vscfoo() {
-    ## FILL shortcuts and tips for VS Code
-    echo -e "${MAGENTA}Ctrl P${RESET} - Quick Open - Rapidly find and open files"
-    echo -e "${MAGENTA}Ctrl Shift P${RESET} - Open Command Palette"
-    echo -e "${MAGENTA}Ctrl Shift ç${RESET} - Open Terminal"
-    echo -e "${MAGENTA}Ctrl / ${RESET} - Toggle line comment"
-    echo -e "${MAGENTA}Shift Alt A${RESET} - Toggle block comment"
-    echo -e "${MAGENTA}Shift Alt f ${RESET} - Format entire file"
-    echo -e "${MAGENTA}Alt Up/Down${RESET} - Move entire line or selected lines up or down"
-    echo -e "${MAGENTA}Ctrl D${RESET} - Select next occurrence of current word"
-    echo -e "${MAGENTA}Ctrl Shift L${RESET} - Select all occurrences of current selection"
-    echo -e "${MAGENTA}Alt Click${RESET} - Multi-cursor editing"
-    echo -e "${MAGENTA}Shift Alt F ${RESET} -  Format document"
-    echo -e "${MAGENTA}Ctrl k Ctrl s ${RESET} - Open Keyboard Shortcuts"
-    echo -e "${MAGENTA}F5${RESET} - Start Debugging"
-    echo -e "${MAGENTA}Shift F5${RESET} - Stop Debugging"
-    echo -e "${MAGENTA}F9${RESET} - Toggle Breakpoint"
-    echo -e "${MAGENTA}F10${RESET} - Step Over"
-    echo -e "${MAGENTA}F11${RESET} - Step Into"
-    echo -e "${MAGENTA}Ctrl k v${RESET} - Preview markown"
+    echo -e "${ORANGE}Editing:${RESET}"
+    echo -e "${MAGENTA}Ctrl /             ${RESET} - Toggle line comment"
+    echo -e "${MAGENTA}Shift Alt a        ${RESET} - Toggle block comment"
+    echo -e "${MAGENTA}Shift Alt f        ${RESET} - Format entire file"
+    echo -e "${MAGENTA}Alt Up/Down        ${RESET} - Move entire line or selected lines up or down"
+    echo -e "${MAGENTA}Shift Alt Up/Down  ${RESET} - Copy the current line or selection up or down"
+    echo -e "${MAGENTA}Ctrl Shift k       ${RESET} - Delete the current line"
+    echo -e "${MAGENTA}Shift Alt Right/Left${RESET} - Expand or shrink the current selection"
+    echo -e "${MAGENTA}Ctrl Shift l       ${RESET} - Select all occurrences of current selection"
+    echo
+
+    echo -e "${ORANGE}Multi-cursor:${RESET}"
+    echo -e "${MAGENTA}Ctrl d             ${RESET} - Select next occurrence of current word"
+    echo -e "${MAGENTA}Ctrl Shift l       ${RESET} - Add cursors to all instances of the current selection"
+    echo -e "${MAGENTA}Alt Click          ${RESET} - Multi-cursor editing"
+    echo -e "${MAGENTA}Ctrl Alt Up/Down   ${RESET} - Add a cursor above or below the current line"
+    echo -e "${MAGENTA}Shift Alt Drag     ${RESET} - Column (block) selection"
+    echo -e "${MAGENTA}editor.multiCursorModifier${RESET} - Set to Ctrl+Click or Alt+Click for multi-cursor (see Selection menu)"
     echo -e "${MAGENTA}Press and Hold scrollwheel button and drag the mouse up or down${RESET} - Create a cursor on each line."
+    echo
+
+    echo -e "${ORANGE}Panels & Views:${RESET}"
+    echo -e "${MAGENTA}Ctrl \`            ${RESET} - Toggle integrated terminal"
+    echo -e "${MAGENTA}Ctrl Shift x       ${RESET} - Open the Extensions panel"
+    echo -e "${MAGENTA}Ctrl Shift g       ${RESET} - Open the Source Control panel"
+    echo -e "${MAGENTA}Ctrl Shift m       ${RESET} - Open the Problems panel"
+    echo
+
+    echo -e "${ORANGE}Interface & Layout:${RESET}"
+    echo -e "${MAGENTA}Ctrl k z           ${RESET} - Zen Mode (distraction-free)"
+    echo -e "${MAGENTA}Ctrl \\             ${RESET} - Split the editor into two"
+    echo -e "${MAGENTA}Ctrl b             ${RESET} - Show or hide the sidebar"
+    echo
+    
+    echo -e "${ORANGE}Command Palette & Settings:${RESET}"
+    echo -e "${MAGENTA}Ctrl Shift p       ${RESET} - Access all commands"
+    echo -e "${MAGENTA}Ctrl k Ctrl s      ${RESET} - Open the keyboard shortcuts editor"
+    echo -e "${MAGENTA}Ctrl ,             ${RESET} - Open the settings panel"
+    echo
+
+    echo -e "${ORANGE}Debugging:${RESET}"
+    echo -e "${MAGENTA}F5                 ${RESET} - Start or continue debugging"
+    echo -e "${MAGENTA}Shift F5           ${RESET} - Stop debugging"
+    echo -e "${MAGENTA}F9                 ${RESET} - Add or remove a breakpoint"
+    echo -e "${MAGENTA}F10 / F11 / Shift F11${RESET} - Step over, into, or out during debugging"
+    echo
+
+    echo -e "${ORANGE}Productivity & Customization:${RESET}"
+    echo -e "${MAGENTA}Shift Alt f        ${RESET} - Format the entire file"
+    echo -e "${MAGENTA}Ctrl = / Ctrl -    ${RESET} - Increase/decrease editor font size"
+    echo -e "${MAGENTA}Customize Shortcuts${RESET} - Open Keyboard Shortcuts editor (Ctrl k Ctrl s) or edit keybindings.json for advanced customization"
+    echo
+
+    echo -e "${ORANGE}Copilot:${RESET}"
+    echo -e "${MAGENTA}Tab                ${RESET} - Accepts the entire inline suggestion"
+    echo -e "${MAGENTA}Alt + ]            ${RESET} - Show next alternative inline suggestion"
+    echo -e "${MAGENTA}Alt + [            ${RESET} - Show previous alternative inline suggestion"
+    echo -e "${MAGENTA}Ctrl + Right Arrow ${RESET} - Accepts the next word of inline suggestion (partial accept)"
+    echo -e "${MAGENTA}Ctrl + Alt + Right Arrow${RESET} - Accepts the next line of inline suggestion (partial accept)"
+    echo -e "${MAGENTA}Esc                ${RESET} - Dismisses the current inline suggestion"
+    echo -e "${MAGENTA}Alt + \\           ${RESET} - Forces Copilot to trigger an inline suggestion"
+    echo -e "${MAGENTA}Ctrl + Enter       ${RESET} - Opens the GitHub Copilot: Open Completions panel"
+    echo -e "${MAGENTA}Ctrl + I           ${RESET} - Starts Inline Chat"
+    echo -e "${MAGENTA}Ctrl + Alt + I     ${RESET} - Opens the dedicated Copilot Chat view"
+    echo -e "${MAGENTA}Customize Keybindings${RESET} - Modify Copilot shortcuts in VS Code's Keyboard Shortcuts settings (Ctrl+K Ctrl+S)"
+    echo -e "${MAGENTA}Context Matters    ${RESET} - Better code context leads to better Copilot suggestions"
+    echo
+
+    echo -e "${ORANGE}Other:${RESET}"
+    echo -e "${MAGENTA}Ctrl k v           ${RESET} - Preview Markdown"
+    echo
 }
+
 
 show_git_commands() {
+    echo ""
     echo -e "${ORANGE}List of Git aliases and functions:${RESET}"
-    echo -e "${MAGENTA}lazygit${RESET} - Commit and push changes to a specified branch. Usage: ${YELLOW}lazygit '<commit_message>' <branch_name>${RESET}"
-    echo -e "${MAGENTA}nb${RESET} - Create a new Git branch. Usage: nb ${YELLOW}<branch_name>${RESET}"
-    echo -e "${MAGENTA}gall${RESET} - Add all changes to Git staging area (equal to git add -A)."
-    echo -e "${MAGENTA}gst${RESET} - Show the current status of the Git repository."
-    echo -e "${MAGENTA}gdst${RESET} - Show the current status of the Git repositories existing in current directory"
-    echo -e "${MAGENTA}ga${RESET} - Add file to Git staging area. Usage: ga <file>"
-    echo -e "${MAGENTA}gf${RESET} - Fetch updates from the remote Git repository (git fetch)."
-    echo -e "${MAGENTA}gb${RESET} - Show the list of Git branches."
-    echo -e "${MAGENTA}gc${RESET} - Commit staged changes with a message. Usage: ${YELLOW}gc '<commit_message>'${RESET}"
-    echo -e "${MAGENTA}gcl${RESET} - Clone a Git repository. Usage: ${YELLOW}gcl <repository_url>${RESET}"
-    echo -e "${MAGENTA}gi${RESET} - Initialize a new Git repository."
-    echo -e "${MAGENTA}gl${RESET} - Show the Git log."
-    echo -e "${MAGENTA}gls${RESET} - Show a graph of the Git log with oneline and decorations."
-    echo -e "${MAGENTA}glpd${RESET} - Show the Git log with detailed commit information and patch diff."
-    echo -e "${MAGENTA}glps${RESET} - Show the Git log with stats and details."
-    echo -e "${MAGENTA}glp${RESET} - Show the Git log with formatted output and human-readable date."
-    echo -e "${MAGENTA}gstr${RESET} - Show a simplified graph of the Git log, displaying only decorated commits."
-    echo -e "${MAGENTA}gp${RESET} - Push changes to a remote Git repository. Usage: ${YELLOW}gp <branch_name>${RESET}"
-    echo -e "${MAGENTA}gu${RESET} - Pull updates from the remote Git repository (git pull)."
-    echo -e "${MAGENTA}gs${RESET} - Switch Git branches. Usage: ${YELLOW}gs <branch_name>${RESET}"
+    echo -e "${MAGENTA}lazygit${RESET}         - Commit and push changes to a specified branch. Usage: ${YELLOW}lazygit '<commit_message>' <branch_name>${RESET}"
+    echo -e "${MAGENTA}nb${RESET}              - Create a new Git branch. Usage: nb ${YELLOW}<branch_name>${RESET}"
+    echo -e "${MAGENTA}gall${RESET}            - Add all changes to Git staging area (equal to git add -A)."
+    echo -e "${MAGENTA}gst${RESET}             - Show the current status of the Git repository."
+    echo -e "${MAGENTA}gdst${RESET}            - Show the current status of the Git repositories existing in current directory"
+    echo -e "${MAGENTA}ga${RESET}              - Add file to Git staging area. Usage: ga <file>"
+    echo -e "${MAGENTA}gf${RESET}              - Fetch updates from the remote Git repository (git fetch)."
+    echo -e "${MAGENTA}gb${RESET}              - Show the list of Git branches."
+    echo -e "${MAGENTA}gc${RESET}              - Commit staged changes with a message. Usage: ${YELLOW}gc '<commit_message>'${RESET}"
+    echo -e "${MAGENTA}gcl${RESET}             - Clone a Git repository. Usage: ${YELLOW}gcl <repository_url>${RESET}"
+    echo -e "${MAGENTA}gi${RESET}              - Initialize a new Git repository."
+    echo -e "${MAGENTA}gl${RESET}              - Show the Git log."
+    echo -e "${MAGENTA}gls${RESET}             - Show a graph of the Git log with oneline and decorations."
+    echo -e "${MAGENTA}glpd${RESET}            - Show the Git log with detailed commit information and patch diff."
+    echo -e "${MAGENTA}glps${RESET}            - Show the Git log with stats and details."
+    echo -e "${MAGENTA}glp${RESET}             - Show the Git log with formatted output and human-readable date."
+    echo -e "${MAGENTA}gstr${RESET}            - Show a simplified graph of the Git log, displaying only decorated commits."
+    echo -e "${MAGENTA}gp${RESET}              - Push changes to a remote Git repository. Usage: ${YELLOW}gp <branch_name>${RESET}"
+    echo -e "${MAGENTA}gu${RESET}              - Pull updates from the remote Git repository (git pull)."
+    echo -e "${MAGENTA}gs${RESET}              - Switch Git branches. Usage: ${YELLOW}gs <branch_name>${RESET}"
+    echo -e "${MAGENTA}gsts${RESET}            - Show the short status of the Git repository."
+    echo -e "${MAGENTA}gdif${RESET}            - Show the differences between the working directory and the last commit."
+    echo
 }
 
 show_kubernetes_commands() {
+    echo ""
     echo -e "${ORANGE}List of Kubernetes aliases and functions:${RESET}"
-    echo -e "${MAGENTA}k${RESET} - Kubernetes alias for kubectl."
-    echo -e "${MAGENTA}ks${RESET} - Kubernetes alias for kubectl with the kube-system namespace."
-
-    echo -e "\n${BLUE}## Cluster Commands:${RESET}"
-    echo -e "${MAGENTA}kci${RESET} - Display cluster information."
-    echo -e "${MAGENTA}kgnw${RESET} - Get the list of nodes with wide output (shows additional information)."
-
-    echo -e "\n${BLUE}## Create resources:${RESET}"
-    echo -e "${MAGENTA}kcf${RESET} - Create a Kubernetes resource from a file. ${YELLOW}Usage: kcf <file.yaml>${RESET}"
-    echo -e "${MAGENTA}kaf${RESET} - Apply a Kubernetes resource from a file. ${YELLOW}Usage: kaf <file.yaml>${RESET}"
-
-    echo -e "\n${BLUE}## Get resources:${RESET}"
-    echo -e "${MAGENTA}kgn${RESET} - Get the list of nodes in the Kubernetes cluster."
-    echo -e "${MAGENTA}kgp${RESET} - Get the list of pods in the Kubernetes cluster."
-    echo -e "${MAGENTA}kgpa${RESET} - Get the list of pods in all namespaces in the Kubernetes cluster."
-    echo -e "${MAGENTA}kgs${RESET} - Get the list of services in the Kubernetes cluster."
-    echo -e "${MAGENTA}kgd${RESET} - Get the list of deployments in the Kubernetes cluster."
-    echo -e "${MAGENTA}kgns${RESET} - Get the list of namespaces in the Kubernetes cluster."
-
-    echo -e "\n${BLUE}## Delete:${RESET}"
-    echo -e "${MAGENTA}kd${RESET} - Delete a Kubernetes resource. Usage: ${YELLOW}kd <resource_type> <resource_name>${RESET}"
-    echo -e "${MAGENTA}kdp${RESET} - Delete a Kubernetes pod. Usage: ${YELLOW}kdp <pod_name>${RESET}"
-    echo -e "${MAGENTA}kds${RESET} - Delete a Kubernetes service. Usage: ${YELLOW}kds <service_name>${RESET}"
-    echo -e "${MAGENTA}kdd${RESET} - Delete a Kubernetes deployment. Usage: ${YELLOW}kdd <deployment_name>${RESET}"
-    echo -e "${MAGENTA}kdn${RESET} - Delete a Kubernetes namespace. Usage: ${YELLOW}kdn <namespace_name>${RESET}"
-
-    echo -e "\n${BLUE}## Documentation & Logs:${RESET}"
-    echo -e "${MAGENTA}kexp${RESET} - Show documentation for a Kubernetes resource type or existing resource. Usage: ${YELLOW}kexp <resource>${RESET}"
-    echo -e "${MAGENTA}kdesc${RESET} - Describe Kubernetes resources. Usage: ${YELLOW}kdesc <resource_type> <resource_name>${RESET}"
-    echo -e "${MAGENTA}kl${RESET} - Show logs for a pod. Usage: ${YELLOW}kl <pod_name>${RESET}"
-
-    echo -e "\n${BLUE}## Others:${RESET}"
-    echo -e "${MAGENTA}ked${RESET} - Edit a Kubernetes resource. Usage: ${YELLOW}ked <resource_type>/<resource_name>${RESET}"
-    echo -e "${MAGENTA}ke${RESET} - Execute a command inside a running pod. Usage: ${YELLOW}ke <pod_name> -- <command>${RESET}"
+    echo -e "${MAGENTA}k${RESET}      - Kubernetes alias for kubectl."
+    echo -e "${MAGENTA}ks${RESET}     - Kubernetes alias for kubectl with the kube-system namespace."
+    echo
+    echo -e "${BLUE}## Cluster Commands:${RESET}"
+    echo -e "${MAGENTA}kci${RESET}    - Display cluster information."
+    echo -e "${MAGENTA}kgnw${RESET}   - Get the list of nodes with wide output (shows additional information)."
+    echo
+    echo -e "${BLUE}## Create resources:${RESET}"
+    echo -e "${MAGENTA}kcf${RESET}    - Create a Kubernetes resource from a file. ${YELLOW}Usage: kcf <file.yaml>${RESET}"
+    echo -e "${MAGENTA}kaf${RESET}    - Apply a Kubernetes resource from a file. ${YELLOW}Usage: kaf <file.yaml>${RESET}"
+    echo
+    echo -e "${BLUE}## Get resources:${RESET}"
+    echo -e "${MAGENTA}kgn${RESET}    - Get the list of nodes in the Kubernetes cluster."
+    echo -e "${MAGENTA}kgp${RESET}    - Get the list of pods in the Kubernetes cluster."
+    echo -e "${MAGENTA}kgpa${RESET}   - Get the list of pods in all namespaces in the Kubernetes cluster."
+    echo -e "${MAGENTA}kgs${RESET}    - Get the list of services in the Kubernetes cluster."
+    echo -e "${MAGENTA}kgd${RESET}    - Get the list of deployments in the Kubernetes cluster."
+    echo -e "${MAGENTA}kgns${RESET}   - Get the list of namespaces in the Kubernetes cluster."
+    echo
+    echo -e "${BLUE}## Delete:${RESET}"
+    echo -e "${MAGENTA}kd${RESET}     - Delete a Kubernetes resource. Usage: ${YELLOW}kd <resource_type> <resource_name>${RESET}"
+    echo -e "${MAGENTA}kdp${RESET}    - Delete a Kubernetes pod. Usage: ${YELLOW}kdp <pod_name>${RESET}"
+    echo -e "${MAGENTA}kds${RESET}    - Delete a Kubernetes service. Usage: ${YELLOW}kds <service_name>${RESET}"
+    echo -e "${MAGENTA}kdd${RESET}    - Delete a Kubernetes deployment. Usage: ${YELLOW}kdd <deployment_name>${RESET}"
+    echo -e "${MAGENTA}kdn${RESET}    - Delete a Kubernetes namespace. Usage: ${YELLOW}kdn <namespace_name>${RESET}"
+    echo
+    echo -e "${BLUE}## Documentation & Logs:${RESET}"
+    echo -e "${MAGENTA}kexp${RESET}   - Show documentation for a Kubernetes resource type or existing resource. Usage: ${YELLOW}kexp <resource>${RESET}"
+    echo -e "${MAGENTA}kdesc${RESET}  - Describe Kubernetes resources. Usage: ${YELLOW}kdesc <resource_type> <resource_name>${RESET}"
+    echo -e "${MAGENTA}kl${RESET}     - Show logs for a pod. Usage: ${YELLOW}kl <pod_name>${RESET}"
+    echo
+    echo -e "${BLUE}## Others:${RESET}"
+    echo -e "${MAGENTA}ked${RESET}    - Edit a Kubernetes resource. Usage: ${YELLOW}ked <resource_type>/<resource_name>${RESET}"
+    echo -e "${MAGENTA}ke${RESET}     - Execute a command inside a running pod. Usage: ${YELLOW}ke <pod_name> -- <command>${RESET}"
     echo -e "${MAGENTA}ksetns${RESET} - Jump to namespace for kubectl context. Usage: ${YELLOW}ksetns <namespace>${RESET}"
+    echo
 }
 
 show_utility_commands() {
+    echo ""
     echo -e "${ORANGE}List of Terminal Utility alias and functions:${RESET}"
-    echo -e "${MAGENTA}ll${RESET} - Long list."
-    echo -e "${MAGENTA}v${RESET} - vim"
-    echo -e "${MAGENTA}aqui${RESET} - Open the current directory in Windows Explorer (WSL Only)."
-    echo -e "${MAGENTA}fmedia${RESET} - Move all .mkv and .mp4 files to the current directory."
-    echo -e "${MAGENTA}cdd${RESET} - Change directory to Windows Desktop on WSL (WSL Only)."
-    echo -e "${MAGENTA}explain${RESET} - Explains the given command or enters interactive mode to explain commands."
-    echo -e "${MAGENTA}tldr${RESET} - Explains the given command and provides examples."
-    echo -e "${MAGENTA}code${RESET} - Launch Visual Studio Code from the command line (can open files directly too)"
-    echo -e "${MAGENTA}data${RESET} - Print the current date and time."
-    echo -e "${MAGENTA}tempolx${RESET} - Get the weather in Lisboa."
-    echo -e "${MAGENTA}temposx${RESET} - Get the weather in Seixal."
-    echo -e "${MAGENTA}tempolxf${RESET} - Get the full weather info in Lisboa."
-    echo -e "${MAGENTA}temposxf${RESET} - Get the full weather info in Seixal."
-    echo -e "${MAGENTA}tempo${RESET} - Get the weather in a specified city. Usage: ${YELLOW}tempo <city>${RESET}"
-    echo -e "${MAGENTA}tempof${RESET} - Get the full weather info in a specified city. Usage: ${YELLOW}tempof <city>${RESET}"
-    echo -e "${MAGENTA}dus${RESET} - Show disk usage of files and directories."
-    echo -e "${MAGENTA}net${RESET} - Show network interfaces and their status."
-    echo -e "${MAGENTA}ippub${RESET} - Show Public IP."
-    echo -e "${MAGENTA}ippubf${RESET} - Show information on ISP and Public IP"
-    echo -e "${MAGENTA}field${RESET} - Extract specific fields from a line. Usage: ${YELLOW}field <column_number> <delimiter>${RESET}"
-    echo -e "${MAGENTA}epoch${RESET} - Convert epoch to human-readable date. Usage: ${YELLOW}epoch <epoch_time>${RESET}"
-    echo -e "${MAGENTA}lintsh${RESET} - Lint shell scripts using ShellCheck. Usage: ${YELLOW}lintsh <file.sh>${RESET}"
-    echo -e "${MAGENTA}fmtsh${RESET} - Format shell scripts using shfmt. Usage: ${YELLOW}fmtsh <file.sh>${RESET}"
-    echo -e "${MAGENTA}rb${RESET} - Reload \$HOME/.bashrc"
-    echo -e "${MAGENTA}eb${RESET} - Open \$HOME/.bashrc in vim"
-    echo -e "${MAGENTA}ebt${RESET} - Open \$HOME/.bash_tools in vim"
-    echo -e "${MAGENTA}evrc${RESET} - Open \$HOME/.vimrc in vim"
-    echo -e "${MAGENTA}wdir${RESET} - Change directory to \$HOME/work"
-    echo -e "${MAGENTA}gdir${RESET} - Change directory to \$HOME/git"
-    echo -e "${MAGENTA}ldir${RESET} - Change directory to \$HOME/lab"
-    echo -e "${MAGENTA}ddir${RESET} - Change directory to \$HOME/dotfiles"
-    echo -e "${MAGENTA}dsk${RESET} - Change directory to a specified directory in /mnt. Usage: ${YELLOW}dsk <drive>${RESET}"
-    echo -e "${MAGENTA}vimfo${RESET} - Show custom vim keymaps and cheatsheet"
-    echo -e "${MAGENTA}tmuxfo${RESET} - Show custom tmux keymaps and cheatsheet"
-    echo -e "${MAGENTA}vscfo${RESET} - Show Visual Studio Code keymaps and cheatsheet"
-    echo -e "${MAGENTA}svim${RESET} - Edit files with sudo. Equal to 'sudoedit' and 'sudo -e'"
-    echo -e "${MAGENTA}colors${RESET} - Print all 256 colors in the terminal."
+    echo -e "${MAGENTA}ll        ${RESET} - Long list."
+    echo -e "${MAGENTA}v         ${RESET} - vim"
+    echo -e "${MAGENTA}aqui      ${RESET} - Open the current directory in Windows Explorer (WSL Only)."
+    echo -e "${MAGENTA}fmedia    ${RESET} - Move all .mkv and .mp4 files to the current directory."
+    echo -e "${MAGENTA}cdd       ${RESET} - Change directory to Windows Desktop on WSL (WSL Only)."
+    echo -e "${MAGENTA}explain   ${RESET} - Explains the given command or enters interactive mode to explain commands."
+    echo -e "${MAGENTA}tldr      ${RESET} - Explains the given command and provides examples."
+    echo -e "${MAGENTA}data      ${RESET} - Print the current date and time."
+    echo -e "${MAGENTA}tempolx   ${RESET} - Get the weather in Lisboa."
+    echo -e "${MAGENTA}temposx   ${RESET} - Get the weather in Seixal."
+    echo -e "${MAGENTA}tempolxf  ${RESET} - Get the full weather info in Lisboa."
+    echo -e "${MAGENTA}temposxf  ${RESET} - Get the full weather info in Seixal."
+    echo -e "${MAGENTA}tempo     ${RESET} - Get the weather in a specified city. Usage: ${YELLOW}tempo <city>${RESET}"
+    echo -e "${MAGENTA}tempof    ${RESET} - Get the full weather info in a specified city. Usage: ${YELLOW}tempof <city>${RESET}"
+    echo -e "${MAGENTA}dus       ${RESET} - Show disk usage of files and directories."
+    echo -e "${MAGENTA}net       ${RESET} - Show network interfaces and their status."
+    echo -e "${MAGENTA}ippub     ${RESET} - Show Public IP."
+    echo -e "${MAGENTA}ippubf    ${RESET} - Show information on ISP and Public IP"
+    echo -e "${MAGENTA}field     ${RESET} - Extract specific fields from a line. Usage: ${YELLOW}field <column_number> <delimiter>${RESET}"
+    echo -e "${MAGENTA}epoch     ${RESET} - Convert epoch to human-readable date. Usage: ${YELLOW}epoch <epoch_time>${RESET}"
+    echo -e "${MAGENTA}lintsh    ${RESET} - Lint shell scripts using ShellCheck. Usage: ${YELLOW}lintsh <file.sh>${RESET}"
+    echo -e "${MAGENTA}fmtsh     ${RESET} - Format shell scripts using shfmt. Usage: ${YELLOW}fmtsh <file.sh>${RESET}"
+    echo -e "${MAGENTA}rb        ${RESET} - Reload $HOME/.bashrc"
+    echo -e "${MAGENTA}eb        ${RESET} - Open $HOME/.bashrc in vim"
+    echo -e "${MAGENTA}ebt       ${RESET} - Open $HOME/.bash_tools in vim"
+    echo -e "${MAGENTA}evrc      ${RESET} - Open $HOME/.vimrc in vim"
+    echo -e "${MAGENTA}wdir      ${RESET} - Change directory to $HOME/work"
+    echo -e "${MAGENTA}gdir      ${RESET} - Change directory to $HOME/git"
+    echo -e "${MAGENTA}ldir      ${RESET} - Change directory to $HOME/lab"
+    echo -e "${MAGENTA}ddir      ${RESET} - Change directory to $HOME/dotfiles"
+    echo -e "${MAGENTA}dsk       ${RESET} - Change directory to a specified directory in /mnt. Usage: ${YELLOW}dsk <drive>${RESET}"
+    echo -e "${MAGENTA}vimfo     ${RESET} - Show custom vim keymaps and cheatsheet"
+    echo -e "${MAGENTA}tmuxfo    ${RESET} - Show custom tmux keymaps and cheatsheet"
+    echo -e "${MAGENTA}vscfo     ${RESET} - Show Visual Studio Code keymaps and cheatsheet"
+    echo -e "${MAGENTA}svim      ${RESET} - Edit files with sudo. Equal to 'sudoedit' and 'sudo -e'"
+    echo -e "${MAGENTA}..        ${RESET} - Go up one directory"
+    echo -e "${MAGENTA}...       ${RESET} - Go up two directories"
+    echo
 }
 
 show_media_commands() {
+    echo ""
     echo -e "${ORANGE}List of Media Download functions:${RESET}"
     echo -e "${BLUE}## Youtube (Download audio and/or video):${RESET}"
-    echo -e "${MAGENTA}getyt${RESET} - Download audio from a YouTube video and save it in desktop as MP3. Usage: ${YELLOW}getyt <url>${RESET}"
-    echo -e "${MAGENTA}getytmp4${RESET} - Download audio from a YouTube video and save it in desktop as MP4 1080p. Usage: ${YELLOW}getytmp4 <url>${RESET}"
-    echo -e "${MAGENTA}getytplist${RESET} - Download audio from all videos and save it in desktop in a YouTube playlist. Usage: ${YELLOW}getytplist <url>${RESET}"
-    echo -e "${MAGENTA}getytplistmp4${RESET} - Download all videos and save it in desktop in a YouTube playlist in MP4 format. Usage: ${YELLOW}getytplistmp4 <url>${RESET}"
+    echo -e "${MAGENTA}getyt         ${RESET} - Download audio from a YouTube video and save it in desktop as MP3. Usage: ${YELLOW}getyt <url>${RESET}"
+    echo -e "${MAGENTA}getytmp4      ${RESET} - Download audio from a YouTube video and save it in desktop as MP4 1080p. Usage: ${YELLOW}getytmp4 <url>${RESET}"
+    echo -e "${MAGENTA}getytplist    ${RESET} - Download audio from all videos and save it in desktop in a YouTube playlist. Usage: ${YELLOW}getytplist <url>${RESET}"
+    echo -e "${MAGENTA}getytplistmp4 ${RESET} - Download all videos and save it in desktop in a YouTube playlist in MP4 format. Usage: ${YELLOW}getytplistmp4 <url>${RESET}"
     echo -e "${MAGENTA}getytplistmp4subs${RESET} - Download all videos and save it in desktop in a YouTube playlist in MP4 format with subtitles. Usage: ${YELLOW}getytplistmp4subs <url>${RESET}"
-    echo -e "${MAGENTA}getytmp4subs${RESET} - Download a YouTube video and save it in desktop in MP4 format (1080p) with subtitles. Usage: ${YELLOW}getytmp4subs <url>${RESET}"
-    echo -e "\n${BLUE}## Spotify (Download audio):${RESET}"
-    echo -e "${MAGENTA}getspot${RESET} - Download a song from Spotify and save it in desktop. Usage: ${YELLOW}getspot <url>${RESET}"
-    echo -e "${MAGENTA}getalb${RESET} - Download an album from Spotify and save it in desktop. Usage: ${YELLOW}getalb <url>${RESET}"
+    echo -e "${MAGENTA}getytmp4subs  ${RESET} - Download a YouTube video and save it in desktop in MP4 format (1080p) with subtitles. Usage: ${YELLOW}getytmp4subs <url>${RESET}"
+    echo
+    echo -e "${BLUE}## Spotify (Download audio):${RESET}"
+    echo -e "${MAGENTA}getspot       ${RESET} - Download a song from Spotify and save it in desktop. Usage: ${YELLOW}getspot <url>${RESET}"
+    echo -e "${MAGENTA}getalb        ${RESET} - Download an album from Spotify and save it in desktop. Usage: ${YELLOW}getalb <url>${RESET}"
+    echo -e "${MAGENTA}getplay       ${RESET} - Download a playlist from Spotify and save it in desktop. Usage: ${YELLOW}getplay <url>${RESET}"
+    echo
 }
 
 show_starship_commands() {
+    echo ""
     echo -e "${ORANGE}List of Customization functions:${RESET}"
-    echo -e "${MAGENTA}pcolor${RESET} - Change theme of Prompt 0-29. Usage: ${YELLOW}pcolor <theme-name>${RESET}"
-    echo -e "${MAGENTA}starship explain${RESET} - Explain current Starship prompt configuration."
-
+    echo -e "${MAGENTA}pcolor           ${RESET} - Lists themes and change theme of prompt"
+    echo -e "${MAGENTA}pskinf            ${RESET} - Changes configuration to detailed/full"
+    echo -e "${MAGENTA}pskins            ${RESET} - Changes configuration to simple"
+    echo -e "${MAGENTA}starship config  ${RESET} - Show current Starship prompt configuration."
+    echo -e "${MAGENTA}starship print-config${RESET} - Print the current Starship prompt configuration."
+    echo -e "${MAGENTA}starship explain ${RESET} - Explain current Starship prompt configuration."
+    echo
 }
-    
-
 
 show_help() {
+    echo ""
     echo -e "${YELLOW}Available sections:${RESET}"
     echo "- git            (Git commands)"
     echo "- kubernetes     (or k8s - Kubernetes commands)"
@@ -574,7 +728,9 @@ show_help() {
     echo "- tmux           (Tmux commands)"
     echo "- vsc            (or vscode, code - VS Code commands)"
     echo "- all            (Show all sections)"
+    echo
 }
+
 
 # Main lscom function
 lscom() {
@@ -603,7 +759,7 @@ lscom() {
         tmuxfo
         ;;
     "vsc" | "vscode" | "code")
-        vscfoo
+        vscfo
         ;;
     "all" | "full" | "")
         show_git_commands
@@ -620,7 +776,7 @@ lscom() {
         echo
         tmuxfo
         echo
-        vscfoo
+        vscfo
         ;;
     *)
         show_help

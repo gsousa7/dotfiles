@@ -15,6 +15,8 @@ THEMES_DIR="$HOME/.config/starship/themes"
 # Create backup and log directory
 mkdir -p "$BACKUP_DIR"
 mkdir -p "$HOME/.config/ansible"
+mkdir -p "$THEMES_DIR"
+
 
 # List of dotfiles to handle
 FILES_TO_SYMLINK=(
@@ -27,7 +29,7 @@ BASH_TOOLS="bash_tools"
 
 # List of core packages to install
 PACKAGES=(
-  "telnet" "rsync" "wget" "curl" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "ncdu" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree" "xclip" "fonts-powerline"
+  "telnet" "rsync" "wget" "curl" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree" "xclip" "fonts-powerline"
 )
 
 # Extra tools to install via python package manager
@@ -69,13 +71,13 @@ install_packages() {
             "bash-doc"
             "info"
             "debian-reference-en"
-            "fonts-powerline"
             "shellcheck"
             "shfmt"
         )
         sudo apt update
 
     elif [[ "$PACKAGE_MANAGER" == "dnf" || "$PACKAGE_MANAGER" == "yum" ]]; then
+        $PACKAGE_MANAGER install -y epel-release
         PACKAGES+=(
             "man-db"
             "man-pages"
@@ -84,6 +86,7 @@ install_packages() {
             "info"
             "man-pages-devel"
             "system-doc"
+            "shellcheck"
         )
     fi
 
@@ -119,6 +122,7 @@ install_extra_tools() {
 
   # Ensure pipx is in the PATH
   pipx ensurepath
+
 }
 
 # Clone the dotfiles repository
@@ -143,7 +147,7 @@ backup_dotfiles() {
     fi
   done
 
-  if [ -f "$HOME/$BASH_TOOLS" ] || [ -L "$BASH_TOOLS" ]; then
+  if [ -f "$HOME/$BASH_TOOLS" ] || [ -L "$HOME/$BASH_TOOLS" ]; then
     mv "$BASH_TOOLS" "$BACKUP_DIR/" && log_message "Backed up .$BASH_TOOLS"
   else
     log_message ".$BASH_TOOLS not found, skipping backup"
@@ -160,6 +164,26 @@ backup_dotfiles() {
     mkdir -p "$BACKUP_DIR/.config/htop"
     mv "$HOME/.config/htop/htoprc" "$BACKUP_DIR/.config/htop/" && log_message "Backed up htoprc"
   fi 
+
+  # Backup tmux.conf
+  # Backup $HOME/tmux.conf
+  if [ -f "$HOME/.tmux.conf" ] || [ -L "$HOME/.tmux.conf" ]; then
+    mkdir -p "$BACKUP_DIR/.config/tmux"
+    mv "$HOME/.tmux.conf" "$BACKUP_DIR/.config/tmux/" && log_message "Backed up .tmux.conf"
+  fi
+
+  # Backup $HOME/.config/tmux/tmux.conf
+  if [ -f "$HOME/.config/tmux/tmux.conf" ] || [ -L "$HOME/.config/tmux/tmux.conf" ]; then
+    mkdir -p "$BACKUP_DIR/.config/tmux"
+    mv "$HOME/.config/tmux/tmux.conf" "$BACKUP_DIR/.config/tmux/" && log_message "Backed up tmux.conf"
+  fi
+  
+  # Backup starship.toml
+  if [ -f "$STARSHIP_CONFIG" ] || [ -L "$STARSHIP_CONFIG" ]; then
+    mkdir -p "$BACKUP_DIR/.config/starship"
+    mv "$STARSHIP_CONFIG" "$BACKUP_DIR/.config/starship/" && log_message "Backed up starship.toml"
+  fi
+
 }
 
 # Symlink dotfiles from repository to home directory
@@ -261,6 +285,7 @@ update_gitconfig() {
   if ! [ -f "$HOME/.ssh/id_rsa.pub" ] && ! [ -f "$HOME/.ssh/id_ed25519.pub" ]; then
     log_message "No SSH key found. Create SSH key with 'ssh-keygen -C \"$git_email\"' or 'ssh-keygen -t ed25519 -C \"$git_email\"' and add it to GitHub."
   fi
+
 }
 
 # Ensure that pre-requisites are meet and installed
@@ -286,6 +311,7 @@ install_vim_prereq() {
   else
     log_message "Dracula theme is already installed."
   fi
+
 }
 
 # Install Nerd Fonts
@@ -360,24 +386,36 @@ install_vim_plugins() {
 # Install tmux plugins
 install_tmux_plugins() {
   log_message "Installing tmux plugins..."
-
-  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  
+  if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  fi
+  
   log_message "Run tmux and press Ctrl b + I to install plugins."
 }
 
 install_starship() {
   log_message "Installing Starship prompt..."
+  
   if ! command -v starship &> /dev/null; then
     curl -sS https://starship.rs/install.sh | sh
     log_message "Starship installed successfully."
-    echo 'eval "$(starship init bash)"' >> ~/.bashrc
+    if ! grep -Fxq 'eval "$(starship init bash)"' ~/.bashrc; then
+      echo 'eval "$(starship init bash)"' >> ~/.bashrc
+    fi
     log_message "Starship prompt added to .bashrc."
   else
-    log_message "Starship is already installed."
+    log_message "Starship is already installed or failed."
   fi
-  ln -sf "$DOTFILES_DIR/starship.toml" "$HOME/.config/starship.toml"
-  log_message "Starship configuration file linked."
-  
+
+  # Backup default starship.toml
+  if [ -f "$STARSHIP_CONFIG" ] || [ -L "$STARSHIP_CONFIG" ]; then
+    mkdir -p "$BACKUP_DIR/.config/starship"
+    mv "$STARSHIP_CONFIG" "$BACKUP_DIR/.config/starship/starship.toml.original" && log_message "Backed up default starship.toml"
+  fi
+
+  ln -sf "$DOTFILES_DIR/starship_full.toml" "$HOME/.config/starship.toml"
+  log_message "Starship full/detailed configuration file linked."
 }
 
 update_everything () {
@@ -387,11 +425,13 @@ update_everything () {
   log_message "Updating dotfiles..."
   cd "$DOTFILES_DIR" && git pull || log_message "Error pulling changes."
   log_message "To apply all changes, restart your shell or run: 'source ~/.bashrc' or 'rb'"
+
 }
 
 
 # Main script execution
 log_message "Script execution started."
+echo ""
 detect_package_manager
 
 # Parse command-line arguments
@@ -466,16 +506,29 @@ fi
 case "$action" in
   install)
     install_packages
+    echo ""
     install_extra_tools
+    echo ""
     install_fonts
+    echo ""
     update_gitconfig "${extra_args[@]}" # Pass Git configuration arguments
+    echo ""
     clone_dotfiles_repo
+    echo ""
     backup_dotfiles
+    echo ""
     symlink_dotfiles
+    echo ""
     include_bash_tools
+    echo ""
     install_vim_prereq
+    echo ""
     install_vim_plugins
+    echo ""
     install_tmux_plugins
+    echo ""
+    install_starship
+    echo ""
     ;;
   update)
     log_message "Updating dotfiles..."
@@ -489,8 +542,12 @@ case "$action" in
     ;;
 esac
 
-log_message "Operation complete."
+echo ""
+log_message "Operation complete. If needed check the log file at $LOG_FILE"
+echo ""
 log_message "To apply all changes, restart your shell or run: 'source ~/.bashrc'"
+log_message "Run tmux and press Ctrl b + I to install plugins."
+log_message "Current skin is set to detailed/full, to change skin run 'pskins' for simple configuration or 'pskinf' for detailed/full configuration."  
 log_message "Backups saved in: $BACKUP_DIR"
 log_message "If in WSL instead of OS with Linux, change the variable DESKTOPWINSL to your Windows Desktop path, example: /mnt/c/Users/<Windows_User>/"
 log_message "If in WSL instead of OS with Linux, install manually the fonts in $fonts_dir and delete the fonts zip files."

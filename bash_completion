@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 complete -A setopt set
 complete -A shopt shopt
 complete -A helptopic help
@@ -8,10 +10,9 @@ complete -cf man sudo
 complete -d cd
 
 
-### TMUX
-#!/usr/bin/env bash
 
 
+# tmux completion
 
 function _tmux_complete_client() {
     local IFS=$'\n'
