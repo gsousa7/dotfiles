@@ -411,7 +411,7 @@ install_starship() {
   # Backup default starship.toml
   if [ -f "$STARSHIP_CONFIG" ] || [ -L "$STARSHIP_CONFIG" ]; then
     mkdir -p "$BACKUP_DIR/.config/starship"
-    mv "$STARSHIP_CONFIG" "$BACKUP_DIR/.config/starship/starship.toml.original" && log_message "Backed up default starship.toml"
+    mv "$STARSHIP_CONFIG" "$BACKUP_DIR/.config/starship/starship.toml_$TIMESTAMP" && log_message "Backed up default starship.toml"
   fi
 
   ln -sf "$DOTFILES_DIR/starship_full.toml" "$HOME/.config/starship.toml"
@@ -419,10 +419,10 @@ install_starship() {
 }
 
 update_everything () {
+  log_message "Updating dotfiles..."
   pip install --upgrade pip pipx
   pipx upgrade-all
   pipx ensurepath
-  log_message "Updating dotfiles..."
   cd "$DOTFILES_DIR" && git pull || log_message "Error pulling changes."
   log_message "To apply all changes, restart your shell or run: 'source ~/.bashrc' or 'rb'"
 
@@ -531,10 +531,7 @@ case "$action" in
     echo ""
     ;;
   update)
-    log_message "Updating dotfiles..."
     update_everything
-    cd "$DOTFILES_DIR" && git pull || log_message "Error pulling changes."
-    log_message "To apply all changes, restart your shell or run: 'source ~/.bashrc' or 'rb'"
     ;;
   *)
     log_message "Invalid action. Exiting."
@@ -550,5 +547,5 @@ log_message "Run tmux and press Ctrl b + I to install plugins."
 log_message "Current skin is set to detailed/full, to change skin run 'pskins' for simple configuration or 'pskinf' for detailed/full configuration."  
 log_message "Backups saved in: $BACKUP_DIR"
 log_message "If in WSL instead of OS with Linux, change the variable DESKTOPWINSL to your Windows Desktop path, example: /mnt/c/Users/<Windows_User>/"
-log_message "If in WSL instead of OS with Linux, install manually the fonts in $fonts_dir and delete the fonts zip files."
+log_message "If in WSL instead of OS with Linux, install manually the fonts in /usr/local/share/fonts and delete the fonts zip files."
 

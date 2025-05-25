@@ -7,7 +7,6 @@ set encoding=utf-8              " Use UTF-8 encoding
 set fileencoding=utf-8          " Ensure files are saved as UTF-8
 set clipboard=unnamedplus       " Use system clipboard
 set mouse=a                     " Enable mouse support
-set mouse=r                     " Allows right click to paste
 set history=1000                " Store 1000 lines of command history
 set wildmenu                    " Enhanced command-line completion
 set lazyredraw                  " Improve performance for macros/scripts

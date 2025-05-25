@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 complete -A setopt set
 complete -A shopt shopt
 complete -A helptopic help
