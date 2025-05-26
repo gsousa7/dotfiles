@@ -15,6 +15,8 @@ export LC_ALL=en_US.UTF-8
 export ANSIBLE_CONFIG="$HOME/.config/ansible/config.ini"
 export ANSIBLE_INVENTORY="$HOME/.config/ansible/inventory.yaml"
 
+# Starship window title
+starship_precmd_user_func="set_win_title"
 
 # Color Man pages
 export LESS_TERMCAP_mb=$'\e[1;32m'
@@ -70,7 +72,10 @@ alias svim='sudoedit'
 alias v='vim'
 alias ..='cd ..'
 alias ...='cd ../..'
-
+alias rg="rg --hidden --smart-case --glob='!.git/' --no-search-zip --trim --colors=line:style:bold --colors=path:fg:magenta --colors=match:style:nobold"
+alias rga="rg --hidden --no-ignore --binary --force-text --smart-case --trim"
+alias etx="vim $HOME/.config/tmux/tmux.config"
+alias es="vim $HOME/.config/starship.toml"
 
 # Git Aliases and functions
 alias nb='git checkout -b'
@@ -239,6 +244,10 @@ epoch() {
     printf '%(%B %d, %Y %-I:%M:%S %p %Z)T\n' "$num"
 }
 
+rgs() {
+  git diff --cached --name-only -z | rg --files0-from=- -- "$@"
+}
+
 # youtube-dl functions
 ## Get mp3 file of youtube
 getyt() {
@@ -404,15 +413,15 @@ tmuxfo() {
     echo
 
     echo -e "${ORANGE}Session management${RESET}"
-    echo -e "${MAGENTA}tmux new -s <name>${RESET} or ${MAGENTA}tn${RESET}                  - Create new session"
-    echo -e "${MAGENTA}tmux new-session -A -s <name>${RESET} or ${MAGENTA}tns${RESET}      - Create session if not exists or attach"
-    echo -e "${MAGENTA}tmux ls${RESET} or ${MAGENTA}tls${RESET}                            - List sessions"
-    echo -e "${MAGENTA}tmux attach -t <name>${RESET} or ${MAGENTA}ta${RESET}               - Attach to session"
-    echo -e "${MAGENTA}tmux switch -t <name>${RESET} or ${MAGENTA}ts${RESET}               - Switch to another session"
-    echo -e "${MAGENTA}tmux rename-session -t <old> <new>${RESET} or ${MAGENTA}tres${RESET} - Rename session"
-    echo -e "${MAGENTA}tmux kill-session -t <name>${RESET} or ${MAGENTA}tks${RESET}        - Kill session"
-    echo -e "${MAGENTA}tmux kill-server${RESET} or ${MAGENTA}tkss${RESET}                  - Kill tmux server"
-    echo -e "${MAGENTA}Ctrl a \$${RESET}                 - Rename current session"
+    echo -e "${MAGENTA}tmux new -s <name>${RESET} or ${MAGENTA}tn${RESET}                   - Create new session"
+    echo -e "${MAGENTA}tmux new-session -A -s <name>${RESET} or ${MAGENTA}tns${RESET}       - Create session if not exists or attach"
+    echo -e "${MAGENTA}tmux ls${RESET} or ${MAGENTA}tls${RESET}                             - List sessions"
+    echo -e "${MAGENTA}tmux attach -t <name>${RESET} or ${MAGENTA}ta${RESET}                - Attach to session"
+    echo -e "${MAGENTA}tmux switch -t <name>${RESET} or ${MAGENTA}ts${RESET}                - Switch to another session"
+    echo -e "${MAGENTA}tmux rename-session -t <old> <new>${RESET} or ${MAGENTA}tres${RESET}  - Rename session"
+    echo -e "${MAGENTA}tmux kill-session -t <name>${RESET} or ${MAGENTA}tks${RESET}         - Kill session"
+    echo -e "${MAGENTA}tmux kill-server${RESET} or ${MAGENTA}tkss${RESET}                   - Kill tmux server"
+    echo -e "${MAGENTA}Ctrl a \$${RESET}                  - Rename current session"
     echo -e "${MAGENTA}Ctrl a d${RESET}                  - Detach from session"
     echo -e "${MAGENTA}Ctrl a s${RESET}                  - List and select sessions"
     echo -e "${MAGENTA}Ctrl a Ctrl t${RESET}             - Choose session from tree"
@@ -427,11 +436,11 @@ tmuxfo() {
     echo -e "${MAGENTA}Ctrl a ,${RESET} or ${MAGENTA}trew${RESET}          - Rename current window"
     echo -e "${MAGENTA}Ctrl a Ctrl m${RESET}             - Move window to specific index"
     echo -e "${MAGENTA}Alt <1-9>${RESET}                 - Jump to window <1-9>"
-    echo -e "${MAGENTA}tmux list-windows${RESET} or ${MAGENTA}tw${RESET}    - List windows"
+    echo -e "${MAGENTA}tmux list-windows${RESET} or ${MAGENTA}tw${RESET}   - List windows"
     echo
 
     echo -e "${ORANGE}Pane creation and layout${RESET}"
-    echo -e "${MAGENTA}Ctrl a |${RESET} or ${MAGENTA}Alt \\${RESET}        - Split vertically"
+    echo -e "${MAGENTA}Ctrl a |${RESET} or ${MAGENTA}Alt \\\\${RESET}         - Split vertically"
     echo -e "${MAGENTA}Ctrl a -${RESET} or ${MAGENTA}Alt -${RESET}         - Split horizontally"
     echo -e "${MAGENTA}Ctrl a space${RESET}              - Cycle through layouts"
     echo -e "${MAGENTA}Ctrl a =${RESET}                  - Equalize pane sizes"
@@ -439,11 +448,11 @@ tmuxfo() {
 
     echo -e "${ORANGE}Pane navigation${RESET}"
     echo -e "${MAGENTA}Alt left/right/up/down arrow${RESET} - Move between panes"
-    echo -e "${MAGENTA}Ctrl a q${RESET}                  - Show pane numbers (press number to select)"
-    echo -e "${MAGENTA}Ctrl a z${RESET}                  - Toggle pane zoom (fullscreen)"
-    echo -e "${MAGENTA}Ctrl a {${RESET}                  - Swap pane with previous"
-    echo -e "${MAGENTA}Ctrl a }${RESET}                  - Swap pane with next"
-    echo -e "${MAGENTA}Ctrl a Ctrl s${RESET}             - Synchronize panes (send input to all panes)"
+    echo -e "${MAGENTA}Ctrl a q${RESET}                     - Show pane numbers (press number to select)"
+    echo -e "${MAGENTA}Ctrl a z${RESET}                     - Toggle pane zoom (fullscreen)"
+    echo -e "${MAGENTA}Ctrl a {${RESET}                     - Swap pane with previous"
+    echo -e "${MAGENTA}Ctrl a }${RESET}                     - Swap pane with next"
+    echo -e "${MAGENTA}Ctrl a Ctrl s${RESET}                - Synchronize panes (send input to all panes)"
     echo
 
     echo -e "${ORANGE}Pane resizing${RESET}"
@@ -460,7 +469,7 @@ tmuxfo() {
 
     echo -e "${ORANGE}Copy mode and clipboard${RESET}"
     echo -e "${MAGENTA}Ctrl a [${RESET}                  - Enter copy mode"
-    echo -e "${MAGENTA}Ctrl c${RESET} or ${MAGENTA}q${RESET}             - Exit copy mode"
+    echo -e "${MAGENTA}Ctrl c${RESET} or ${MAGENTA}q${RESET}               - Exit copy mode"
     echo -e "${MAGENTA}Space${RESET}                     - Start selection in copy mode"
     echo -e "${MAGENTA}Enter${RESET}                     - Copy selection in copy mode"
     echo -e "${MAGENTA}Ctrl a ]${RESET}                  - Paste copied text"
@@ -477,7 +486,7 @@ tmuxfo() {
     echo
 
     echo -e "${ORANGE}Plugin management - TPM${RESET}"
-    echo -e "${MAGENTA}Ctrl a Ctrl i${RESET}             - Install plugins"
+    echo -e "${MAGENTA}Ctrl a Ctrl I${RESET}             - Install plugins"
     echo -e "${MAGENTA}Ctrl a Ctrl u${RESET}             - Update plugins"
     echo -e "${MAGENTA}Ctrl a Alt u${RESET}              - Uninstall removed plugins"
     echo -e "${MAGENTA}Ctrl a Ctrl S${RESET}             - Save tmux session (tmux-resurrect)"
@@ -487,12 +496,14 @@ tmuxfo() {
 
     echo -e "${ORANGE}Advanced session commands${RESET}"
     echo -e "${MAGENTA}tmux new-session -d -s <name>${RESET}         - Start a detached session"
-    echo -e "${MAGENTA}tmux select-layout tiled${RESET} or ${MAGENTA}tslt${RESET} - Tile all panes"
+    echo -e "${MAGENTA}tmux select-layout tiled${RESET} or ${MAGENTA}tslt${RESET}      - Tile all panes"
     echo
 }
 
 # VS Code help
 vscfo() {
+    echo ""
+    echo -e "${BLUE}Visual Studio Code Cheatsheet:${RESET}"
     echo ""
     echo -e "${ORANGE}Navigation:${RESET}"
     echo -e "${MAGENTA}Ctrl p             ${RESET} - Quick Open - Rapidly find and open files"
@@ -501,28 +512,28 @@ vscfo() {
     echo
 
     echo -e "${ORANGE}Editing:${RESET}"
-    echo -e "${MAGENTA}Ctrl /             ${RESET} - Toggle line comment"
-    echo -e "${MAGENTA}Shift Alt a        ${RESET} - Toggle block comment"
-    echo -e "${MAGENTA}Shift Alt f        ${RESET} - Format entire file"
-    echo -e "${MAGENTA}Alt Up/Down        ${RESET} - Move entire line or selected lines up or down"
-    echo -e "${MAGENTA}Shift Alt Up/Down  ${RESET} - Copy the current line or selection up or down"
-    echo -e "${MAGENTA}Ctrl Shift k       ${RESET} - Delete the current line"
+    echo -e "${MAGENTA}Ctrl /             ${RESET}  - Toggle line comment"
+    echo -e "${MAGENTA}Shift Alt a        ${RESET}  - Toggle block comment"
+    echo -e "${MAGENTA}Shift Alt f        ${RESET}  - Format entire file"
+    echo -e "${MAGENTA}Alt Up/Down        ${RESET}  - Move entire line or selected lines up or down"
+    echo -e "${MAGENTA}Shift Alt Up/Down  ${RESET}  - Copy the current line or selection up or down"
+    echo -e "${MAGENTA}Ctrl Shift k       ${RESET}  - Delete the current line"
     echo -e "${MAGENTA}Shift Alt Right/Left${RESET} - Expand or shrink the current selection"
-    echo -e "${MAGENTA}Ctrl Shift l       ${RESET} - Select all occurrences of current selection"
+    echo -e "${MAGENTA}Ctrl Shift l       ${RESET}  - Select all occurrences of current selection"
     echo
 
     echo -e "${ORANGE}Multi-cursor:${RESET}"
-    echo -e "${MAGENTA}Ctrl d             ${RESET} - Select next occurrence of current word"
-    echo -e "${MAGENTA}Ctrl Shift l       ${RESET} - Add cursors to all instances of the current selection"
-    echo -e "${MAGENTA}Alt Click          ${RESET} - Multi-cursor editing"
-    echo -e "${MAGENTA}Ctrl Alt Up/Down   ${RESET} - Add a cursor above or below the current line"
-    echo -e "${MAGENTA}Shift Alt Drag     ${RESET} - Column (block) selection"
-    echo -e "${MAGENTA}editor.multiCursorModifier${RESET} - Set to Ctrl+Click or Alt+Click for multi-cursor (see Selection menu)"
+    echo -e "${MAGENTA}Ctrl d             ${RESET}                                             - Select next occurrence of current word"
+    echo -e "${MAGENTA}Ctrl Shift l       ${RESET}                                             - Add cursors to all instances of the current selection"
+    echo -e "${MAGENTA}Alt Click          ${RESET}                                             - Multi-cursor editing"
+    echo -e "${MAGENTA}Ctrl Alt Up/Down   ${RESET}                                             - Add a cursor above or below the current line"
+    echo -e "${MAGENTA}Shift Alt Drag     ${RESET}                                             - Column (block) selection"
+    echo -e "${MAGENTA}editor.multiCursorModifier${RESET}                                      - Set to Ctrl+Click or Alt+Click for multi-cursor (see Selection menu)"
     echo -e "${MAGENTA}Press and Hold scrollwheel button and drag the mouse up or down${RESET} - Create a cursor on each line."
     echo
 
     echo -e "${ORANGE}Panels & Views:${RESET}"
-    echo -e "${MAGENTA}Ctrl \`            ${RESET} - Toggle integrated terminal"
+    echo -e "${MAGENTA}Ctrl \`            ${RESET}  - Toggle integrated terminal"
     echo -e "${MAGENTA}Ctrl Shift x       ${RESET} - Open the Extensions panel"
     echo -e "${MAGENTA}Ctrl Shift g       ${RESET} - Open the Source Control panel"
     echo -e "${MAGENTA}Ctrl Shift m       ${RESET} - Open the Problems panel"
@@ -541,9 +552,9 @@ vscfo() {
     echo
 
     echo -e "${ORANGE}Debugging:${RESET}"
-    echo -e "${MAGENTA}F5                 ${RESET} - Start or continue debugging"
-    echo -e "${MAGENTA}Shift F5           ${RESET} - Stop debugging"
-    echo -e "${MAGENTA}F9                 ${RESET} - Add or remove a breakpoint"
+    echo -e "${MAGENTA}F5                 ${RESET}   - Start or continue debugging"
+    echo -e "${MAGENTA}Shift F5           ${RESET}   - Stop debugging"
+    echo -e "${MAGENTA}F9                 ${RESET}   - Add or remove a breakpoint"
     echo -e "${MAGENTA}F10 / F11 / Shift F11${RESET} - Step over, into, or out during debugging"
     echo
 
@@ -554,18 +565,16 @@ vscfo() {
     echo
 
     echo -e "${ORANGE}Copilot:${RESET}"
-    echo -e "${MAGENTA}Tab                ${RESET} - Accepts the entire inline suggestion"
-    echo -e "${MAGENTA}Alt + ]            ${RESET} - Show next alternative inline suggestion"
-    echo -e "${MAGENTA}Alt + [            ${RESET} - Show previous alternative inline suggestion"
-    echo -e "${MAGENTA}Ctrl + Right Arrow ${RESET} - Accepts the next word of inline suggestion (partial accept)"
+    echo -e "${MAGENTA}Tab                ${RESET}      - Accepts the entire inline suggestion"
+    echo -e "${MAGENTA}Alt + ]            ${RESET}      - Show next alternative inline suggestion"
+    echo -e "${MAGENTA}Alt + [            ${RESET}      - Show previous alternative inline suggestion"
+    echo -e "${MAGENTA}Ctrl + Right Arrow ${RESET}      - Accepts the next word of inline suggestion (partial accept)"
     echo -e "${MAGENTA}Ctrl + Alt + Right Arrow${RESET} - Accepts the next line of inline suggestion (partial accept)"
-    echo -e "${MAGENTA}Esc                ${RESET} - Dismisses the current inline suggestion"
-    echo -e "${MAGENTA}Alt + \\           ${RESET} - Forces Copilot to trigger an inline suggestion"
-    echo -e "${MAGENTA}Ctrl + Enter       ${RESET} - Opens the GitHub Copilot: Open Completions panel"
-    echo -e "${MAGENTA}Ctrl + I           ${RESET} - Starts Inline Chat"
-    echo -e "${MAGENTA}Ctrl + Alt + I     ${RESET} - Opens the dedicated Copilot Chat view"
-    echo -e "${MAGENTA}Customize Keybindings${RESET} - Modify Copilot shortcuts in VS Code's Keyboard Shortcuts settings (Ctrl+K Ctrl+S)"
-    echo -e "${MAGENTA}Context Matters    ${RESET} - Better code context leads to better Copilot suggestions"
+    echo -e "${MAGENTA}Esc                ${RESET}      - Dismisses the current inline suggestion"
+    echo -e "${MAGENTA}Alt + \\           ${RESET}       - Forces Copilot to trigger an inline suggestion"
+    echo -e "${MAGENTA}Ctrl + Enter       ${RESET}      - Opens the GitHub Copilot: Open Completions panel"
+    echo -e "${MAGENTA}Ctrl + I           ${RESET}      - Starts Inline Chat"
+    echo -e "${MAGENTA}Ctrl + Alt + I     ${RESET}      - Opens the dedicated Copilot Chat view"
     echo
 
     echo -e "${ORANGE}Other:${RESET}"
@@ -669,6 +678,8 @@ show_utility_commands() {
     echo -e "${MAGENTA}lintsh    ${RESET} - Lint shell scripts using ShellCheck. Usage: ${YELLOW}lintsh <file.sh>${RESET}"
     echo -e "${MAGENTA}fmtsh     ${RESET} - Format shell scripts using shfmt. Usage: ${YELLOW}fmtsh <file.sh>${RESET}"
     echo -e "${MAGENTA}rb        ${RESET} - Reload $HOME/.bashrc"
+    echo -e "${MAGENTA}etx       ${RESET} - Open $HOME/.config/tmux/tmux.config in vim"
+    echo -e "${MAGENTA}es        ${RESET} - Open current starship configuration in vim - $HOME/.config/starship.toml"
     echo -e "${MAGENTA}eb        ${RESET} - Open $HOME/.bashrc in vim"
     echo -e "${MAGENTA}ebt       ${RESET} - Open $HOME/.bash_tools in vim"
     echo -e "${MAGENTA}evrc      ${RESET} - Open $HOME/.vimrc in vim"
@@ -683,19 +694,21 @@ show_utility_commands() {
     echo -e "${MAGENTA}svim      ${RESET} - Edit files with sudo. Equal to 'sudoedit' and 'sudo -e'"
     echo -e "${MAGENTA}..        ${RESET} - Go up one directory"
     echo -e "${MAGENTA}...       ${RESET} - Go up two directories"
-    echo
+    echo -e "${MAGENTA}rg        ${RESET} - Enhanced ripgrep: searches hidden files, smart case, custom colors, no zips. Usage: ${YELLOW}rg <pattern> [path]${RESET}"
+    echo -e "${MAGENTA}rga       ${RESET} - Search all files: includes hidden, ignored, and binary files. Usage: ${YELLOW}rga <pattern> [path]${RESET}"
+    echo -e "${MAGENTA}rgs       ${RESET} - Search only staged Git files. Usage: ${YELLOW}rgs <pattern>${RESET}"
 }
 
 show_media_commands() {
     echo ""
     echo -e "${ORANGE}List of Media Download functions:${RESET}"
     echo -e "${BLUE}## Youtube (Download audio and/or video):${RESET}"
-    echo -e "${MAGENTA}getyt         ${RESET} - Download audio from a YouTube video and save it in desktop as MP3. Usage: ${YELLOW}getyt <url>${RESET}"
-    echo -e "${MAGENTA}getytmp4      ${RESET} - Download audio from a YouTube video and save it in desktop as MP4 1080p. Usage: ${YELLOW}getytmp4 <url>${RESET}"
-    echo -e "${MAGENTA}getytplist    ${RESET} - Download audio from all videos and save it in desktop in a YouTube playlist. Usage: ${YELLOW}getytplist <url>${RESET}"
-    echo -e "${MAGENTA}getytplistmp4 ${RESET} - Download all videos and save it in desktop in a YouTube playlist in MP4 format. Usage: ${YELLOW}getytplistmp4 <url>${RESET}"
+    echo -e "${MAGENTA}getyt         ${RESET}    - Download audio from a YouTube video and save it in desktop as MP3. Usage: ${YELLOW}getyt <url>${RESET}"
+    echo -e "${MAGENTA}getytmp4      ${RESET}    - Download audio from a YouTube video and save it in desktop as MP4 1080p. Usage: ${YELLOW}getytmp4 <url>${RESET}"
+    echo -e "${MAGENTA}getytplist    ${RESET}    - Download audio from all videos and save it in desktop in a YouTube playlist. Usage: ${YELLOW}getytplist <url>${RESET}"
+    echo -e "${MAGENTA}getytplistmp4 ${RESET}    - Download all videos and save it in desktop in a YouTube playlist in MP4 format. Usage: ${YELLOW}getytplistmp4 <url>${RESET}"
     echo -e "${MAGENTA}getytplistmp4subs${RESET} - Download all videos and save it in desktop in a YouTube playlist in MP4 format with subtitles. Usage: ${YELLOW}getytplistmp4subs <url>${RESET}"
-    echo -e "${MAGENTA}getytmp4subs  ${RESET} - Download a YouTube video and save it in desktop in MP4 format (1080p) with subtitles. Usage: ${YELLOW}getytmp4subs <url>${RESET}"
+    echo -e "${MAGENTA}getytmp4subs  ${RESET}    - Download a YouTube video and save it in desktop in MP4 format (1080p) with subtitles. Usage: ${YELLOW}getytmp4subs <url>${RESET}"
     echo
     echo -e "${BLUE}## Spotify (Download audio):${RESET}"
     echo -e "${MAGENTA}getspot       ${RESET} - Download a song from Spotify and save it in desktop. Usage: ${YELLOW}getspot <url>${RESET}"
@@ -707,12 +720,38 @@ show_media_commands() {
 show_starship_commands() {
     echo ""
     echo -e "${ORANGE}List of Customization functions:${RESET}"
-    echo -e "${MAGENTA}pcolor           ${RESET} - Lists themes and change theme of prompt"
-    echo -e "${MAGENTA}pskinf            ${RESET} - Changes configuration to detailed/full"
-    echo -e "${MAGENTA}pskins            ${RESET} - Changes configuration to simple"
-    echo -e "${MAGENTA}starship config  ${RESET} - Show current Starship prompt configuration."
+    echo -e "${MAGENTA}pcolor           ${RESET}     - Lists themes and change theme of prompt"
+    echo -e "${MAGENTA}pskinf            ${RESET}    - Changes configuration to detailed/full"
+    echo -e "${MAGENTA}pskins            ${RESET}    - Changes configuration to simple"
+    echo -e "${MAGENTA}starship config  ${RESET}     - Show current Starship prompt configuration."
     echo -e "${MAGENTA}starship print-config${RESET} - Print the current Starship prompt configuration."
-    echo -e "${MAGENTA}starship explain ${RESET} - Explain current Starship prompt configuration."
+    echo -e "${MAGENTA}starship explain ${RESET}     - Explain current Starship prompt configuration."
+    echo 
+    echo -e "${BLUE}Git Status Indicators:${RESET}"
+    echo -e "  ${MAGENTA}✓${RESET}                   - ${YELLOW}up_to_date:${RESET} Your current branch is clean and in sync with its remote."
+    echo -e "  ${MAGENTA}🏳${RESET}                   - ${YELLOW}conflicted:${RESET} You have merge conflicts that need to be resolved."
+    echo -e "  ${MAGENTA}📦${RESET}                  - ${YELLOW}stashed:${RESET} You have changes stashed."
+    echo -e "  ${MAGENTA}📝${RESET}                  - ${YELLOW}modified:${RESET} You have uncommitted, modified files."
+    echo -e "  ${MAGENTA}🗑${RESET}                   - ${YELLOW}deleted:${RESET} You have uncommitted, deleted files."
+    echo -e "  ${MAGENTA}⇡\${count}${RESET}            - ${YELLOW}ahead:${RESET} Your local branch is ahead of its remote by '\${count}' commits."
+    echo -e "  ${MAGENTA}⇕⇡\${ahead_count}⇣\${behind_count}${RESET} - ${YELLOW}diverged:${RESET} Your local branch has diverged from its remote; it's ahead by '\${ahead_count}' and behind by '\${behind_count}' commits."
+    echo -e "  ${MAGENTA}⇣\${count}${RESET}          - ${YELLOW}behind:${RESET} Your local branch is behind its remote by '\${count}' commits."
+    echo -e "  ${MAGENTA}🤷${RESET}             - ${YELLOW}untracked:${RESET} You have new, untracked files."
+    echo -e "  ${MAGENTA}[++(\$count)](green)${RESET} - ${YELLOW}staged:${RESET} You have '\$count' changes staged for commit (added to index)."
+    echo -e "  ${MAGENTA}👅${RESET}                  - ${YELLOW}renamed:${RESET} You have uncommitted, renamed files."
+    echo
+    echo -e "${BLUE}Git Status Symbols (Alternative):${RESET}"
+    echo -e "  ${MAGENTA}=${RESET}              - ${YELLOW}conflicted:${RESET} (Alternative) Merge conflicts."
+    echo -e "  ${MAGENTA}>${RESET}              - ${YELLOW}ahead:${RESET} (Alternative) Local branch is ahead of remote."
+    echo -e "  ${MAGENTA}<${RESET}              - ${YELLOW}behind:${RESET} (Alternative) Local branch is behind remote."
+    echo -e "  ${MAGENTA}?${RESET}              - ${YELLOW}diverged:${RESET} (Alternative) Local branch has diverged."
+    echo -e "  ${MAGENTA}?${RESET}              - ${YELLOW}untracked:${RESET} (Alternative) New, untracked files." # Note: '?' can have different meanings based on config
+    echo -e "  ${MAGENTA}\$${RESET}              - ${YELLOW}stashed:${RESET} (Alternative) Changes stashed."
+    echo -e "  ${MAGENTA}!${RESET}              - ${YELLOW}modified:${RESET} (Alternative) Uncommitted, modified files."
+    echo -e "  ${MAGENTA}+${RESET}              - ${YELLOW}staged:${RESET} (Alternative) Changes staged for commit."
+    echo -e "  ${MAGENTA}>${RESET}              - ${YELLOW}renamed:${RESET} (Alternative) Uncommitted, renamed files."
+    echo -e "  ${MAGENTA}X${RESET}              - ${YELLOW}deleted:${RESET} (Alternative) Uncommitted, deleted files."
+    echo -e "  ${MAGENTA}(empty string)${RESET}  - ${YELLOW}typechanged:${RESET} File type changed (e.g., file to symlink)."
     echo
 }
 

@@ -29,7 +29,7 @@ BASH_TOOLS="bash_tools"
 
 # List of core packages to install
 PACKAGES=(
-  "telnet" "rsync" "wget" "curl" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree" "xclip" "fonts-powerline"
+  "telnet" "rsync" "wget" "curl" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree" "xclip" "ripgrep" "fonts-powerline"
 )
 
 # Extra tools to install via python package manager
@@ -391,7 +391,7 @@ install_tmux_plugins() {
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
   fi
   
-  log_message "Run tmux and press Ctrl b + I to install plugins."
+  log_message "Run tmux and press Ctrl a + I to install plugins."
 }
 
 install_starship() {
@@ -543,7 +543,7 @@ echo ""
 log_message "Operation complete. If needed check the log file at $LOG_FILE"
 echo ""
 log_message "To apply all changes, restart your shell or run: 'source ~/.bashrc'"
-log_message "Run tmux and press Ctrl b + I to install plugins."
+log_message "Run tmux and press Ctrl a + I to install plugins."
 log_message "Current skin is set to detailed/full, to change skin run 'pskins' for simple configuration or 'pskinf' for detailed/full configuration."  
 log_message "Backups saved in: $BACKUP_DIR"
 log_message "If in WSL instead of OS with Linux, change the variable DESKTOPWINSL to your Windows Desktop path, example: /mnt/c/Users/<Windows_User>/"
