@@ -3,4 +3,3 @@ mouse: false
 pager: true
 width: 80
 all: false
-local: true
