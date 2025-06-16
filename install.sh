@@ -10,13 +10,16 @@ BACKUP_DIR="/tmp/dotfiles_$TIMESTAMP"
 LOG_FILE="$BACKUP_DIR/dotfiles_install.log"
 ORIGINAL_BASHRC="$HOME/.bashrc"
 STARSHIP_CONFIG="$HOME/.config/starship.toml"
-THEMES_DIR="$HOME/.config/starship/themes"
+
 
 # Create backup and log directory
 mkdir -p "$BACKUP_DIR"
-mkdir -p "$HOME/.config/ansible"
-mkdir -p "$THEMES_DIR"
 
+# Create costum directories
+mkdir -p "$HOME/.config/ansible"
+mkdir -p "$HOME/git"
+mkdir -p "$HOME/lab"
+mkdir -p "$HOME/work"
 
 # List of dotfiles to handle
 FILES_TO_SYMLINK=(
@@ -37,7 +40,15 @@ EXTRA_TOOLS=("spotdl" "yt-dlp" "tldr")
 
 # Log function to capture success and failure
 log_message() {
-  echo "$1" | tee -a "$LOG_FILE"
+  local GREEN="\e[32m"
+  local RESET="\e[0m"
+  local message="$1"
+
+  # Print colored message to console (stdout)
+  echo -e "${GREEN}${message}${RESET}"
+
+  # Print plain message to log file
+  echo "${message}" >> "$LOG_FILE"
 }
 
 
@@ -75,6 +86,25 @@ install_packages() {
             "shfmt"
         )
         sudo apt update
+
+      
+
+    # Install glow markdown viewer
+    log_message "Installing glow..."
+    if command -v glow >/dev/null 2>&1; then
+        log_message "glow is already installed"
+    elif [ -d /etc/apt/keyrings ] || sudo mkdir -p /etc/apt/keyrings; then
+        if curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg && \
+           echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list && \
+           sudo apt update && sudo apt install glow -y; then
+            log_message "glow installed successfully"
+        else
+            log_message "Failed to install glow"
+        fi
+    else
+        log_message "/etc/apt/keyrings directory does not exist and could not be created"
+    fi
+       
 
     elif [[ "$PACKAGE_MANAGER" == "dnf" || "$PACKAGE_MANAGER" == "yum" ]]; then
         $PACKAGE_MANAGER install -y epel-release
@@ -122,6 +152,16 @@ install_extra_tools() {
 
   # Ensure pipx is in the PATH
   pipx ensurepath
+
+  if ! command -v pastel &> /dev/null; then
+    log_message "Installing pastel"
+    wget "https://github.com/sharkdp/pastel/releases/download/v0.8.1/pastel_0.8.1_amd64.deb"
+    sudo dpkg -i pastel_0.8.1_amd64.deb
+    rm -f pastel_0.8.1_amd64.deb 
+  else
+    log_message "Pastel is already installed."
+  fi
+ 
 
 }
 
@@ -184,6 +224,10 @@ backup_dotfiles() {
     mv "$STARSHIP_CONFIG" "$BACKUP_DIR/.config/starship/" && log_message "Backed up starship.toml"
   fi
 
+  if [ -f "$HOME/.config/glow/glow.yml" ] || [ -L "$$HOME/.config/glow/glow.yml" ]; then
+    mkdir -p "$BACKUP_DIR/.config/glow"
+    mv "$HOME/.config/glow/glow.yml" "$BACKUP_DIR/$HOME/.config/glow/" && log_message "Backed up glow.yml"
+  fi
 }
 
 # Symlink dotfiles from repository to home directory
@@ -201,6 +245,14 @@ symlink_dotfiles() {
   # Symlink htop config to .config directory
   mkdir -p "$HOME/.config/htop"
   ln -sf "$DOTFILES_DIR/htoprc" "$HOME/.config/htop/htoprc" && log_message "Linked htoprc to .config"
+
+  # Symlink ansible config to .config directory
+  ln -sf "$DOTFILES_DIR/ansible.cfg" "$HOME/.config/ansible/ansible.cfg" && log_message "Linked ansible.cfg to .config"
+  touch "$HOME/.config/ansible/inventory" && log_message "Created ansible inventory file in .config/ansible/inventory"
+
+    # Symlink glow config to .config directory
+  mkdir -p "$HOME/.config/glow"
+  ln -sf "$DOTFILES_DIR/glow.yml" "$HOME/.config/glow/glow.yml" && log_message "Linked glow.yml to .config"
 }
 
 # Include bash_tools on .bashrc
@@ -529,6 +581,7 @@ case "$action" in
     echo ""
     install_starship
     echo ""
+    
     ;;
   update)
     update_everything
@@ -543,9 +596,15 @@ echo ""
 log_message "Operation complete. If needed check the log file at $LOG_FILE"
 echo ""
 log_message "To apply all changes, restart your shell or run: 'source ~/.bashrc'"
+echo ""
 log_message "Run tmux and press Ctrl a + I to install plugins."
+echo ""
 log_message "Current skin is set to detailed/full, to change skin run 'pskins' for simple configuration or 'pskinf' for detailed/full configuration."  
+echo ""
 log_message "Backups saved in: $BACKUP_DIR"
+echo ""
 log_message "If in WSL instead of OS with Linux, change the variable DESKTOPWINSL to your Windows Desktop path, example: /mnt/c/Users/<Windows_User>/"
 log_message "If in WSL instead of OS with Linux, install manually the fonts in /usr/local/share/fonts and delete the fonts zip files."
-
+log_message "Turn on the WSL integration in Visual Studio Code"
+echo ""
+log_message "Log in to GitHub to import configuration and settings"

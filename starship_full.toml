@@ -3,104 +3,114 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 format = """
-[](color_1)\
+[](color_bg1)\
 $os\
 $username\
-[](bg:color_2 fg:color_1)\
+[](bg:color_bg2 fg:color_bg1)\
 $directory\
-[](fg:color_2 bg:color_3)\
+[](fg:color_bg2 bg:color_bg3)\
 $git_branch\
 $git_status\
 $git_state\
-[](fg:color_3 bg:color_4)\
+[](fg:color_bg3 bg:color_bg4)\
 $kubernetes\
 $python\
-[](fg:color_4 bg:color_bg3)\
+[](fg:color_bg4 bg:color_bg5)\
 $docker_context\
 $terraform\
-[](fg:color_bg3 bg:color_bg1)\
+[](fg:color_bg5 bg:color_bg6)\
 $cmd_duration\
 $status\
-[ ](fg:color_bg1)\
+[ ](fg:color_bg6)\
 """
+
+# Starship color legend
+## color_txt - text color
+## color_bg1 - 1st color block
+## color_bg2 - 2nd color block
+## color_bg3 - 3rd color block
+## color_bg4 - 4th color block
+## color_bg5 - 5th color block
+## color_bg6 - 6th color block
+
 
 palette = "gruvbox_dark"
 
 [palettes.gruvbox_dark]
-color_fg0 = '#fbf1c7'
-color_bg1 = '#3c3836'
-color_bg3 = '#665c54'
-color_4 = '#458588'
-color_3 = '#689d6a'
-color_5 = '#98971a'
-color_1 = '#d65d0e'
-color_6 = '#b16286'
-color_7 = '#cc241d'
-color_2 = '#d79921'
-
-[palettes.gruvbox_light]
-color_fg0 = '#3c3836'
-color_bg1 = '#fbf1c7'
-color_bg3 = '#d5c4a1'
-color_4   = '#076678'
-color_3   = '#427b58'
-color_5   = '#b57614'
-color_1   = '#af3a03'
-color_6   = '#8f3f71'
-color_7   = '#9d0006'
-color_2   = '#b57614'
+color_txt = '#fbf1c7'
+color_bg1 = '#d65d0e'
+color_bg2 = '#d79921'
+color_bg3 = '#689d6a'
+color_bg4 = '#458588'
+color_bg5 = '#665c54'
+color_bg6 = '#3c3836'
 
 [palettes.nord]
-color_fg0 = '#ECEFF4'
-color_bg1 = '#2E3440'
+color_txt = '#2e3440'
+color_bg1 = '#3B4252'
+color_bg2 = '#434C5E'
 color_bg3 = '#4C566A'
-color_4   = '#5E81AC'
-color_3   = '#A3BE8C'
-color_5   = '#EBCB8B'
-color_1   = '#BF616A'
-color_6   = '#B48EAD'
-color_7   = '#D08770'
-color_2   = '#88C0D0'
+color_bg4 = '#D8DEE9'
+color_bg5 = '#E5E9F0'
+color_bg6 = '#ECEFF4'
+
+[palettes.nord_inverted]
+color_txt = '#ECEFF4'
+color_bg1 = '#2E3440'
+color_bg2 = '#3B4252'
+color_bg3 = '#434C5E'
+color_bg4 = '#4C566A'
+color_bg5 = '#D8DEE9'
+color_bg6 = '#E5E9F0'
 
 [palettes.dracula]
-color_fg0 = '#F8F8F2'
+color_txt = '#F8F8F2'
 color_bg1 = '#282A36'
-color_bg3 = '#44475A'
-color_4   = '#8BE9FD'
-color_3   = '#50FA7B'
-color_5   = '#F1FA8C'
-color_1   = '#FF79C6'
-color_6   = '#BD93F9'
-color_7   = '#FF5555'
-color_2   = '#FFB86C'
+color_bg2 = '#6272A4'
+color_bg3 = '#BD93F9'
+color_bg4 = '#FF79C6'
+color_bg5 = '#8BE9FD'
+color_bg6 = '#50FA7B
 
 [palettes.solarized_dark]
-color_fg0 = '#839496'
-color_bg1 = '#002b36'
-color_bg3 = '#073642'
-color_4   = '#268bd2'
-color_3   = '#859900'
-color_5   = '#b58900'
-color_1   = '#cb4b16'
-color_6   = '#6c71c4'
-color_7   = '#dc322f'
-color_2   = '#2aa198'
+color_txt = '#839496'
+color_bg1 = "#002b36
+color_bg2 = "#073642
+color_bg3 = "#586e75
+color_bg4 = "#268bd2
+color_bg5 = "#2aa198
+color_bg6 = "#6c71c4
 
 [palettes.solarized_light]
-color_fg0 = '#657b83'
-color_bg1 = '#fdf6e3'
-color_bg3 = '#eee8d5'
-color_4   = '#268bd2'
-color_3   = '#859900'
-color_5   = '#b58900'
-color_1   = '#cb4b16'
-color_6   = '#6c71c4'
-color_7   = '#dc322f'
-color_2   = '#2aa198'
+color_txt = "#073642"
+color_bg1 = "#fdf6e3"
+color_bg2 = "#eee8d5"
+color_bg3 = "#93a1a1"
+color_bg4 = "#859900"
+color_bg5 = "#b58900"
+color_bg6 = "#dc322f"
+
+[palettes.catppuccin_mocha]
+color_txt = "#CDD6F4"
+color_bg1 = "#1E1E2E"
+color_bg2 = "#181825"
+color_bg3 = "#B4BEE0"
+color_bg4 = "#89B4FA"
+color_bg5 = "#F5C2E7"
+color_bg6 = "#A6E3A1"
+
+[palettes.guezwhoz]
+color_txt = "#d0d0d0"
+color_bg1 = "#1c1c1c"
+color_bg2 = "#080808"
+color_bg3 = "#8a8a8a"
+color_bg4 = "#5fafd7"
+color_bg5 = "#afafff"
+color_bg6 = "#5fd7d7"
 
 [os]
 disabled = false
-style = "bg:color_1 fg:color_fg0"
+style = "bg:color_bg1 fg:color_txt"
 
 [os.symbols]
 Windows = "󰍲"
@@ -127,98 +137,105 @@ Pop = ""
 
 [username]
 show_always = true
-style_user = "bg:color_1 fg:color_fg0"
-style_root = "bg:color_1 fg:color_fg0"
+style_user = "bg:color_bg1 fg:color_txt"
+style_root = "bg:color_bg1 fg:color_txt"
 format = '[ $user ]($style)'
 
 [directory]
-style = "fg:color_fg0 bg:color_2"
+style = "fg:color_txt bg:color_bg2"
 format = "[ $path ]($style)"
 truncation_length = 3
 truncation_symbol = "…/"
 
 [directory.substitutions]
+"~" = "󰋜"
 "Documents" = "󰈙 "
 "Downloads" = " "
 "Music" = "󰝚 "
 "Pictures" = " "
 "Developer" = "󰲋 "
-"Git" = "󰲋 "
+"git" = "󰲋 "
 "Projects" = " "
 "Videos" = "󰕧 "
 "Desktop" = " "
-"Scripts" = " "
-"Configs" = " "
-"Data" = " "
+"scripts" = " "
+"work" = " "
+"lab" = " "
+
 
 [git_branch]
 symbol = ""
-style = "fg:color_fg0 bg:color_3"
+style = "fg:color_txt bg:color_3"
 format = '[ $symbol $branch ]($style)'
 
+
 [git_status]
-style = "fg:color_fg0 bg:color_3"
+style = "fg:color_txt bg:color_3"
 format = '[($all_status$ahead_behind )]($style)'
-up_to_date = '✓'
-conflicted = '🏳'
-stashed = '📦'
-modified = '📝'
-deleted = '🗑'
-ahead = '⇡${count}'
-diverged = '⇕⇡${ahead_count}⇣${behind_count}'
-behind = '⇣${count}'
-untracked = '🤷'
-staged = '[++\($count\)](green)'
-renamed = '👅'
+conflicted = '[ ${count}](bold red) '
+up_to_date = '󰘽(bold green)'
+untracked = '[󰋗 ${count}](red) '
+ahead = ' ${count}(bold green)'
+diverged = ' ${ahead_count}(bold green)  ${behind_count}(bold yellow)'
+behind = ' ${count}(bold yellow)'
+stashed = '[ ${count}](bold blue) '
+modified = '[󰛿 ${count}](bold yellow) '
+staged = '[󰐗 ${count}](bold green) '
+renamed = '[󱍸 ${count}](bold yellow) '
+deleted = '[󰍶 ${count}](bold red) '
+
 
 [git_state]
-style = "fg:color_fg0 bg:color_3"
+style = "fg:color_txt bg:color_3"
 format = '[ $state( $progress_current/$progress_total) ]($style)'
 
 [python]
 symbol = ""
-style = "fg:color_fg0 bg:color_4"
+style = "fg:color_txt bg:color_4"
 format = '[ $symbol( $version) ]($style)'
 
 [docker_context]
 symbol = ""
-style = "fg:color_fg0 bg:color_bg3"
+style = "fg:color_txt bg:color_bg5"
 format = '[ $symbol( $context) ]($style)'
 detect_files = ['docker-compose.yml', 'docker-compose.yaml', 'Dockerfile']
 detect_extensions = ['Dockerfile']
 
 [conda]
-style = "fg:color_fg0 bg:color_bg3"
+style = "fg:color_txt bg:color_bg5"
 format = '[ $symbol( $environment) ]($style)'
 
 [kubernetes]
 symbol = "☸"
-style = "fg:color_fg0 bg:color_bg3"
+style = "fg:color_txt bg:color_bg5"
 format = '[[ $symbol $context ($cluster:$namespace) ]($style)]'
 disabled = false
 
 [aws]
 symbol = "☁️"
-style = "fg:color_fg0 bg:color_bg3"
+style = "fg:color_txt bg:color_bg5"
 format = '[ $symbol ($profile:$region) ]($style)'
 
 [azure]
 symbol = "󰠅"
-style = "fg:color_fg0 bg:color_bg3"
+style = "fg:color_txt bg:color_bg5"
 format = '[ $symbol ($subscription/$tenant) ]($style)'
 
 [terraform]
 symbol = "💨"
-style = "fg:color_fg0 bg:color_bg3"
+style = "fg:color_txt bg:color_bg5"
 format = '[ $symbol$workspace($version) ]($style)'
 
 [status]
-style = "bg:color_bg1 fg:color_fg0"
+style = "bg:color_bg6 fg:color_txt"
 format = '[ ↵ $status ]($style)'
 disabled = false
 map_symbol = true
 
 [cmd_duration]
 min_time = 500
-style = "bg:color_bg1 fg:color_fg0"
+style = "bg:color_bg6 fg:color_txt"
 format = '[ $duration ]($style)'
+
+[character]
+continuation_symbol = "[↪](bold color_bg2)"
