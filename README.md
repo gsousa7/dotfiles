@@ -129,6 +129,7 @@ Run the script with arguments to skip prompts:
 
 ## 3. Notes
 - `.bashrc` file will only be modified to load `.bash_tools` and starship, making it easier to manage.
+- Starship configuration/themes are located in `assets` directory
 - If no SSH key is found, the script will prompt you to create one and add it to your GitHub account `ssh-keygen`
 - If running in WSL, you may need to manually install the fonts from `/usr/local/share/fonts`.
 - Inspired by [bahamas10's dotfiles](https://github.com/bahamas10/dotfiles) and [ChrisTitusTech dotfiles](https://github.com/christitustech/mybash). 

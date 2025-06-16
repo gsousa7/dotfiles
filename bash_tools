@@ -9,16 +9,22 @@ export DESKTOPWINSL='/mnt/c/Users/Gonçalo Sousa/'
 export HISTCONTROL='ignoredups'
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
+export PASTEL_COLOR_MODE=24bit
 
 
 # Ansible
 export ANSIBLE_CONFIG="$HOME/.config/ansible/config.ini"
-export ANSIBLE_INVENTORY="$HOME/.config/ansible/inventory.yaml"
+export ANSIBLE_INVENTORY="$HOME/.config/ansible/inventory"
 
 # Starship window title
+set_win_title() {
+    echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"
+}
+
 starship_precmd_user_func="set_win_title"
 
 # Color Man pages
+export LESS="R --use-color"
 export LESS_TERMCAP_mb=$'\e[1;32m'
 export LESS_TERMCAP_md=$'\e[1;32m'
 export LESS_TERMCAP_me=$'\e[0m'
@@ -44,9 +50,12 @@ RED="\e[31m"
 
 
 # Custom Alias
-alias ll='ls -la'
+alias l='\ls -h --color=auto --group-directories-first'
+alias ls='\ls -lh --color=auto --group-directories-first'
+alias ll='\ls -lah --color=auto --group-directories-first'
 alias aqui='explorer.exe .'
-alias fmedia='find . -type f \( -name "*.mp4" -o -name "*.mkv" \) -exec mv {} . \;'
+alias fmedia='find . -type f \( -name "*.mp4" -o -name "*.mkv" \)'
+#alias fmedia='find . -type f \( -name "*.mp4" -o -name "*.mkv" \) -exec mv {} . \;'
 alias cdd='cd "${DESKTOPWINSL}Desktop"'
 alias data='echo $(date "+%d/%m/%Y %H:%M:%S")'
 alias tempolx='curl wttr.in/Lisboa\?format=4'
@@ -76,6 +85,7 @@ alias rg="rg --hidden --smart-case --glob='!.git/' --no-search-zip --trim --colo
 alias rga="rg --hidden --no-ignore --binary --force-text --smart-case --trim"
 alias etx="vim $HOME/.config/tmux/tmux.config"
 alias es="vim $HOME/.config/starship.toml"
+alias eai="vim $HOME/.config/ansible/inventory"
 
 # Git Aliases and functions
 alias nb='git checkout -b'
@@ -146,17 +156,17 @@ gdst() {
 
 
 # tmux alias
-alias t='tmux'                    
+alias t='tmux'
 alias ta='tmux attach -t'
-alias td='tmux detach'         
-alias tl='tmux list-sessions'     
-alias tn='tmux new -s'            
-alias tks='tmux kill-session -t'   
-alias ts='tmux switch -t'         
-alias tkss='tmux kill-server'      
+alias td='tmux detach'
+alias tl='tmux list-sessions'
+alias tn='tmux new -s'
+alias tks='tmux kill-session -t'
+alias ts='tmux switch -t'
+alias tkss='tmux kill-server'
 alias trew='tmux rename-window'
 alias tres='tmux rename-session -t'
-alias tw='tmux list-windows'      
+alias tw='tmux list-windows'
 alias tns='tmux new-session -A -s'
 alias tslt='tmux select-layout tiled'
 
@@ -251,32 +261,93 @@ rgs() {
 # youtube-dl functions
 ## Get mp3 file of youtube
 getyt() {
-    yt-dlp --extract-audio --audio-format mp3 --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
+    yt-dlp --extract-audio --audio-format mp3 --audio-quality 0 --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
 }
 
 ## Get mp4 file of youtube
 getytmp4() {
-    yt-dlp -f 'bestvideo[height=1080]+bestaudio/best[height=1080]' --merge-output-format mp4 --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
+    yt-dlp -f 'bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=1080]+bestaudio/best[height<=1080]/best' \
+           --merge-output-format mp4 \
+           --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
 }
 
 ## Get mp3 file of youtube playlist
 getytplist() {
-    yt-dlp -x --audio-format mp3 --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
+    yt-dlp --extract-audio --audio-format mp3 --audio-quality 0 \
+           --output "${DESKTOPWINSL}Desktop/%(playlist_title)s/%(title)s.%(ext)s" "$1"
 }
 
 ## Get mp4 file of youtube playlist
 getytplistmp4() {
-    yt-dlp -f 'bestvideo+bestaudio' --merge-output-format mp4 --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
+    yt-dlp -f 'bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=1080]+bestaudio/best[height<=1080]/best' \
+           --merge-output-format mp4 \
+           --output "${DESKTOPWINSL}Desktop/%(playlist_title)s/%(title)s.%(ext)s" "$1"
 }
 
 ## Get mp4 file of youtube with subs
 getytmp4subs() {
-    yt-dlp -f 'bestvideo[height=1080]+bestaudio/best[height=1080]' --merge-output-format mp4 --write-subs --embed-subs --sub-lang en --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
+    yt-dlp -f 'bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=1080]+bestaudio/best[height<=1080]/best' \
+           --merge-output-format mp4 \
+           --write-subs --embed-subs --sub-langs "en,pt,es" --sub-format "srt/vtt/best" \
+           --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
 }
 
 ## Get mp4 file of youtube playlist with subs
 getytplistmp4subs() {
-    yt-dlp -f 'bestvideo+bestaudio' --merge-output-format mp4 --write-subs --embed-subs --sub-lang en --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$1"
+    yt-dlp -f 'bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=1080]+bestaudio/best[height<=1080]/best' \
+           --merge-output-format mp4 \
+           --write-subs --embed-subs --sub-langs "en,pt,es" --sub-format "srt/vtt/best" \
+           --output "${DESKTOPWINSL}Desktop/%(playlist_title)s/%(title)s.%(ext)s" "$1"
+}
+
+## Debug function - check available formats
+getytformats() {
+    echo "Available formats for: $1"
+    yt-dlp --list-formats "$1"
+}
+
+## Flexible download function with options
+getytflex() {
+    local url="$1"
+    local format="$2"
+    local quality="$3"
+
+    case "$format" in
+        "mp3"|"audio")
+            yt-dlp --extract-audio --audio-format mp3 --audio-quality 0 \
+                   --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$url"
+            ;;
+        "mp4"|"video")
+            case "$quality" in
+                "4k"|"2160")
+                    yt-dlp -f 'bestvideo[height<=2160]+bestaudio/best[height<=2160]/best' \
+                           --merge-output-format mp4 \
+                           --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$url"
+                    ;;
+                "1440"|"2k")
+                    yt-dlp -f 'bestvideo[height<=1440]+bestaudio/best[height<=1440]/best' \
+                           --merge-output-format mp4 \
+                           --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$url"
+                    ;;
+                "720")
+                    yt-dlp -f 'bestvideo[height<=720]+bestaudio/best[height<=720]/best' \
+                           --merge-output-format mp4 \
+                           --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$url"
+                    ;;
+                *)
+                    yt-dlp -f 'bestvideo[height<=1080]+bestaudio/best[height<=1080]/best' \
+                           --merge-output-format mp4 \
+                           --output "${DESKTOPWINSL}Desktop/%(title)s.%(ext)s" "$url"
+                    ;;
+            esac
+            ;;
+        *)
+            echo "Usage: getytflex <url> <format> [quality]"
+            echo "Format: mp3|audio|mp4|video"
+            echo "Quality (for video): 720|1080|1440|4k"
+            echo "Example: getytflex 'https://youtu.be/...' mp4 1080"
+            ;;
+    esac
 }
 
 # spotify functions
@@ -295,31 +366,35 @@ getplay() {
     spotdl --output "${DESKTOPWINSL}Desktop/{playlist}/{artist} - {title}" --format mp3 --bitrate 320k "$1"
 }
 
-# List starship palettes and set oneS
+# List starship palettes and set one
 pcolor() {
-    if [ "$(readlink ~/.config/starship.toml)" != "$HOME/dotfiles/starship_full.toml" ]; then
-        echo "Palette can only be changed when the full Starship configuration is active."
-        return 1
-    fi
+    #if [ "$(readlink ~/.config/starship.toml)" != "$HOME/dotfiles/starship_full.toml" ]; then
+    #    echo "Palette can only be changed when the full Starship configuration is active."
+    #    return 1
+    #fi
 
     echo "Available palettes:"
     echo "1) gruvbox_dark"
-    echo "2) gruvbox_light"
-    echo "3) nord"
+    echo "2) nord"
+    echo "3) nord inverted"
     echo "4) dracula"
     echo "5) solarized_dark"
     echo "6) solarized_light"
+    echo "7) catppuccin_mocha"
+    echo "8) guezwhoz"
 
     read -p "Enter the number of the palette you want to use: " choice
 
     local palette=""
     case $choice in
         1) palette="gruvbox_dark" ;;
-        2) palette="gruvbox_light" ;;
-        3) palette="nord" ;;
+        2) palette="nord" ;;
+        3) palette="nord_inverted" ;;
         4) palette="dracula" ;;
         5) palette="solarized_dark" ;;
         6) palette="solarized_light" ;;
+        7) palette="catppuccin_mocha" ;;
+        8) palette="guezwhoz" ;;
         *)
             echo "Invalid choice. Exiting."
             return 1
@@ -335,10 +410,10 @@ pskinf() {
     # Unlink if symlink or remove if file exists
     [ -L ~/.config/starship.toml ] && unlink ~/.config/starship.toml
     [ -f ~/.config/starship.toml ] && rm ~/.config/starship.toml
-	
+
     # Link to full config
     ln -sf ~/dotfiles/starship_full.toml ~/.config/starship.toml
-	
+
     echo "Switched to full Starship prompt."
 }
 
@@ -346,10 +421,10 @@ pskins() {
     # Unlink if symlink or remove if file exists
     [ -L ~/.config/starship.toml ] && unlink ~/.config/starship.toml
     [ -f ~/.config/starship.toml ] && rm ~/.config/starship.toml
-	
+
     # Link to simple config
     ln -sf ~/dotfiles/starship_simple.toml ~/.config/starship.toml
-	
+
     echo "Switched to simple Starship prompt."
 }
 
@@ -360,7 +435,7 @@ vimfo() {
 
     # Basic Commands
     echo -e "${ORANGE}Basic Commands:${RESET}"
-    echo -e "${YELLOW}Not required 'Esc :'${RESET}"
+    echo -e "${YELLOW}Not required 'Esc :' but requires \ (exactly has bellow)${RESET}"
     echo -e "${MAGENTA}\q      ${RESET}- Quit"
     echo -e "${MAGENTA}\w      ${RESET}- Save"
     echo -e "${MAGENTA}\x      ${RESET}- Save and quit"
@@ -415,7 +490,7 @@ tmuxfo() {
     echo -e "${ORANGE}Session management${RESET}"
     echo -e "${MAGENTA}tmux new -s <name>${RESET} or ${MAGENTA}tn${RESET}                   - Create new session"
     echo -e "${MAGENTA}tmux new-session -A -s <name>${RESET} or ${MAGENTA}tns${RESET}       - Create session if not exists or attach"
-    echo -e "${MAGENTA}tmux ls${RESET} or ${MAGENTA}tls${RESET}                             - List sessions"
+    echo -e "${MAGENTA}tmux ls${RESET} or ${MAGENTA}tl${RESET}                             - List sessions"
     echo -e "${MAGENTA}tmux attach -t <name>${RESET} or ${MAGENTA}ta${RESET}                - Attach to session"
     echo -e "${MAGENTA}tmux switch -t <name>${RESET} or ${MAGENTA}ts${RESET}                - Switch to another session"
     echo -e "${MAGENTA}tmux rename-session -t <old> <new>${RESET} or ${MAGENTA}tres${RESET}  - Rename session"
@@ -544,7 +619,7 @@ vscfo() {
     echo -e "${MAGENTA}Ctrl \\             ${RESET} - Split the editor into two"
     echo -e "${MAGENTA}Ctrl b             ${RESET} - Show or hide the sidebar"
     echo
-    
+
     echo -e "${ORANGE}Command Palette & Settings:${RESET}"
     echo -e "${MAGENTA}Ctrl Shift p       ${RESET} - Access all commands"
     echo -e "${MAGENTA}Ctrl k Ctrl s      ${RESET} - Open the keyboard shortcuts editor"
@@ -656,6 +731,7 @@ show_utility_commands() {
     echo ""
     echo -e "${ORANGE}List of Terminal Utility alias and functions:${RESET}"
     echo -e "${MAGENTA}ll        ${RESET} - Long list."
+    echo -e "${MAGENTA}la        ${RESET} - Long list including hidden files."
     echo -e "${MAGENTA}v         ${RESET} - vim"
     echo -e "${MAGENTA}aqui      ${RESET} - Open the current directory in Windows Explorer (WSL Only)."
     echo -e "${MAGENTA}fmedia    ${RESET} - Move all .mkv and .mp4 files to the current directory."
@@ -683,6 +759,7 @@ show_utility_commands() {
     echo -e "${MAGENTA}eb        ${RESET} - Open $HOME/.bashrc in vim"
     echo -e "${MAGENTA}ebt       ${RESET} - Open $HOME/.bash_tools in vim"
     echo -e "${MAGENTA}evrc      ${RESET} - Open $HOME/.vimrc in vim"
+    echo -e "${MAGENTA}eai       ${RESET} - Open $HOME/.config/ansible/inventory in vim"
     echo -e "${MAGENTA}wdir      ${RESET} - Change directory to $HOME/work"
     echo -e "${MAGENTA}gdir      ${RESET} - Change directory to $HOME/git"
     echo -e "${MAGENTA}ldir      ${RESET} - Change directory to $HOME/lab"
@@ -697,6 +774,8 @@ show_utility_commands() {
     echo -e "${MAGENTA}rg        ${RESET} - Enhanced ripgrep: searches hidden files, smart case, custom colors, no zips. Usage: ${YELLOW}rg <pattern> [path]${RESET}"
     echo -e "${MAGENTA}rga       ${RESET} - Search all files: includes hidden, ignored, and binary files. Usage: ${YELLOW}rga <pattern> [path]${RESET}"
     echo -e "${MAGENTA}rgs       ${RESET} - Search only staged Git files. Usage: ${YELLOW}rgs <pattern>${RESET}"
+    echo -e "${MAGENTA}pastel    ${RESET} - Generate, list, analyze, convert and manipulate colors${RESET}"
+    echo -e "${MAGENTA}glow      ${RESET} - Render Markdown files in the terminal with syntax highlighting. Usage: ${YELLOW}glow <file.md>${RESET} or interactive mode with files in current directory ${YELLOW}glow${RESET}"
 }
 
 show_media_commands() {
@@ -709,6 +788,8 @@ show_media_commands() {
     echo -e "${MAGENTA}getytplistmp4 ${RESET}    - Download all videos and save it in desktop in a YouTube playlist in MP4 format. Usage: ${YELLOW}getytplistmp4 <url>${RESET}"
     echo -e "${MAGENTA}getytplistmp4subs${RESET} - Download all videos and save it in desktop in a YouTube playlist in MP4 format with subtitles. Usage: ${YELLOW}getytplistmp4subs <url>${RESET}"
     echo -e "${MAGENTA}getytmp4subs  ${RESET}    - Download a YouTube video and save it in desktop in MP4 format (1080p) with subtitles. Usage: ${YELLOW}getytmp4subs <url>${RESET}"
+    echo -e "${MAGENTA}getytformats  ${RESET}    - Check available video/audio formats for a YouTube video (debug tool). Usage: ${YELLOW}getytformats <url>${RESET}"
+    echo -e "${MAGENTA}getytflex     ${RESET}    - Flexible YouTube downloader with quality options. Usage: ${YELLOW}getytflex <url> <format> [quality]${RESET} \nFormat: ${YELLOW}mp3|audio|mp4|video${RESET} | Quality: ${YELLOW}720|1080|1440|4k${RESET}"
     echo
     echo -e "${BLUE}## Spotify (Download audio):${RESET}"
     echo -e "${MAGENTA}getspot       ${RESET} - Download a song from Spotify and save it in desktop. Usage: ${YELLOW}getspot <url>${RESET}"
@@ -726,32 +807,19 @@ show_starship_commands() {
     echo -e "${MAGENTA}starship config  ${RESET}     - Show current Starship prompt configuration."
     echo -e "${MAGENTA}starship print-config${RESET} - Print the current Starship prompt configuration."
     echo -e "${MAGENTA}starship explain ${RESET}     - Explain current Starship prompt configuration."
-    echo 
-    echo -e "${BLUE}Git Status Indicators:${RESET}"
-    echo -e "  ${MAGENTA}✓${RESET}                   - ${YELLOW}up_to_date:${RESET} Your current branch is clean and in sync with its remote."
-    echo -e "  ${MAGENTA}🏳${RESET}                   - ${YELLOW}conflicted:${RESET} You have merge conflicts that need to be resolved."
-    echo -e "  ${MAGENTA}📦${RESET}                  - ${YELLOW}stashed:${RESET} You have changes stashed."
-    echo -e "  ${MAGENTA}📝${RESET}                  - ${YELLOW}modified:${RESET} You have uncommitted, modified files."
-    echo -e "  ${MAGENTA}🗑${RESET}                   - ${YELLOW}deleted:${RESET} You have uncommitted, deleted files."
-    echo -e "  ${MAGENTA}⇡\${count}${RESET}            - ${YELLOW}ahead:${RESET} Your local branch is ahead of its remote by '\${count}' commits."
-    echo -e "  ${MAGENTA}⇕⇡\${ahead_count}⇣\${behind_count}${RESET} - ${YELLOW}diverged:${RESET} Your local branch has diverged from its remote; it's ahead by '\${ahead_count}' and behind by '\${behind_count}' commits."
-    echo -e "  ${MAGENTA}⇣\${count}${RESET}          - ${YELLOW}behind:${RESET} Your local branch is behind its remote by '\${count}' commits."
-    echo -e "  ${MAGENTA}🤷${RESET}             - ${YELLOW}untracked:${RESET} You have new, untracked files."
-    echo -e "  ${MAGENTA}[++(\$count)](green)${RESET} - ${YELLOW}staged:${RESET} You have '\$count' changes staged for commit (added to index)."
-    echo -e "  ${MAGENTA}👅${RESET}                  - ${YELLOW}renamed:${RESET} You have uncommitted, renamed files."
     echo
-    echo -e "${BLUE}Git Status Symbols (Alternative):${RESET}"
-    echo -e "  ${MAGENTA}=${RESET}              - ${YELLOW}conflicted:${RESET} (Alternative) Merge conflicts."
-    echo -e "  ${MAGENTA}>${RESET}              - ${YELLOW}ahead:${RESET} (Alternative) Local branch is ahead of remote."
-    echo -e "  ${MAGENTA}<${RESET}              - ${YELLOW}behind:${RESET} (Alternative) Local branch is behind remote."
-    echo -e "  ${MAGENTA}?${RESET}              - ${YELLOW}diverged:${RESET} (Alternative) Local branch has diverged."
-    echo -e "  ${MAGENTA}?${RESET}              - ${YELLOW}untracked:${RESET} (Alternative) New, untracked files." # Note: '?' can have different meanings based on config
-    echo -e "  ${MAGENTA}\$${RESET}              - ${YELLOW}stashed:${RESET} (Alternative) Changes stashed."
-    echo -e "  ${MAGENTA}!${RESET}              - ${YELLOW}modified:${RESET} (Alternative) Uncommitted, modified files."
-    echo -e "  ${MAGENTA}+${RESET}              - ${YELLOW}staged:${RESET} (Alternative) Changes staged for commit."
-    echo -e "  ${MAGENTA}>${RESET}              - ${YELLOW}renamed:${RESET} (Alternative) Uncommitted, renamed files."
-    echo -e "  ${MAGENTA}X${RESET}              - ${YELLOW}deleted:${RESET} (Alternative) Uncommitted, deleted files."
-    echo -e "  ${MAGENTA}(empty string)${RESET}  - ${YELLOW}typechanged:${RESET} File type changed (e.g., file to symlink)."
+    echo -e "${BLUE}Git Status Indicators:${RESET}\n"
+    echo -e "  ${MAGENTA} (count)${RESET}          - ${RED}conflicted:${RESET} You have merge conflicts that need to be resolved."
+    echo -e "  ${BLUE}󰘽${RESET}                   - ${BLUE}up_to_date:${RESET} Your current branch is clean and in sync with its remote."
+    echo -e "  ${RED}󰋗 (count)${RESET}          - ${RED}untracked:${RESET} You have new, untracked files."
+    echo -e "  ${MAGENTA} (count)${RESET}          - ${YELLOW}ahead:${RESET} Your local branch is ahead of its remote by 'count' commits."
+    echo -e "  ${MAGENTA}(ahead) (behind)${RESET} - ${YELLOW}diverged:${RESET} Your local branch has diverged from its remote; it's ahead by 'ahead' and behind by 'behind' commits."
+    echo -e "  ${MAGENTA} (count)${RESET}          - ${YELLOW}behind:${RESET} Your local branch is behind its remote by 'count' commits."
+    echo -e "  ${BLUE} (count)${RESET}          - ${BLUE}stashed:${RESET} You have changes stashed."
+    echo -e "  ${YELLOW}󰛿 (count)${RESET}          - ${YELLOW}modified:${RESET} You have uncommitted, modified files."
+    echo -e "  ${BLUE}󰐗 (count)${RESET}          - ${BLUE}staged:${RESET} You have 'count' changes staged for commit (added to index)."
+    echo -e "  ${YELLOW}󰍸 (count)${RESET}          - ${YELLOW}renamed:${RESET} You have uncommitted, renamed files."
+    echo -e "  ${RED}󰍶 (count)${RESET}          - ${RED}deleted:${RESET} You have uncommitted, deleted files."
     echo
 }
 
