@@ -21,7 +21,7 @@ set_win_title() {
     echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"
 }
 
-starship_precmd_user_func="set_win_title"
+#starship_precmd_user_func="set_win_title"
 
 # Color Man pages
 export LESS="R --use-color"
@@ -97,18 +97,20 @@ alias gb='git branch'
 alias gc='git commit -m'
 alias gcl='git clone'
 alias gi='git init'
-alias gl='git log --graph --all --pretty=format:"%C(magenta)%h %C(white) %an  %ar%C(blue)  %D%n%s%n"'
 alias gsts='git status --short'
+alias glpd='git log --graph --oneline --decorate --all -p --pretty=format:"%C(brightred)%h%Creset %C(white)<%C(green)%an - %ae%Creset%C(white)>%Creset %C(yellow)(%ad)%Creset %s %C(brightcyan)%d%Creset"'
+alias gl='git log --all --graph --date=format:"%d/%m/%Y %H:%M" --pretty=format:"%C(brightred)%h%Creset -%C(brightcyan)%d%Creset %s %C(yellow)(%ad) %C(white)<%C(green)%an - %ae%Creset%C(white)>%Creset"'
 alias gls='git log --graph --oneline --decorate --all'
-alias glpd='git log --graph --oneline --decorate --all -p --pretty=format:"%C(auto)%h %C(cyan)%an <%ae> %C(yellow)%ad %C(reset)%s %C(auto)%d %C(reset)"'
-alias glps='git log --graph --oneline --decorate --all --stat --pretty=format:"%C(auto)%h %C(cyan)%an <%ae> %C(yellow)%ad %C(reset)%s %C(auto)%d %C(reset)"'
-alias glp='git log --graph --oneline --decorate --all --pretty=format:"%C(auto)%h %C(cyan)%an <%ae> %C(yellow)%ad %C(reset)%s %C(auto)%d %C(reset)" --date=format:"%d/%m/%Y %H:%M:%S"'
+alias glps='git log --graph --oneline --decorate --all --stat --pretty=format:"%C(brightred)%h%Creset %C(white)<%C(green)%an - %ae%Creset%C(white)>%Creset %C(yellow)(%ad)%Creset %s %C(brightcyan)%d%Creset"'
 alias gstr='git log --oneline --simplify-by-decoration --graph --all'
 alias gp='git push origin'
 alias gu='git pull' # gu = git update
 alias gs='git switch'
 alias gdif="git diff --output-indicator-new=' ' --output-indicator-old=' '"
 alias gdiff="git diff --output-indicator-new=' ' --output-indicator-old=' ' --color-words"
+alias gloa='git log --author'
+alias glof='git log --follow'
+
 
 # Git oneliner to add commit and push
 lazygit() {
@@ -672,17 +674,18 @@ show_git_commands() {
     echo -e "${MAGENTA}gc${RESET}              - Commit staged changes with a message. Usage: ${YELLOW}gc '<commit_message>'${RESET}"
     echo -e "${MAGENTA}gcl${RESET}             - Clone a Git repository. Usage: ${YELLOW}gcl <repository_url>${RESET}"
     echo -e "${MAGENTA}gi${RESET}              - Initialize a new Git repository."
-    echo -e "${MAGENTA}gl${RESET}              - Show the Git log."
-    echo -e "${MAGENTA}gls${RESET}             - Show a graph of the Git log with oneline and decorations."
-    echo -e "${MAGENTA}glpd${RESET}            - Show the Git log with detailed commit information and patch diff."
-    echo -e "${MAGENTA}glps${RESET}            - Show the Git log with stats and details."
-    echo -e "${MAGENTA}glp${RESET}             - Show the Git log with formatted output and human-readable date."
-    echo -e "${MAGENTA}gstr${RESET}            - Show a simplified graph of the Git log, displaying only decorated commits."
+    echo -e "${MAGENTA}gl${RESET}              - Show the Git log with a detailed, colored graph, including hash, date, author, email, and subject."
+    echo -e "${MAGENTA}gls${RESET}             - Show a concise, one-line graph of all Git log branches with decorations."
+    echo -e "${MAGENTA}glps${RESET}            - Show the Git log across all branches, with concise commit details and file change statistics."
+    echo -e "${MAGENTA}glpd${RESET}            - Show the Git log across all branches, with concise commit details and full patch (diff) information."
+    echo -e "${MAGENTA}gstr${RESET}            - Show a simplified graph of the Git log, displaying only decorated commits (e.g., merge points, branch tips)."
     echo -e "${MAGENTA}gp${RESET}              - Push changes to a remote Git repository. Usage: ${YELLOW}gp <branch_name>${RESET}"
     echo -e "${MAGENTA}gu${RESET}              - Pull updates from the remote Git repository (git pull)."
     echo -e "${MAGENTA}gs${RESET}              - Switch Git branches. Usage: ${YELLOW}gs <branch_name>${RESET}"
     echo -e "${MAGENTA}gsts${RESET}            - Show the short status of the Git repository."
     echo -e "${MAGENTA}gdif${RESET}            - Show the differences between the working directory and the last commit."
+    echo -e "${MAGENTA}gloa${RESET}            - Filter Git log by author. Usage: ${YELLOW}git log --author <author name or email>${RESET}"
+    echo -e "${MAGENTA}glof${RESET}            - Follow a file's history in Git log through renames. Usage: ${YELLOW}git log --follow <file>${RESET}"
     echo
 }
 

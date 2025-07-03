@@ -55,11 +55,11 @@
     "profiles": {
         "defaults": {
             "backgroundImage": null,
-            "colorScheme": "GruvboxDark",
+            "colorScheme": "Dracula",
             "cursorShape": "vintage",
             "bellStyle": "none",
             "font": {
-                "face": "UbuntuSansMono Nerd Font"
+                "face": "JetBrainsMono Nerd Font"
             }
         }
     },

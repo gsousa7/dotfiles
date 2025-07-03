@@ -5,10 +5,25 @@ This repository includes the following custom configurations:
 - Git aliases
 - Kubernetes aliases
 - Utility aliases and functions
-- htop, tmux and vim configuration customization 
+- Ansible, Glow, htop, Starship, tmux, vim, Visual Studio Code and WSL configuration customization
+  - `ansible.cfg` with custom localizations and users
+  - `glow.yml` with dark mode and better readability for markdown files
   - `.htoprc` with theme and better visibility
+  - `starship_full.toml` and `starship_simple.toml` for prompt
   - `.tmux.conf` with theme and better visibility
   - `.vimrc` with theme, linting, shortcuts and tools
+  - `vsc.cfg` with configurations and extensions
+  - `wsl.json` with themes and behaviour
+
+Files and Links
+| Source file           | Destination                        |
+|-----------------------|------------------------------------|
+| `vimrc`               | `~/.vimrc`                         |
+| `htoprc`              | `~/.config/htop/htoprc`            |
+| `tmux.conf`           | `~/.config/tmux/tmux.conf`         |
+| `ansible.cfg`         | `~/.config/ansible/ansible.cfg`    |
+| `glow.yml`            | `~/.config/glow/glow.yml`          |
+| `starship_full.toml`/`starship_simple.toml` | `~/.config/starship.toml` |
 
 ## Table of Contents
 1. [Installation](#1-installation)
@@ -19,6 +34,7 @@ This repository includes the following custom configurations:
 ## 1. Installation
 
 The installation script can run interactively and non-interactively
+
 
 ### Pre-requisites
 The following are required for this configuration to work:
@@ -102,13 +118,13 @@ Run the script with arguments to skip prompts:
    ```bash
    sudo fc-cache -fv
    ```
-   
+
 ---
 
 ## 2. Dotfiles usage
 - To view available aliases and functions, run:
   ```bash
-  lscom help 
+  lscom help
   ```
   or
   ```bash
@@ -127,9 +143,38 @@ Run the script with arguments to skip prompts:
   vscfo
   ```
 
+### Glow Markdown Viewer
+
+- **Usage:**
+  ```bash
+  glow README.md
+  glow .
+  glow
+  ```
+
+### Starship Prompt
+
+- Switch to full prompt: `pskinf`
+- Switch to simple prompt: `pskins`
+- Edit the prompt config: `vim ~/.config/starship.toml`
+
+### Ansible
+
+An empty inventory file is created at `~/.config/ansible/inventory`.
+Edit this file to add your hosts.
+
+### Extra Tools
+
+- `spotdl` — Download Spotify tracks
+- `yt-dlp` — Download YouTube videos
+- `tldr` — Simplified man pages
+- `pastel` — Terminal color tool
+
+These are installed via pipx and available in your `$PATH`.
+
+
 ## 3. Notes
 - `.bashrc` file will only be modified to load `.bash_tools` and starship, making it easier to manage.
-- Starship configuration/themes are located in `assets` directory
 - If no SSH key is found, the script will prompt you to create one and add it to your GitHub account `ssh-keygen`
-- If running in WSL, you may need to manually install the fonts from `/usr/local/share/fonts`.
-- Inspired by [bahamas10's dotfiles](https://github.com/bahamas10/dotfiles) and [ChrisTitusTech dotfiles](https://github.com/christitustech/mybash). 
+- If running in WSL, you may need to manually install the fonts from `/usr/local/share/fonts` and in Windows.
+- Inspired by [bahamas10's dotfiles](https://github.com/bahamas10/dotfiles) and [ChrisTitusTech dotfiles](https://github.com/christitustech/mybash).
