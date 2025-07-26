@@ -159,6 +159,62 @@ gdst() {
     fi
 }
 
+gppr() {
+    local found_repo=false
+    for dir in */; do
+        echo -e "\n${BLUE}=== Checking ${ORANGE}$dir${RESET}${BLUE} ===${RESET}"
+
+        if [ -d "$dir/.git" ]; then
+            found_repo=true
+            ( # Use a subshell to execute commands within the directory without affecting the parent script's current directory
+                cd "$dir" || { echo -e "${RED}Error: Could not enter directory '$dir'. Skipping.${RESET}"; return 1; }
+
+                # Check if 'main' branch exists locally
+                if ! git show-ref --verify --quiet refs/heads/main; then
+                    echo -e "${MAGENTA}No 'main' branch found locally.${RESET}"
+                    return 0 # Continue to next directory
+                fi
+
+                # Check if 'origin' remote exists and if 'main' branch is tracked
+                if ! git remote show origin &>/dev/null; then
+                    echo -e "${MAGENTA}No 'origin' remote found.${RESET}"
+                    return 0
+                fi
+
+                # Fetch the latest state of the 'main' branch from origin to ensure an accurate comparison
+                # Redirect stderr to /dev/null to suppress common "branch not found" warnings if origin/main doesn't exist yet
+                git fetch origin main &>/dev/null
+
+                # Check if 'origin/main' exists after fetch
+                if ! git show-ref --verify --quiet refs/remotes/origin/main; then
+                    echo -e "${MAGENTA}'main' branch not found on 'origin'. Possibly needs first push.${RESET}"
+                    return 0
+                fi
+
+                # Count commits local 'main' is ahead of 'origin/main'
+                local ahead_count=$(git rev-list --count origin/main..main)
+
+                # Count commits local 'main' is behind 'origin/main'
+                local behind_count=$(git rev-list --count main..origin/main)
+
+                if [ "$ahead_count" -gt 0 ]; then
+                    echo -e "${YELLOW}Main branch is ${ahead_count} commit(s) ahead of remote. NOT PUSHED.${RESET}"
+                elif [ "$behind_count" -gt 0 ]; then
+                    echo -e "${YELLOW}Main branch is ${behind_count} commit(s) behind remote. Consider pulling.${RESET}"
+                else
+                    echo -e "${GREEN}Main branch is up-to-date with remote.${RESET}"
+                fi
+            ) # End of subshell
+        else
+            echo -e "${MAGENTA}Not a Git repository.${RESET}"
+        fi
+    done
+
+    if ! $found_repo; then
+        echo -e "${MAGENTA}No Git repositories found in subdirectories.${RESET}"
+    fi
+}
+
 
 # tmux alias
 alias t='tmux'
@@ -659,6 +715,7 @@ vscfo() {
 
     echo -e "${ORANGE}Other:${RESET}"
     echo -e "${MAGENTA}Ctrl k v           ${RESET} - Preview Markdown"
+    echo -e "${MAGENTA}Windows key .      ${RESET} - Open emoji picker"
     echo
 }
 
@@ -671,6 +728,7 @@ show_git_commands() {
     echo -e "${MAGENTA}gall${RESET}            - Add all changes to Git staging area (equal to git add -A)."
     echo -e "${MAGENTA}gst${RESET}             - Show the current status of the Git repository."
     echo -e "${MAGENTA}gdst${RESET}            - Show the current status of the Git repositories existing in current directory"
+    echo -e "${MAGENTA}gppr${RESET}            - Show if the 'main' branch in local Git repositories is pushed to remote"
     echo -e "${MAGENTA}ga${RESET}              - Add file to Git staging area. Usage: ga <file>"
     echo -e "${MAGENTA}gf${RESET}              - Fetch updates from the remote Git repository (git fetch)."
     echo -e "${MAGENTA}gb${RESET}              - Show the list of Git branches."
