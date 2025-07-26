@@ -21,7 +21,7 @@ set_win_title() {
     echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"
 }
 
-#starship_precmd_user_func="set_win_title"
+starship_precmd_user_func="set_win_title"
 
 # Color Man pages
 export LESS="R --use-color"
@@ -86,6 +86,9 @@ alias rga="rg --hidden --no-ignore --binary --force-text --smart-case --trim"
 alias etx="vim $HOME/.config/tmux/tmux.config"
 alias es="vim $HOME/.config/starship.toml"
 alias eai="vim $HOME/.config/ansible/inventory"
+alias bat="batcat"
+alias bats="batcat -pn --no-paging"
+
 
 # Git Aliases and functions
 alias nb='git checkout -b'
@@ -733,8 +736,9 @@ show_kubernetes_commands() {
 show_utility_commands() {
     echo ""
     echo -e "${ORANGE}List of Terminal Utility alias and functions:${RESET}"
-    echo -e "${MAGENTA}ll        ${RESET} - Long list."
-    echo -e "${MAGENTA}la        ${RESET} - Long list including hidden files."
+    echo -e "${MAGENTA}l        ${RESET} - List files."
+    echo -e "${MAGENTA}ls        ${RESET} - Long list."
+    echo -e "${MAGENTA}ll        ${RESET} - Long list including hidden files."
     echo -e "${MAGENTA}v         ${RESET} - vim"
     echo -e "${MAGENTA}aqui      ${RESET} - Open the current directory in Windows Explorer (WSL Only)."
     echo -e "${MAGENTA}fmedia    ${RESET} - Move all .mkv and .mp4 files to the current directory."
@@ -779,6 +783,8 @@ show_utility_commands() {
     echo -e "${MAGENTA}rgs       ${RESET} - Search only staged Git files. Usage: ${YELLOW}rgs <pattern>${RESET}"
     echo -e "${MAGENTA}pastel    ${RESET} - Generate, list, analyze, convert and manipulate colors${RESET}"
     echo -e "${MAGENTA}glow      ${RESET} - Render Markdown files in the terminal with syntax highlighting. Usage: ${YELLOW}glow <file.md>${RESET} or interactive mode with files in current directory ${YELLOW}glow${RESET}"
+    echo -e "${MAGENTA}bat       ${RESET} - View files with syntax highlighting, line numbers, and Git integration. Usage: ${YELLOW}bat <file>${RESET}"
+    echo -e "${MAGENTA}bats      ${RESET} - View files as plain text, without pager, syntax highlighting, line numbers, or Git integration. Usage: ${YELLOW}bats <file>${RESET}"
 }
 
 show_media_commands() {
