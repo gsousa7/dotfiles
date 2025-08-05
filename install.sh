@@ -32,7 +32,7 @@ BASH_TOOLS="bash_tools"
 
 # List of core packages to install
 PACKAGES=(
-  "telnet" "rsync" "wget" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree" "xclip" "ripgrep" "fonts-powerline" "bat" "software-properties-common" "coreutils" "build-essential" "file" "make" "procps" "zlib1g-dev"
+  "telnet" "rsync" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree" "xclip" "ripgrep" "fonts-powerline" "bat" "software-properties-common" "coreutils" "build-essential" "file" "make" "procps" "zlib1g-dev" "gpg"
 )
 
 # Extra tools to install via python package manager
@@ -57,13 +57,13 @@ detect_package_manager() {
   log_message "Detecting package manager..."
   if command -v dnf &> /dev/null; then
     PACKAGE_MANAGER="dnf"
-    sudo dnf install -y curl > /dev/null 2>&1
+    sudo dnf install -y curl wget > /dev/null 2>&1
   elif command -v yum &> /dev/null; then
     PACKAGE_MANAGER="yum"
-    sudo yum install -y curl > /dev/null 2>&1
+    sudo yum install -y curl wget > /dev/null 2>&1
   elif command -v apt-get &> /dev/null; then
     PACKAGE_MANAGER="apt"
-    sudo apt install -y curl > /dev/null 2>&1
+    sudo apt install -y curl wget > /dev/null 2>&1
   else
     log_message "Error: No supported package manager found (dnf/yum/apt). Exiting."
     exit 1
@@ -76,18 +76,36 @@ install_packages() {
     log_message "Installing core packages..."
     
     if [ "$PACKAGE_MANAGER" == "apt" ]; then
-        # Configure glow repository
-        log_message "Checking glow repository configuration..."
+        
+        # Ensure /etc/apt/keyrings exists for all repository configurations
+        if [ ! -d /etc/apt/keyrings ]; then
+            log_message "Creating /etc/apt/keyrings directory..."
+            sudo mkdir -p /etc/apt/keyrings
+        fi
+
+        # Configure glow repository if glow is not installed
+        log_message "Checking for glow..."
         if ! command -v glow >/dev/null 2>&1; then
-            if [ -d /etc/apt/keyrings ] || sudo mkdir -p /etc/apt/keyrings; then
-                if curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg && \
-                   echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list; then
-                    log_message "Glow repository configured successfully."
-                else
-                    log_message "Failed to configure glow repository. It may not be installed."
-                fi
+            log_message "Configuring glow repository..."
+            if curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg && \
+                echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list; then
+                log_message "Glow repository configured successfully."
             else
-                log_message "/etc/apt/keyrings directory could not be created. Skipping glow repository configuration."
+                log_message "Failed to configure glow repository. It may not be installed."
+            fi
+        fi
+
+        # Configure eza repository if eza is not installed
+        log_message "Checking for eza..."
+        if ! command -v eza >/dev/null 2>&1; then
+            log_message "Configuring eza repository..."
+            if [ ! -f /etc/apt/keyrings/gierens.gpg ]; then
+                log_message "Adding eza repository key..."
+                wget -qO- https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | sudo gpg --dearmor -o /etc/apt/keyrings/gierens.gpg
+                echo "deb [signed-by=/etc/apt/keyrings/gierens.gpg] http://deb.gierens.de stable main" | sudo tee /etc/apt/sources.list.d/gierens.list
+                sudo chmod 644 /etc/apt/keyrings/gierens.gpg /etc/apt/sources.list.d/gierens.list
+            else
+                log_message "Eza repository already configured."
             fi
         fi
 
@@ -102,6 +120,7 @@ install_packages() {
             "shellcheck"
             "shfmt"
             "glow"
+            "eza"
         )
 
         log_message "Updating package list and installing packages..."
