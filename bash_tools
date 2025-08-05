@@ -11,6 +11,7 @@ export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 export PASTEL_COLOR_MODE=24bit
 
+fastfetch
 
 # Ansible
 export ANSIBLE_CONFIG="$HOME/.config/ansible/config.ini"
@@ -22,6 +23,9 @@ set_win_title() {
 }
 
 starship_precmd_user_func="set_win_title"
+
+# Load Homebrew
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 # Color Man pages
 export LESS="R --use-color"
@@ -81,6 +85,9 @@ alias svim='sudoedit'
 alias v='vim'
 alias ..='cd ..'
 alias ...='cd ../..'
+alias .3='cd ../../..'
+alias .4='cd ../../../..'
+alias .5='cd ../../../../..'
 alias rg="rg --hidden --smart-case --glob='!.git/' --no-search-zip --trim --colors=line:style:bold --colors=path:fg:magenta --colors=match:style:nobold"
 alias rga="rg --hidden --no-ignore --binary --force-text --smart-case --trim"
 alias etx="vim $HOME/.config/tmux/tmux.config"
@@ -319,6 +326,44 @@ rgs() {
   git diff --cached --name-only -z | rg --files0-from=- -- "$@"
 }
 
+function ex {
+ if [ -z "$1" ]; then
+    # display usage if no parameters given
+    echo "Usage: ex <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
+    echo "       extract <path/file_name_1.ext> [path/file_name_2.ext] [path/file_name_3.ext]"
+ else
+    for n in "$@"
+    do
+      if [ -f "$n" ] ; then
+          case "${n%,}" in
+            *.cbt|*.tar.bz2|*.tar.gz|*.tar.xz|*.tbz2|*.tgz|*.txz|*.tar)
+                         tar xvf "$n"       ;;
+            *.lzma)      unlzma ./"$n"      ;;
+            *.bz2)       bunzip2 ./"$n"     ;;
+            *.cbr|*.rar)       unrar x -ad ./"$n" ;;
+            *.gz)        gunzip ./"$n"      ;;
+            *.cbz|*.epub|*.zip)       unzip ./"$n"       ;;
+            *.z)         uncompress ./"$n"  ;;
+            *.7z|*.arj|*.cab|*.cb7|*.chm|*.deb|*.dmg|*.iso|*.lzh|*.msi|*.pkg|*.rpm|*.udf|*.wim|*.xar)
+                         7z x ./"$n"        ;;
+            *.xz)        unxz ./"$n"        ;;
+            *.exe)       cabextract ./"$n"  ;;
+            *.cpio)      cpio -id < ./"$n"  ;;
+            *.cba|*.ace)      unace x ./"$n"      ;;
+            *)
+                         echo "ex: '$n' - unknown archive method"
+                         return 1
+                         ;;
+          esac
+      else
+          echo "'$n' - file does not exist"
+          return 1
+      fi
+    done
+fi
+}
+
+
 # youtube-dl functions
 ## Get mp3 file of youtube
 getyt() {
@@ -500,7 +545,15 @@ vimfo() {
     echo -e "${MAGENTA}\q      ${RESET}- Quit"
     echo -e "${MAGENTA}\w      ${RESET}- Save"
     echo -e "${MAGENTA}\x      ${RESET}- Save and quit"
-    echo -e "${MAGENTA}\/      ${RESET}- Clear highlights"
+    echo -e "${MAGENTA}\/      ${RESET}- Clear search highlights"
+    echo
+    
+    # Tab Management
+    echo -e "${ORANGE}Tab Commands:${RESET}"
+    echo -e "${MAGENTA}\t      ${RESET}- New tab"
+    echo -e "${MAGENTA}\c      ${RESET}- Close current tab"
+    echo -e "${MAGENTA}\n      ${RESET}- Next tab"
+    echo -e "${MAGENTA}\p      ${RESET}- Previous tab"
     echo
 
     # Split Management
@@ -539,6 +592,15 @@ vimfo() {
     echo -e "${MAGENTA}vim -O file1.txt file2.txt${RESET} - Open with vertical split"
     echo -e "${MAGENTA}vim -o file1.txt file2.txt${RESET} - Open with horizontal split"
     echo
+
+    # ALE
+    echo -e "${ORANGE}ALE Commands:${RESET}"
+    echo -e "${MAGENTA}:ALEInfo         ${RESET}- Shows debug information for ALE."
+    echo -e "${MAGENTA}:ALEDetail       ${RESET}- Displays detailed errors and warnings."
+    echo -e "${MAGENTA}:ALEGoToNext     ${RESET}- Jumps to the next error or warning."
+    echo -e "${MAGENTA}:ALEGoToPrevious ${RESET}- Jumps to the previous error or warning."
+    echo -e "${MAGENTA}:ALEToggle       ${RESET}- Toggles ALE on or off for the current buffer."
+    echo -e "${MAGENTA}:ALEFix          ${RESET}- Automatically fixes code issues on save."
 }
 
 # Tmux help
@@ -836,6 +898,9 @@ show_utility_commands() {
     echo -e "${MAGENTA}svim      ${RESET} - Edit files with sudo. Equal to 'sudoedit' and 'sudo -e'"
     echo -e "${MAGENTA}..        ${RESET} - Go up one directory"
     echo -e "${MAGENTA}...       ${RESET} - Go up two directories"
+    echo -e "${MAGENTA}.3        ${RESET} - Go up three directories"     
+    echo -e "${MAGENTA}.4        ${RESET} - Go up four directories"
+    echo -e "${MAGENTA}.5        ${RESET} - Go up five directories"
     echo -e "${MAGENTA}rg        ${RESET} - Enhanced ripgrep: searches hidden files, smart case, custom colors, no zips. Usage: ${YELLOW}rg <pattern> [path]${RESET}"
     echo -e "${MAGENTA}rga       ${RESET} - Search all files: includes hidden, ignored, and binary files. Usage: ${YELLOW}rga <pattern> [path]${RESET}"
     echo -e "${MAGENTA}rgs       ${RESET} - Search only staged Git files. Usage: ${YELLOW}rgs <pattern>${RESET}"
@@ -843,6 +908,19 @@ show_utility_commands() {
     echo -e "${MAGENTA}glow      ${RESET} - Render Markdown files in the terminal with syntax highlighting. Usage: ${YELLOW}glow <file.md>${RESET} or interactive mode with files in current directory ${YELLOW}glow${RESET}"
     echo -e "${MAGENTA}bat       ${RESET} - View files with syntax highlighting, line numbers, and Git integration. Usage: ${YELLOW}bat <file>${RESET}"
     echo -e "${MAGENTA}bats      ${RESET} - View files as plain text, without pager, syntax highlighting, line numbers, or Git integration. Usage: ${YELLOW}bats <file>${RESET}"
+    echo -e "${MAGENTA}ex        ${RESET} - Extracts various compressed file types automatically. Usage: ${YELLOW}ex <path/file_name_1.ext> [path/file_name_2.ext]...${RESET}"
+}
+
+show_brew_commands () {
+    echo ""
+    echo -e "${ORANGE}List of Brew commands:${RESET}"
+    echo -e "${MAGENTA}brew install     ${RESET} - Installs a package. Usage: ${YELLOW}brew install <formula>${RESET}"
+    echo -e "${MAGENTA}brew update      ${RESET} - Updates Homebrew and its package list. Usage: ${YELLOW}brew update${RESET}"
+    echo -e "${MAGENTA}brew upgrade     ${RESET} - Upgrades all outdated installed packages. Usage: ${YELLOW}brew upgrade${RESET}"
+    echo -e "${MAGENTA}brew search      ${RESET} - Searches for available packages. Usage: ${YELLOW}brew search <text>${RESET}"
+    echo -e "${MAGENTA}brew list        ${RESET} - Lists all installed packages. Usage: ${YELLOW}brew list${RESET}"
+    echo -e "${MAGENTA}brew uninstall   ${RESET} - Uninstalls a package. Usage: ${YELLOW}brew uninstall <formula>${RESET}"
+    echo -e "${MAGENTA}brew doctor      ${RESET} - Diagnoses problems with your installation. Usage: ${YELLOW}brew doctor${RESET}"
 }
 
 show_media_commands() {
@@ -898,6 +976,7 @@ show_help() {
     echo "- utils          (or cli, utility, utilities, terminal - Terminal utilities)"
     echo "- youtube        (or yt, spotify, media - Media download commands)"
     echo "- starship       (or theme, prompt, ps1, custom, customization, skin - Starship prompt customization)"
+    echo "- brew           (Homebrew commands)"
     echo "- vim            (or vi, editor - Vim commands)"
     echo "- tmux           (Tmux commands)"
     echo "- vsc            (or vscode, code - VS Code commands)"
@@ -913,6 +992,9 @@ lscom() {
     case "$section" in
     "git")
         show_git_commands
+        ;;
+    "brew" | "homebrew")
+        show_brew_commands
         ;;
     "k8s" | "kubernetes")
         show_kubernetes_commands
@@ -945,6 +1027,8 @@ lscom() {
         show_media_commands
         echo
         show_starship_commands
+        echo
+        show_brew_commands
         echo
         vimfo
         echo

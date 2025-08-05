@@ -32,7 +32,7 @@ BASH_TOOLS="bash_tools"
 
 # List of core packages to install
 PACKAGES=(
-  "telnet" "rsync" "wget" "curl" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree" "xclip" "ripgrep" "fonts-powerline" "bat" "software-properties-common" "coreutils"
+  "telnet" "rsync" "wget" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree" "xclip" "ripgrep" "fonts-powerline" "bat" "software-properties-common" "coreutils" "build-essential" "file" "make" "procps" "zlib1g-dev"
 )
 
 # Extra tools to install via python package manager
@@ -57,10 +57,13 @@ detect_package_manager() {
   log_message "Detecting package manager..."
   if command -v dnf &> /dev/null; then
     PACKAGE_MANAGER="dnf"
+    sudo dnf install -y curl > /dev/null 2>&1
   elif command -v yum &> /dev/null; then
     PACKAGE_MANAGER="yum"
+    sudo yum install -y curl > /dev/null 2>&1
   elif command -v apt-get &> /dev/null; then
     PACKAGE_MANAGER="apt"
+    sudo apt install -y curl > /dev/null 2>&1
   else
     log_message "Error: No supported package manager found (dnf/yum/apt). Exiting."
     exit 1
@@ -71,10 +74,24 @@ detect_package_manager() {
 # Install core packages
 install_packages() {
     log_message "Installing core packages..."
-
-    # Append documentation packages based on package manager
+    
     if [ "$PACKAGE_MANAGER" == "apt" ]; then
-        PACKAGES+=(
+        # Configure glow repository
+        log_message "Checking glow repository configuration..."
+        if ! command -v glow >/dev/null 2>&1; then
+            if [ -d /etc/apt/keyrings ] || sudo mkdir -p /etc/apt/keyrings; then
+                if curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg && \
+                   echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list; then
+                    log_message "Glow repository configured successfully."
+                else
+                    log_message "Failed to configure glow repository. It may not be installed."
+                fi
+            else
+                log_message "/etc/apt/keyrings directory could not be created. Skipping glow repository configuration."
+            fi
+        fi
+
+        PACKAGES=(
             "man-db"
             "manpages"
             "manpages-dev"
@@ -84,31 +101,35 @@ install_packages() {
             "debian-reference-en"
             "shellcheck"
             "shfmt"
+            "glow"
         )
+
+        log_message "Updating package list and installing packages..."
         sudo apt update
+        sudo apt install -y "${PACKAGES[@]}" && log_message "Packages installed successfully." || log_message "Failed to install packages."
 
-      
-
-    # Install glow markdown viewer
-    log_message "Installing glow..."
-    if command -v glow >/dev/null 2>&1; then
-        log_message "glow is already installed"
-    elif [ -d /etc/apt/keyrings ] || sudo mkdir -p /etc/apt/keyrings; then
-        if curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg && \
-           echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list && \
-           sudo apt update && sudo apt install glow -y; then
-            log_message "glow installed successfully"
+        # Install fastfetch
+        log_message "Checking for fastfetch..."
+        if ! command -v fastfetch >/dev/null 2>&1; then
+            log_message "fastfetch not found. Installing from GitHub releases..."
+            log_message "Downloading latest fastfetch release..."
+            if curl -LJO https://github.com/fastfetch-cli/fastfetch/releases/latest/download/fastfetch-linux-amd64.deb; then
+                log_message "Installation started..."
+                if sudo dpkg -i fastfetch-linux-amd64.deb; then
+                    log_message "fastfetch installed successfully."
+                else
+                    log_message "Failed to install fastfetch using dpkg. May need to run 'sudo apt-get install -f' to fix dependencies."
+                fi
+                rm fastfetch-linux-amd64.deb
+            else
+                log_message "Failed to download fastfetch package."
+            fi
         else
-            log_message "Failed to install glow"
+            log_message "fastfetch is already installed."
         fi
-    else
-        log_message "/etc/apt/keyrings directory does not exist and could not be created"
-    fi
-       
 
     elif [[ "$PACKAGE_MANAGER" == "dnf" || "$PACKAGE_MANAGER" == "yum" ]]; then
-        $PACKAGE_MANAGER install -y epel-release
-        PACKAGES+=(
+        PACKAGES=(
             "man-db"
             "man-pages"
             "python3-docs"
@@ -118,16 +139,30 @@ install_packages() {
             "system-doc"
             "shellcheck"
         )
+        # Note: You would add glow and fastfetch repos/packages here for dnf/yum
+        sudo "$PACKAGE_MANAGER" install -y epel-release
+        log_message "Installing packages using $PACKAGE_MANAGER..."
+        sudo "$PACKAGE_MANAGER" install -y "${PACKAGES[@]}" && log_message "Packages installed successfully." || log_message "Failed to install packages."
     fi
 
-    log_message "Installing packages using $PACKAGE_MANAGER..."
-    sudo "$PACKAGE_MANAGER" install -y "${PACKAGES[@]}" && log_message "Packages installed successfully." || log_message "Failed to install packages."
     log_message "Configuring vim as main editor"
     if [ "$PACKAGE_MANAGER" == "apt" ]; then
       sudo update-alternatives --set editor /usr/bin/vim.basic
     elif [[ "$PACKAGE_MANAGER" == "dnf" || "$PACKAGE_MANAGER" == "yum" ]]; then
       sudo alternatives --set editor /usr/bin/vim
     fi
+}
+
+install_homebrew() {
+    # Check if Homebrew is already installed
+    if command -v brew >/dev/null 2>&1; then
+        log_message "Homebrew is already installed. Exiting."
+        return 0
+    fi
+
+    log_message "Running Homebrew installation script..."
+    # Run the official Homebrew installation script
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 }
 
 # Install pip-based extra tools
@@ -559,6 +594,8 @@ case "$action" in
   install)
     install_packages
     echo ""
+    install_homebrew
+    echo ""
     install_extra_tools
     echo ""
     install_fonts
@@ -594,6 +631,8 @@ esac
 
 echo ""
 log_message "Operation complete. If needed check the log file at $LOG_FILE"
+echo ""
+log_message "May need to run 'sudo apt-get install -f' to fix dependencies."
 echo ""
 log_message "To apply all changes, restart your shell or run: 'source ~/.bashrc'"
 echo ""

@@ -54,6 +54,7 @@ Plug 'vim-airline/vim-airline'        " Status line
 Plug 'vim-airline/vim-airline-themes' " Airline themes
 Plug 'sheerun/vim-polyglot'           " Syntax highlighting for many languages
 Plug 'dense-analysis/ale'             " Linting and fixing
+Plug 'frazrepo/vim-rainbow'
 
 call plug#end()
 
@@ -74,7 +75,13 @@ nnoremap <silent> <C-l> <C-w>l
 " Clear search highlights
 nnoremap <silent> <leader>/ :noh<CR>
 
+" Tab management
+nnoremap <leader>t :tabnew<CR>      " Open a new tab
+nnoremap <leader>c :tabclose<CR>    " Close the current tab
+nnoremap <leader>n :tabnext<CR>     " Go to the next tab
+nnoremap <leader>p :tabprevious<CR> " Go to the previous tab
 
+let g:rainbow_active = 1
 " ---------------------------------------------
 " ALE Settings
 " ---------------------------------------------
