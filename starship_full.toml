@@ -6,7 +6,7 @@ format = """
 [](color_bg1)\
 $os\
 $username\
-[](bg:color_bg2 fg:color_bg1)\
+[](fg:color_bg1 bg:color_bg2)\
 $directory\
 [](fg:color_bg2 bg:color_bg3)\
 $git_branch\
@@ -70,16 +70,16 @@ color_bg2 = '#6272A4'
 color_bg3 = '#BD93F9'
 color_bg4 = '#FF79C6'
 color_bg5 = '#8BE9FD'
-color_bg6 = '#50FA7B
+color_bg6 = '#50FA7B'
 
 [palettes.solarized_dark]
 color_txt = '#839496'
-color_bg1 = "#002b36
-color_bg2 = "#073642
-color_bg3 = "#586e75
-color_bg4 = "#268bd2
-color_bg5 = "#2aa198
-color_bg6 = "#6c71c4
+color_bg1 = '#002b36'
+color_bg2 = '#073642'
+color_bg3 = '#586e75'
+color_bg4 = '#268bd2'
+color_bg5 = '#2aa198'
+color_bg6 = '#6c71c4'
 
 [palettes.solarized_light]
 color_txt = "#073642"
@@ -165,28 +165,28 @@ truncation_symbol = "…/"
 
 [git_branch]
 symbol = ""
-style = "fg:color_txt bg:color_3"
+style = "fg:color_txt bg:color_bg3"
 format = '[ $symbol $branch ]($style)'
 
 
 [git_status]
-style = "fg:color_txt bg:color_3"
+style = "fg:color_txt bg:color_bg3"
 format = '[($all_status$ahead_behind )]($style)'
-conflicted = '[ ${count}](bold red) '
-up_to_date = '󰘽(bold green)'
-untracked = '[󰋗 ${count}](red) '
-ahead = ' ${count}(bold green)'
-diverged = ' ${ahead_count}(bold green)  ${behind_count}(bold yellow)'
-behind = ' ${count}(bold yellow)'
-stashed = '[ ${count}](bold blue) '
-modified = '[󰛿 ${count}](bold yellow) '
-staged = '[󰐗 ${count}](bold green) '
-renamed = '[󱍸 ${count}](bold yellow) '
-deleted = '[󰍶 ${count}](bold red) '
+conflicted = ' ${count} '
+up_to_date = '󰘽'
+untracked = '󰋗 ${count} '
+ahead = ' ${count}'
+diverged = ' ${ahead_count}  ${behind_count}'
+behind = ' ${count}'
+stashed = ' ${count} '
+modified = '󰛿 ${count} '
+staged = '󰐗 ${count} '
+renamed = '󱍸 ${count} '
+deleted = '󰍶 ${count} '
 
 
 [git_state]
-style = "fg:color_txt bg:color_3"
+style = "fg:color_txt bg:color_bg3"
 format = '[ $state( $progress_current/$progress_total) ]($style)'
 
 [python]
@@ -207,7 +207,7 @@ format = '[ $symbol( $environment) ]($style)'
 
 [kubernetes]
 symbol = "☸"
-style = "fg:color_txt bg:color_bg5"
+style = "fg:color_txt bg:color_bg4"
 format = '[[ $symbol $context ($cluster:$namespace) ]($style)]'
 disabled = false
 

@@ -326,7 +326,7 @@ rgs() {
   git diff --cached --name-only -z | rg --files0-from=- -- "$@"
 }
 
-function ex {
+ex() {
  if [ -z "$1" ]; then
     # display usage if no parameters given
     echo "Usage: ex <path/file_name>.<zip|rar|bz2|gz|tar|tbz2|tgz|Z|7z|xz|ex|tar.bz2|tar.gz|tar.xz>"
@@ -479,7 +479,7 @@ pcolor() {
     #    return 1
     #fi
 
-    echo "Available palettes:"
+    echo "Available starship palettes:"
     echo "1) gruvbox_dark"
     echo "2) nord"
     echo "3) nord inverted"
@@ -532,6 +532,55 @@ pskins() {
     ln -sf ~/dotfiles/starship_simple.toml ~/.config/starship.toml
 
     echo "Switched to simple Starship prompt."
+}
+
+eskin() {
+    echo "Available eza themes:"
+    echo "1) default"
+    echo "2) gruvbox-dark"
+    echo "3) dracula"
+    echo "4) solarized-dark"
+    echo "5) solarized-light"
+    echo "6) black"
+    echo "7) catppuccin"
+    echo "8) frosty"
+    echo "9) gruvbox-light"
+    echo "10) one_dark"
+    echo "11) rose-pine-dawn"
+    echo "12) rose-pine-moon"
+    echo "13) rose-pine"
+    echo "14) tokyonight"
+    echo "15) white"
+
+    read -p "Enter the number of the palette you want to use: " choice
+
+    ead -p "Enter the number of the theme you want to use: " choice
+
+    local theme_file=""
+    case $choice in
+        1) theme_file="default.yml" ;;
+        2) theme_file="gruvbox-dark.yml" ;;
+        3) theme_file="dracula.yml" ;;
+        4) theme_file="solarized-dark.yml" ;;
+        5) theme_file="solarized-light.yml" ;;
+        6) theme_file="black.yml" ;;
+        7) theme_file="catppuccin.yml" ;;
+        8) theme_file="frosty.yml" ;;
+        9) theme_file="gruvbox-light.yml" ;;
+        10) theme_file="one_dark.yml" ;;
+        11) theme_file="rose-pine-dawn.yml" ;;
+        12) theme_file="rose-pine-moon.yml" ;;
+        13) theme_file="rose-pine.yml" ;;
+        14) theme_file="tokyonight.yml" ;;
+        15) theme_file="white.yml" ;;
+        *)
+            echo "Invalid choice. Exiting."
+            return 1
+            ;;
+    esac
+
+    ln -sf "$HOME/.config/eza/eza-themes/themes/$theme_file" ~/.config/eza/theme.yml
+    echo "Eza theme updated to $theme_file."
 }
 
 # get vim help

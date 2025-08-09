@@ -1,7 +1,7 @@
 # Starship Simple configuration
+
 "$schema" = 'https://starship.rs/config-schema.json'
 
-# Adjusted format for better spacing and clarity
 format = """$os$username@$hostname:$directory$git_branch$git_status$fill$cmd_duration
 $character$status"""
 
@@ -19,6 +19,9 @@ format = '[$hostname]($style)'
 ssh_only = false
 ssh_symbol = '🌐'
 
+[os]
+disabled = false
+style = "bg:color_bg1 fg:color_txt"
 
 [os.symbols]
 Windows = "󰍲"

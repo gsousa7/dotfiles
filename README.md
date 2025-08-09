@@ -8,11 +8,10 @@ This repository includes the following custom configurations:
 - Ansible, Glow, htop, Starship, tmux, vim, Visual Studio Code and WSL configuration customization
   - `ansible.cfg` with custom localizations and users
   - `glow.yml` with dark mode and better readability for markdown files
-  - `.htoprc` with theme and better visibility
+  - `htoprc` with theme and better visibility
   - `starship_full.toml` and `starship_simple.toml` for prompt
-  - `.tmux.conf` with theme and better visibility
-  - `.vimrc` with theme, linting, shortcuts and tools
-  - `vsc.cfg` with configurations and extensions
+  - `tmux.conf` with theme and better visibility
+  - `vimrc` with theme, linting, shortcuts and tools
   - `wsl.json` with themes and behaviour
 
 Files and Links

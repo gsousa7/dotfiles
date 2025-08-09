@@ -43,12 +43,13 @@ log_message() {
   local GREEN="\e[32m"
   local RESET="\e[0m"
   local message="$1"
+  local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
 
-  # Print colored message to console (stdout)
-  echo -e "${GREEN}${message}${RESET}"
+  # Print colored message with timestamp to console (stdout)
+  echo -e "${GREEN}[${timestamp}] ${message}${RESET}"
 
-  # Print plain message to log file
-  echo "${message}" >> "$LOG_FILE"
+  # Print plain message with timestamp to log file
+  echo "[${timestamp}] ${message}" >> "$LOG_FILE"
 }
 
 
@@ -304,9 +305,35 @@ symlink_dotfiles() {
   ln -sf "$DOTFILES_DIR/ansible.cfg" "$HOME/.config/ansible/ansible.cfg" && log_message "Linked ansible.cfg to .config"
   touch "$HOME/.config/ansible/inventory" && log_message "Created ansible inventory file in .config/ansible/inventory"
 
-    # Symlink glow config to .config directory
+  # Symlink glow config to .config directory
   mkdir -p "$HOME/.config/glow"
   ln -sf "$DOTFILES_DIR/glow.yml" "$HOME/.config/glow/glow.yml" && log_message "Linked glow.yml to .config"
+}
+
+eza_configuration() {
+    local EZA_THEMES_REPO="https://github.com/eza-community/eza-themes.git"
+    local EZA_CONFIG_DIR="$HOME/.config/eza"
+    local EZA_THEME_SYMLINK="$EZA_CONFIG_DIR/theme.yml"
+    
+    if [ -d "$EZA_CONFIG_DIR" ]; then
+        log_message "Removing existing eza config directory..."
+        rm -rf "$EZA_CONFIG_DIR"
+    fi
+    
+    mkdir -p "$EZA_CONFIG_DIR"
+
+    if ! git clone "$EZA_THEMES_REPO" "$EZA_CONFIG_DIR/assets"; then
+        log_message "Failed to clone eza themes repository. Exiting."
+        return 1
+    fi
+
+    log_message "Creating symlink for eza theme file..."
+    if ! ln -sf "$EZA_CONFIG_DIR/themes/default.yml" "$EZA_THEME_SYMLINK"; then
+        log_message "Failed to create symlink for eza theme file. Exiting."
+        return 1
+    fi
+    
+    log_message "Eza configuration completed successfully!"
 }
 
 # Include bash_tools on .bashrc
