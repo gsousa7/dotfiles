@@ -23,7 +23,7 @@ set_win_title() {
     echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"
 }
 
-export starship_precmd_user_func="set_win_title"
+starship_precmd_user_func="set_win_title"
 
 # Load Homebrew
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
