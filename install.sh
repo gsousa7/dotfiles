@@ -575,6 +575,76 @@ install_starship() {
   log_message "Starship full/detailed configuration file linked."
 }
 
+install_cloud_clis() {
+    echo "This function will install AWS CLI v2 and Azure CLI."
+
+    if command -v aws &> /dev/null && command -v az &> /dev/null; then
+        echo "Both AWS CLI and Azure CLI are already installed."
+        return 0
+    fi
+
+    if ! command -v aws &> /dev/null; then
+        echo "Installing AWS CLI v2..."
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        if [ $? -eq 0 ]; then
+            unzip -q awscliv2.zip
+            sudo ./aws/install --update
+            rm -rf aws awscliv2.zip
+            echo "AWS CLI installation complete."
+        else
+            echo "Failed to download AWS CLI installer. Aborting."
+            return 1
+        fi
+    else
+        echo "AWS CLI is already installed."
+    fi
+
+    if ! command -v az &> /dev/null; then
+        echo "Installing Azure CLI..."
+        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+        if [ $? -eq 0 ]; then
+            echo "Azure CLI installation complete."
+        else
+            echo "Failed to download Azure CLI installer. Aborting."
+            return 1
+        fi
+    else
+        echo "Azure CLI is already installed."
+    fi
+}
+
+install_terraform() {
+    log_message "This function will install Terraform using the official HashiCorp APT repository."
+
+    # Check if Terraform is already installed
+    if command -v terraform &> /dev/null; then
+        log_message "Terraform is already installed."
+        return 0
+    fi
+
+    log_message "Adding HashiCorp GPG key and repository..."
+    # Add the GPG key
+    if ! wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg &> /dev/null; then
+        log_message "Failed to add HashiCorp GPG key. Aborting."
+        return 1
+    fi
+
+    # Add the HashiCorp APT repository
+    if ! echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list &> /dev/null; then
+        log_message "Failed to add HashiCorp repository. Aborting."
+        return 1
+    fi
+
+    log_message "Updating package list and installing Terraform..."
+    # Update package list and install Terraform
+    if sudo apt update && sudo apt install terraform; then
+        log_message "Terraform installation complete."
+    else
+        log_message "An error occurred during the Terraform installation."
+        return 1
+    fi
+}
+
 update_everything () {
   log_message "Updating dotfiles..."
   pip install --upgrade pip pipx
@@ -692,7 +762,9 @@ case "$action" in
     echo ""
     install_starship
     echo ""
-    
+    install_cloud_clis
+    echo ""
+    install_terraform
     ;;
   update)
     update_everything
