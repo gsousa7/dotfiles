@@ -54,9 +54,34 @@ RED="\e[31m"
 
 
 # Custom Alias
-alias l='\ls -h --color=auto --group-directories-first'
-alias ls='\ls -lh --color=auto --group-directories-first'
-alias ll='\ls -lah --color=auto --group-directories-first'
+#alias l='\ls -h --color=auto --group-directories-first'
+#alias ls='\ls -lh --color=auto --group-directories-first'
+#alias ll='\ls -lah --color=auto --group-directories-first'
+
+# eza alias
+alias l='eza --icons --sort=name --group-directories-first --color=auto'
+alias ls='eza -a --icons --git --sort=name --group-directories-first --color=auto'
+alias ll='eza -lah --icons --git --sort=name --group-directories-first --color=auto'
+alias lls='eza -lah --icons --git --sort=size --group-directories-first --color=auto' 
+alias ld='eza --only-dirs --git --icons --sort=name --color=auto'
+alias lf='eza --only-files --git --icons --sort=name --color=auto'
+alias lda='eza -lah --only-dirs --git --icons --color=auto' 
+alias lfa='eza -lah --only-files --git --icons --color=auto'
+alias tree='eza -aT --icons --color=auto --sort=name --group-directories-first'
+alias ltree='eza -lahT --icons --color=auto --sort=name --group-directories-first --git'
+alias l.='eza -lh --icons ../'         
+alias l..='eza -lh --icons ../../'     
+alias l...='eza -lh --icons ../../../' 
+alias lt="eza -lTg --color=auto --icons --sort=Name --group-directories-first --git"
+alias lt2="eza -lTg --level=2 --color=auto --icons --sort=Name --group-directories-first --git"
+alias lt3="eza -lTg --level=3 --color=auto --icons --sort=Name --group-directories-first --git"
+alias lt4="eza -lTg --level=4 --color=auto --icons --sort=Name --group-directories-first --git"
+alias lta="eza -lTag --color=auto --icons --sort=Name --group-directories-first --git"
+alias lta2="eza -lTag --level=2 --color=auto --icons --sort=Name --group-directories-first --git"
+alias lta3="eza -lTag --level=3 --color=auto --icons --sort=Name --group-directories-first --git"
+alias lta4="eza -lTag --level=4 --color=auto --icons --sort=Name --group-directories-first --git"
+
+
 alias aqui='explorer.exe .'
 alias fmedia='find . -type f \( -name "*.mp4" -o -name "*.mkv" \)'
 #alias fmedia='find . -type f \( -name "*.mp4" -o -name "*.mkv" \) -exec mv {} . \;'
@@ -474,10 +499,10 @@ getplay() {
 
 # List starship palettes and set one
 pcolor() {
-    #if [ "$(readlink ~/.config/starship.toml)" != "$HOME/dotfiles/starship_full.toml" ]; then
-    #    echo "Palette can only be changed when the full Starship configuration is active."
-    #    return 1
-    #fi
+    if [ "$(readlink ~/.config/starship.toml)" != "$HOME/dotfiles/starship_full.toml" ]; then
+        echo "Palette can only be changed when the full Starship configuration is active."
+        return 1
+    fi
 
     echo "Available starship palettes:"
     echo "1) gruvbox_dark"
@@ -552,9 +577,7 @@ eskin() {
     echo "14) tokyonight"
     echo "15) white"
 
-    read -p "Enter the number of the palette you want to use: " choice
-
-    ead -p "Enter the number of the theme you want to use: " choice
+    read -p "Enter the number of the theme you want to use: " choice
 
     local theme_file=""
     case $choice in
@@ -579,7 +602,7 @@ eskin() {
             ;;
     esac
 
-    ln -sf "$HOME/.config/eza/eza-themes/themes/$theme_file" ~/.config/eza/theme.yml
+    ln -sf "$HOME/.config/eza/assets/themes/$theme_file" ~/.config/eza/theme.yml
     echo "Eza theme updated to $theme_file."
 }
 
@@ -676,7 +699,7 @@ tmuxfo() {
 
     echo -e "${ORANGE}Window management${RESET}"
     echo -e "${MAGENTA}Ctrl a c${RESET}                  - Create new window"
-    echo -e "${MAGENTA}Ctrl a X${RESET}                  - Close current window"
+    echo -e "${MAGENTA}Ctrl a x${RESET}                  - Close current window"
     echo -e "${MAGENTA}Ctrl a n${RESET} or ${MAGENTA}Alt n${RESET}         - Next window"
     echo -e "${MAGENTA}Ctrl a p${RESET} or ${MAGENTA}Alt p${RESET}         - Previous window"
     echo -e "${MAGENTA}Ctrl a w${RESET}                  - List windows"
@@ -902,12 +925,47 @@ show_kubernetes_commands() {
     echo
 }
 
+show_eza_commands() {
+    echo ""
+    echo -e "${ORANGE}List of Eza commands and aliases:${RESET}"
+    echo -e "${BLUE}--- Git Status Legend ---${RESET}"
+    echo "This shows a two-character column indicating staged and unstaged statuses."
+    echo ""
+    echo -e "${BLUE}Character Meanings:${RESET}"
+    echo -e "  ${MAGENTA}- ${RESET} - Not modified"
+    echo -e "  ${MAGENTA}M ${RESET} - Modified file"
+    echo -e "  ${MAGENTA}N ${RESET} - New file"
+    echo -e "  ${MAGENTA}D ${RESET} - Deleted"
+    echo -e "  ${MAGENTA}R ${RESET} - Renamed"
+    echo -e "  ${MAGENTA}T ${RESET} - Type-change"
+    echo -e "  ${MAGENTA}I ${RESET} - Ignored"
+    echo -e "  ${MAGENTA}U ${RESET} - Conflicted"
+    echo -e "${MAGENTA}l         ${RESET} - Lists files with icons, sorted by name."
+    echo -e "${MAGENTA}ls        ${RESET} - Lists all files (-a) with icons and Git status, sorted by name."
+    echo -e "${MAGENTA}ll        ${RESET} - Lists all files (-lah) with icons and Git status in long format, sorted by name."
+    echo -e "${MAGENTA}lls       ${RESET} - Lists all files in long format, with icons and Git status, sorted by size."
+    echo -e "${MAGENTA}ld        ${RESET} - Lists only directories with Git status and icons."
+    echo -e "${MAGENTA}lf        ${RESET} - Lists only files with Git status and icons."
+    echo -e "${MAGENTA}lda       ${RESET} - Lists all directories (-lah) with Git status and icons."
+    echo -e "${MAGENTA}lfa       ${RESET} - Lists all files (-lah) with Git status and icons."
+    echo -e "${MAGENTA}tree      ${RESET} - Shows a tree view (-aT) of all files with icons."
+    echo -e "${MAGENTA}ltree     ${RESET} - Shows a long tree view (-lahT) of all files with Git status."
+    echo -e "${MAGENTA}lt        ${RESET} - Creates a long tree view (-lTg) with icons, sorted by name."
+    echo -e "${MAGENTA}lt2       ${RESET} - Same as lt, but shows only 2 levels deep."
+    echo -e "${MAGENTA}lt3       ${RESET} - Same as lt, but shows only 3 levels deep."
+    echo -e "${MAGENTA}lt4       ${RESET} - Same as lt, but shows only 4 levels deep."
+    echo -e "${MAGENTA}lta       ${RESET} - Creates a long tree view (-lTag) including hidden files, with Git status and icons."
+    echo -e "${MAGENTA}lta2      ${RESET} - Same as lta, but shows only 2 levels deep."
+    echo -e "${MAGENTA}lta3      ${RESET} - Same as lta, but shows only 3 levels deep."
+    echo -e "${MAGENTA}lta4      ${RESET} - Same as lta, but shows only 4 levels deep."
+    echo -e "${MAGENTA}l.        ${RESET} - Lists the contents of the parent directory (../)."
+    echo -e "${MAGENTA}l..       ${RESET} - Lists the contents of the directory 2 levels up (../../)."
+    echo -e "${MAGENTA}l...      ${RESET} - Lists the contents of the directory 3 levels up (../../../)." 
+}
+
 show_utility_commands() {
     echo ""
     echo -e "${ORANGE}List of Terminal Utility alias and functions:${RESET}"
-    echo -e "${MAGENTA}l        ${RESET} - List files."
-    echo -e "${MAGENTA}ls        ${RESET} - Long list."
-    echo -e "${MAGENTA}ll        ${RESET} - Long list including hidden files."
     echo -e "${MAGENTA}v         ${RESET} - vim"
     echo -e "${MAGENTA}aqui      ${RESET} - Open the current directory in Windows Explorer (WSL Only)."
     echo -e "${MAGENTA}fmedia    ${RESET} - Move all .mkv and .mp4 files to the current directory."
@@ -1020,6 +1078,7 @@ show_starship_commands() {
 show_help() {
     echo ""
     echo -e "${YELLOW}Available sections:${RESET}"
+    echo "- eza            (or exa, ls, list - Enhanced ls command)"
     echo "- git            (Git commands)"
     echo "- kubernetes     (or k8s - Kubernetes commands)"
     echo "- utils          (or cli, utility, utilities, terminal - Terminal utilities)"
@@ -1057,6 +1116,9 @@ lscom() {
     "starship" | "prompt" | "ps1" | "custom" | "customization" | "theme" | "skin")
         show_starship_commands
         ;;
+    "eza" | "exa" | "ls" | "list")
+        show_eza_commands
+        ;;
     "vim" | "vi" | "editor")
         vimfo
         ;;
@@ -1078,6 +1140,8 @@ lscom() {
         show_starship_commands
         echo
         show_brew_commands
+        echo
+        show_eza_commands
         echo
         vimfo
         echo

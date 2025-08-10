@@ -311,24 +311,25 @@ symlink_dotfiles() {
 }
 
 eza_configuration() {
-    local EZA_THEMES_REPO="https://github.com/eza-community/eza-themes.git"
-    local EZA_CONFIG_DIR="$HOME/.config/eza"
-    local EZA_THEME_SYMLINK="$EZA_CONFIG_DIR/theme.yml"
+    EZA_THEMES_REPO="https://github.com/eza-community/eza-themes.git"
+    EZA_CONFIGURATION_DIR="$HOME/.config/eza"
+    EZA_THEMES_DIR="$EZA_CONFIGURATION_DIR/assets"
+    EZA_THEME_SYMLINK="$EZA_CONFIGURATION_DIR/theme.yml"
     
-    if [ -d "$EZA_CONFIG_DIR" ]; then
+    if [ -d "$EZA_CONFIGURATION_DIR" ]; then
         log_message "Removing existing eza config directory..."
-        rm -rf "$EZA_CONFIG_DIR"
+        rm -rf "$EZA_CONFIGURATION_DIR"
     fi
     
-    mkdir -p "$EZA_CONFIG_DIR"
+    mkdir -p "$EZA_CONFIGURATION_DIR"
 
-    if ! git clone "$EZA_THEMES_REPO" "$EZA_CONFIG_DIR/assets"; then
+    if ! git clone "$EZA_THEMES_REPO" "$EZA_THEMES_DIR"; then
         log_message "Failed to clone eza themes repository. Exiting."
         return 1
     fi
 
     log_message "Creating symlink for eza theme file..."
-    if ! ln -sf "$EZA_CONFIG_DIR/themes/default.yml" "$EZA_THEME_SYMLINK"; then
+    if ! ln -sf "$EZA_THEMES_DIR/themes/default.yml" "$EZA_THEME_SYMLINK"; then
         log_message "Failed to create symlink for eza theme file. Exiting."
         return 1
     fi
@@ -655,6 +656,8 @@ case "$action" in
     symlink_dotfiles
     echo ""
     include_bash_tools
+    echo ""
+    eza_configuration
     echo ""
     install_vim_prereq
     echo ""
