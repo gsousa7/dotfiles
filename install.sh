@@ -645,6 +645,29 @@ install_terraform() {
     fi
 }
 
+# Kubectl
+install_kubectl() {    
+    # Check if kubectl is already installed
+    if command -v kubectl &> /dev/null; then
+        log_message "kubectl is already installed. Version:"
+        kubectl version --client
+        return 0
+    fi
+
+    log_message "Downloading the latest stable version of kubectl..."
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+
+    # Make the binary executable and move it to a local bin directory
+    chmod +x kubectl
+    mkdir -p "$HOME/.local/bin"
+    mv ./kubectl "$HOME/.local/bin/kubectl"
+
+    log_message "kubectl installation completed successfully."
+    log_message "To make 'kubectl' available, please ensure '$HOME/.local/bin' is in your PATH."
+    log_message "You can check the installed version by running: kubectl version --client"
+    
+}
+
 update_everything () {
   log_message "Updating dotfiles..."
   pip install --upgrade pip pipx
@@ -765,7 +788,10 @@ case "$action" in
     install_cloud_clis
     echo ""
     install_terraform
+    echo ""
+    install_kubectl
     ;;
+    
   update)
     update_everything
     ;;
