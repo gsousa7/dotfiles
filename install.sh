@@ -171,6 +171,7 @@ install_packages() {
     elif [[ "$PACKAGE_MANAGER" == "dnf" || "$PACKAGE_MANAGER" == "yum" ]]; then
       sudo alternatives --set editor /usr/bin/vim
     fi
+
 }
 
 install_homebrew() {
@@ -183,6 +184,28 @@ install_homebrew() {
     log_message "Running Homebrew installation script..."
     # Run the official Homebrew installation script
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+}
+
+install_rust_and_cargo() {
+    log_message "This function will install Rust and Cargo using the rustup installer."
+    
+    # Check if cargo is already installed
+    if command -v cargo &> /dev/null; then
+        log_message "Rust and Cargo are already installed."
+        return 0
+    fi
+
+    log_message "Downloading and running the rustup installer..."
+    # The rustup installer will handle the installation process
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+    # Check the installation's exit status
+    if [ $? -eq 0 ]; then
+        log_message "Rust and Cargo installation completed successfully."
+    else
+        log_message "An error occurred during the installation of Rust and Cargo."
+        return 1
+    fi
 }
 
 # Install pip-based extra tools
