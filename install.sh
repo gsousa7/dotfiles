@@ -666,6 +666,8 @@ case "$action" in
     echo ""
     install_homebrew
     echo ""
+    install_rust_and_cargo
+    echo ""
     install_extra_tools
     echo ""
     install_fonts
