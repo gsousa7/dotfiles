@@ -1,7 +1,8 @@
 # General settings
 export EDITOR='vim'
-export HISTSIZE=5000
-export HISTFILESIZE=5000
+export HISTSIZE=500000
+export HISTFILESIZE=500000
+export HISTTIMEFORMAT="%F %T "
 export GREP_COLORS='mt=1;36'
 export PAGER='less'
 export TZ='Europe/Lisbon'
@@ -22,7 +23,7 @@ set_win_title() {
     echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD}\007"
 }
 
-starship_precmd_user_func="set_win_title"
+export starship_precmd_user_func="set_win_title"
 
 # Load Homebrew
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
