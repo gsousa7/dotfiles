@@ -569,12 +569,12 @@ install_tmux_plugins() {
   fi
   
   # Symlink scripts
-  ln -sf "$DOTFILES_DIR/tmux/scripts/ssh.sh" "$HOME/.config/tmux/scripts/ssh.sh"
-  ln -sf "$DOTFILES_DIR/tmux/scripts/weather.sh" "$HOME/.config/tmux/scripts/weather.sh"
+  ln -sf "$DOTFILES_DIR/sh.sh" "$HOME/.config/tmux/scripts/ssh.sh"
+  ln -sf "$DOTFILES_DIR/weather.sh" "$HOME/.config/tmux/scripts/weather.sh"
   
   # Ensure source files are executable
-  chmod +x "$DOTFILES_DIR/tmux/scripts/ssh.sh" 2>/dev/null || true
-  chmod +x "$DOTFILES_DIR/tmux/scripts/weather.sh" 2>/dev/null || true
+  chmod +x "$DOTFILES_DIR/ssh.sh" 2>/dev/null || true
+  chmod +x "$DOTFILES_DIR/weather.sh" 2>/dev/null || true
 
   log_message "Run tmux and press Ctrl a + I to install plugins."
 }
