@@ -39,7 +39,7 @@ The installation script can run interactively and non-interactively
 The following are required for this configuration to work:
 - Debian-based or RHEL-based Linux system, including WSL
 - Sudo access configured for the user
-- `git` installed
+- `git` and `curl` installed
 
 #### Sudo access
 To grant sudo access without a password prompt, type `visudo` and add the following line at the end of the file:
@@ -51,12 +51,12 @@ Replace `<user>` with the user you want to configure.
 #### Git installation
 For Debian-based systems:
 ```bash
-sudo apt install -y git
+sudo apt install -y git curl
 ```
 
 For RHEL-based systems:
 ```bash
-sudo dnf install -y git
+sudo dnf install -y git curl
 ```
 
 ### Script description

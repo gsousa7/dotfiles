@@ -122,7 +122,8 @@ install_packages() {
             "shfmt"
             "glow"
             "eza"
-            "jetbrain-font"
+            "fonts-jetbrain-mono"
+            
         )
 
         log_message "Updating package list and installing packages..."
