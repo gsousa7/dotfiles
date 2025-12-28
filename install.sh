@@ -661,7 +661,7 @@ install_terraform() {
     local CODENAME=$(grep -oP '^VERSION_CODENAME=\K\w+' /etc/os-release)
 
     # Add the HashiCorp APT repository using the determined codename
-    if ! echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $CODENAME main" | sudo tee /etc/apt/sources.list.d/   hashicorp.list &> /dev/null; then
+    if ! echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $CODENAME main" | sudo tee /etc/apt/sources.list.d/hashicorp.list &> /dev/null; then
         log_message "Failed to add HashiCorp repository. Aborting."
         return 1
     fi
