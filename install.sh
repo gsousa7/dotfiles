@@ -32,7 +32,7 @@ BASH_TOOLS="bash_tools"
 
 # List of core packages to install
 PACKAGES=(
-  "telnet" "rsync" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree" "xclip" "ripgrep" "fonts-powerline" "bat" "software-properties-common" "coreutils" "build-essential" "file" "make" "procps" "zlib1g-dev" "gpg" "build-essential"
+  "telnet" "rsync" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree" "xclip" "ripgrep" "fonts-powerline" "bat" "software-properties-common" "coreutils" "build-essential" "file" "make" "procps" "zlib1g-dev" "gpg" "build-essential" "ffmpeg"
 )
 
 # Extra tools to install via python package manager
@@ -110,7 +110,7 @@ install_packages() {
             fi
         fi
 
-        PACKAGES=(
+        PACKAGES+=(
             "man-db"
             "manpages"
             "manpages-dev"
@@ -122,6 +122,7 @@ install_packages() {
             "shfmt"
             "glow"
             "eza"
+            "jetbrain-font"
         )
 
         log_message "Updating package list and installing packages..."
@@ -184,6 +185,11 @@ install_homebrew() {
     log_message "Running Homebrew installation script..."
     # Run the official Homebrew installation script
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    sudo ln -s /usr/bin/batcat /usr/local/bin/bat
+    brew install bat-extras
+    touch /home/$USER/.config/bat/config
+    echo '--map-syntax ".bash_tools:Bourne Again Shell (bash)"' >> /home/$USER/.config/bat/config
+    log_message "Homebrew installation completed."
 }
 
 install_rust_and_cargo() {
@@ -475,7 +481,7 @@ install_vim_prereq() {
 install_fonts() {
   log_message "Installing Nerd Fonts"
 
-  local fonts_version="3.3.0"
+  local fonts_version="3.4.0"
   local fonts_dir="/usr/local/share/fonts"
   local fonts=(
     BitstreamVeraSansMono
@@ -548,6 +554,27 @@ install_tmux_plugins() {
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
   fi
   
+  mkdir -p "$HOME/.config/tmux/scripts"
+
+  if [ -f "$HOME/.config/tmux/scripts/ssh.sh" ] || [ -L "$HOME/.config/tmux/scripts/ssh.sh" ]; then
+    mkdir -p "$BACKUP_DIR/.config/tmux/scripts"
+    mv "$HOME/.config/tmux/scripts/ssh.sh" "$BACKUP_DIR/.config/tmux/scripts/" && log_message "Backed up ssh.sh"
+  fi
+  
+  # Backup existing weather.sh if it exists
+  if [ -f "$HOME/.config/tmux/scripts/weather.sh" ] || [ -L "$HOME/.config/tmux/scripts/weather.sh" ]; then
+    mkdir -p "$BACKUP_DIR/.config/tmux/scripts"
+    mv "$HOME/.config/tmux/scripts/weather.sh" "$BACKUP_DIR/.config/tmux/scripts/" && log_message "Backed up weather.sh"
+  fi
+  
+  # Symlink scripts
+  ln -sf "$DOTFILES_DIR/tmux/scripts/ssh.sh" "$HOME/.config/tmux/scripts/ssh.sh"
+  ln -sf "$DOTFILES_DIR/tmux/scripts/weather.sh" "$HOME/.config/tmux/scripts/weather.sh"
+  
+  # Ensure source files are executable
+  chmod +x "$DOTFILES_DIR/tmux/scripts/ssh.sh" 2>/dev/null || true
+  chmod +x "$DOTFILES_DIR/tmux/scripts/weather.sh" 2>/dev/null || true
+
   log_message "Run tmux and press Ctrl a + I to install plugins."
 }
 
@@ -623,14 +650,17 @@ install_terraform() {
     fi
 
     log_message "Adding HashiCorp GPG key and repository..."
-    # Add the GPG key
+    # Add the GPG key (from the original script)
     if ! wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg &> /dev/null; then
         log_message "Failed to add HashiCorp GPG key. Aborting."
         return 1
     fi
 
-    # Add the HashiCorp APT repository
-    if ! echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list &> /dev/null; then
+    # Determine the distribution codename (using the robust fix)
+    local CODENAME=$(grep -oP '^VERSION_CODENAME=\K\w+' /etc/os-release)
+
+    # Add the HashiCorp APT repository using the determined codename
+    if ! echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $CODENAME main" | sudo tee /etc/apt/sources.list.d/   hashicorp.list &> /dev/null; then
         log_message "Failed to add HashiCorp repository. Aborting."
         return 1
     fi

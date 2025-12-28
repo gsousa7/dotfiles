@@ -17,7 +17,6 @@ $kubernetes\
 $python\
 [](fg:color_bg4 bg:color_bg5)\
 $docker_context\
-$terraform\
 [](fg:color_bg5 bg:color_bg6)\
 $cmd_duration\
 $status\
@@ -146,20 +145,20 @@ style = "fg:color_txt bg:color_bg2"
 format = "[ $path ]($style)"
 truncation_length = 3
 truncation_symbol = "…/"
+home_symbol = "󰋞"
 
 [directory.substitutions]
-"~" = "󰋜"
-"Documents" = "󰈙 "
-"Downloads" = " "
-"Music" = "󰝚 "
-"Pictures" = " "
-"Developer" = "󰲋 "
-"git" = "󰲋 "
-"Projects" = " "
-"Videos" = "󰕧 "
-"Desktop" = " "
-"scripts" = " "
-"work" = " "
+"Documents" = "󰈙"
+"Downloads" = ""
+"Music" = "󰝚"
+"Pictures" = ""
+"Developer" = ""
+"git" = ""
+"Projects" = ""
+"Videos" = "󰕧"
+"Desktop" = ""
+"scripts" = "󰲋"
+'/work/' = ""
 "lab" = " "
 
 
@@ -220,11 +219,6 @@ format = '[ $symbol ($profile:$region) ]($style)'
 symbol = "󰠅"
 style = "fg:color_txt bg:color_bg5"
 format = '[ $symbol ($subscription/$tenant) ]($style)'
-
-[terraform]
-symbol = "💨"
-style = "fg:color_txt bg:color_bg5"
-format = '[ $symbol$workspace($version) ]($style)'
 
 [status]
 style = "bg:color_bg6 fg:color_txt"

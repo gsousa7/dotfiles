@@ -63,16 +63,16 @@ RED="\e[31m"
 alias l='eza --icons --sort=name --group-directories-first --color=auto'
 alias ls='eza -a --icons --git --sort=name --group-directories-first --color=auto'
 alias ll='eza -lah --icons --git --sort=name --group-directories-first --color=auto'
-alias lls='eza -lah --icons --git --sort=size --group-directories-first --color=auto' 
+alias lls='eza -lah --icons --git --sort=size --group-directories-first --color=auto'
 alias ld='eza --only-dirs --git --icons --sort=name --color=auto'
 alias lf='eza --only-files --git --icons --sort=name --color=auto'
-alias lda='eza -lah --only-dirs --git --icons --color=auto' 
+alias lda='eza -lah --only-dirs --git --icons --color=auto'
 alias lfa='eza -lah --only-files --git --icons --color=auto'
 alias tree='eza -aT --icons --color=auto --sort=name --group-directories-first'
 alias ltree='eza -lahT --icons --color=auto --sort=name --group-directories-first --git'
-alias l.='eza -lh --icons ../'         
-alias l..='eza -lh --icons ../../'     
-alias l...='eza -lh --icons ../../../' 
+alias l.='eza -lh --icons ../'
+alias l..='eza -lh --icons ../../'
+alias l...='eza -lh --icons ../../../'
 alias lt="eza -lTg --color=auto --icons --sort=Name --group-directories-first --git"
 alias lt2="eza -lTg --level=2 --color=auto --icons --sort=Name --group-directories-first --git"
 alias lt3="eza -lTg --level=3 --color=auto --icons --sort=Name --group-directories-first --git"
@@ -119,9 +119,10 @@ alias rga="rg --hidden --no-ignore --binary --force-text --smart-case --trim"
 alias etx="vim $HOME/.config/tmux/tmux.config"
 alias es="vim $HOME/.config/starship.toml"
 alias eai="vim $HOME/.config/ansible/inventory"
-alias bat="batcat"
 alias bats="batcat -pn --no-paging"
-
+alias cat="batcat -p --no-paging --color=always"
+alias s5m="sleep 300"
+alias s10m="sleep 600"
 
 # Git Aliases and functions
 alias nb='git checkout -b'
@@ -389,6 +390,31 @@ ex() {
 fi
 }
 
+gif() {
+    if [ $# -lt 2 ]; then
+        echo "Usage: gif <input.mp4> <output.gif> [options]"
+        echo "Options: small, hq, fast (padrão: default)"
+        return 1
+    fi
+
+    case "$3" in
+        "small")
+            ffmpeg -i "$1" -vf "fps=8,scale=240:-1:flags=lanczos" -c:v gif "$2"
+            ;;
+        "hq")
+            ffmpeg -i "$1" -vf "fps=15,scale=480:-1:flags=lanczos,palettegen" /tmp/palette.png
+            ffmpeg -i "$1" -i /tmp/palette.png -vf "fps=15,scale=480:-1:flags=lanczos,paletteuse" "$2"
+            rm /tmp/palette.png
+            ;;
+        "fast")
+            ffmpeg -i "$1" -vf "fps=20,scale=400:-1:flags=lanczos" -c:v gif "$2"
+            ;;
+        *)
+            ffmpeg -i "$1" -vf "fps=10,scale=320:-1:flags=lanczos" -c:v gif "$2"
+            ;;
+    esac
+}
+
 
 # youtube-dl functions
 ## Get mp3 file of youtube
@@ -607,6 +633,18 @@ eskin() {
     echo "Eza theme updated to $theme_file."
 }
 
+function hl() {
+  # If input is being piped to the function (e.g., lsblk | hl)
+  if [ -p /dev/stdin ]; then
+    # Process the piped input. Use 'batcat' since your system uses it.
+    batcat -l conf -p
+  # If a command is provided as an argument (e.g., hl lsblk)
+  else
+    # Execute the command and pipe its output to batcat
+    "$@" | batcat -l conf -p
+  fi
+}
+
 # get vim help
 vimfo() {
     echo ""
@@ -620,7 +658,7 @@ vimfo() {
     echo -e "${MAGENTA}\x      ${RESET}- Save and quit"
     echo -e "${MAGENTA}\/      ${RESET}- Clear search highlights"
     echo
-    
+
     # Tab Management
     echo -e "${ORANGE}Tab Commands:${RESET}"
     echo -e "${MAGENTA}\t      ${RESET}- New tab"
@@ -705,8 +743,8 @@ tmuxfo() {
     echo -e "${MAGENTA}Ctrl a p${RESET} or ${MAGENTA}Alt p${RESET}         - Previous window"
     echo -e "${MAGENTA}Ctrl a w${RESET}                  - List windows"
     echo -e "${MAGENTA}Ctrl a ,${RESET} or ${MAGENTA}trew${RESET}          - Rename current window"
-    echo -e "${MAGENTA}Ctrl a Ctrl m${RESET}             - Move window to specific index"
-    echo -e "${MAGENTA}Alt <1-9>${RESET}                 - Jump to window <1-9>"
+    echo -e "${MAGENTA}Ctrl a m${RESET}             - Move window to specific index"
+    echo -e "${MAGENTA}Alt 1-5${RESET}                 - Jump to window <1-9>"
     echo -e "${MAGENTA}tmux list-windows${RESET} or ${MAGENTA}tw${RESET}   - List windows"
     echo
 
@@ -715,6 +753,9 @@ tmuxfo() {
     echo -e "${MAGENTA}Ctrl a -${RESET} or ${MAGENTA}Alt -${RESET}         - Split horizontally"
     echo -e "${MAGENTA}Ctrl a space${RESET}              - Cycle through layouts"
     echo -e "${MAGENTA}Ctrl a =${RESET}                  - Equalize pane sizes"
+    echo -e "${MAGENTA}Alt left/right/up/down arrow${RESET} - Move between panes"
+    echo -e "${MAGENTA}Alt Shift H${RESET}                  - Swap pane with previous"
+    echo -e "${MAGENTA}Alt Shift L${RESET}                  - Swap pane with next"
     echo
 
     echo -e "${ORANGE}Pane navigation${RESET}"
@@ -760,14 +801,15 @@ tmuxfo() {
     echo -e "${MAGENTA}Ctrl a Ctrl I${RESET}             - Install plugins"
     echo -e "${MAGENTA}Ctrl a Ctrl u${RESET}             - Update plugins"
     echo -e "${MAGENTA}Ctrl a Alt u${RESET}              - Uninstall removed plugins"
-    echo -e "${MAGENTA}Ctrl a Ctrl S${RESET}             - Save tmux session (tmux-resurrect)"
+    echo -e "${MAGENTA}Ctrl a S${RESET}             - Save tmux session (tmux-resurrect)"
     echo -e "${MAGENTA}Ctrl a Ctrl r${RESET}             - Restore tmux session (tmux-resurrect)"
-    echo -e "${MAGENTA}Ctrl a Ctrl b${RESET}             - Backup tmux session (tmux-resurrect)"
     echo
 
     echo -e "${ORANGE}Advanced session commands${RESET}"
     echo -e "${MAGENTA}tmux new-session -d -s <name>${RESET}         - Start a detached session"
     echo -e "${MAGENTA}tmux select-layout tiled${RESET} or ${MAGENTA}tslt${RESET}      - Tile all panes"
+
+
     echo
 }
 
@@ -851,6 +893,8 @@ vscfo() {
     echo -e "${ORANGE}Other:${RESET}"
     echo -e "${MAGENTA}Ctrl k v           ${RESET} - Preview Markdown"
     echo -e "${MAGENTA}Windows key .      ${RESET} - Open emoji picker"
+	echo -e "${MAGENTA}Ctrl k 1           ${RESET} - Add markdown bash code block"
+	echo -e "${MAGENTA}Ctrl k 2           ${RESET} - Add markdown bash code block with output"
     echo
 }
 
@@ -961,7 +1005,7 @@ show_eza_commands() {
     echo -e "${MAGENTA}lta4      ${RESET} - Same as lta, but shows only 4 levels deep."
     echo -e "${MAGENTA}l.        ${RESET} - Lists the contents of the parent directory (../)."
     echo -e "${MAGENTA}l..       ${RESET} - Lists the contents of the directory 2 levels up (../../)."
-    echo -e "${MAGENTA}l...      ${RESET} - Lists the contents of the directory 3 levels up (../../../)." 
+    echo -e "${MAGENTA}l...      ${RESET} - Lists the contents of the directory 3 levels up (../../../)."
 }
 
 show_utility_commands() {
@@ -1006,7 +1050,7 @@ show_utility_commands() {
     echo -e "${MAGENTA}svim      ${RESET} - Edit files with sudo. Equal to 'sudoedit' and 'sudo -e'"
     echo -e "${MAGENTA}..        ${RESET} - Go up one directory"
     echo -e "${MAGENTA}...       ${RESET} - Go up two directories"
-    echo -e "${MAGENTA}.3        ${RESET} - Go up three directories"     
+    echo -e "${MAGENTA}.3        ${RESET} - Go up three directories"
     echo -e "${MAGENTA}.4        ${RESET} - Go up four directories"
     echo -e "${MAGENTA}.5        ${RESET} - Go up five directories"
     echo -e "${MAGENTA}rg        ${RESET} - Enhanced ripgrep: searches hidden files, smart case, custom colors, no zips. Usage: ${YELLOW}rg <pattern> [path]${RESET}"
@@ -1016,7 +1060,11 @@ show_utility_commands() {
     echo -e "${MAGENTA}glow      ${RESET} - Render Markdown files in the terminal with syntax highlighting. Usage: ${YELLOW}glow <file.md>${RESET} or interactive mode with files in current directory ${YELLOW}glow${RESET}"
     echo -e "${MAGENTA}bat       ${RESET} - View files with syntax highlighting, line numbers, and Git integration. Usage: ${YELLOW}bat <file>${RESET}"
     echo -e "${MAGENTA}bats      ${RESET} - View files as plain text, without pager, syntax highlighting, line numbers, or Git integration. Usage: ${YELLOW}bats <file>${RESET}"
+    echo -e "${MAGENTA}cat      ${RESET}  - Same as bats but with no line numbers. Usage: ${YELLOW}catb <file>${RESET}"
     echo -e "${MAGENTA}ex        ${RESET} - Extracts various compressed file types automatically. Usage: ${YELLOW}ex <path/file_name_1.ext> [path/file_name_2.ext]...${RESET}"
+    echo -e "${MAGENTA}hl        ${RESET} - Highlights the output of a command using batcat. Usage: ${YELLOW}hl <command> ${RESET}or ${YELLOW}<command> | hl${RESET}"
+    echo -e "${MAGENTA}s5m       ${RESET} - Sleep 5 minutes."
+    echo -e "${MAGENTA}s5m       ${RESET} - Sleep 10 minutes."
 }
 
 show_brew_commands () {
@@ -1048,6 +1096,7 @@ show_media_commands() {
     echo -e "${MAGENTA}getspot       ${RESET} - Download a song from Spotify and save it in desktop. Usage: ${YELLOW}getspot <url>${RESET}"
     echo -e "${MAGENTA}getalb        ${RESET} - Download an album from Spotify and save it in desktop. Usage: ${YELLOW}getalb <url>${RESET}"
     echo -e "${MAGENTA}getplay       ${RESET} - Download a playlist from Spotify and save it in desktop. Usage: ${YELLOW}getplay <url>${RESET}"
+    echo -e "${MAGENTA}gif           ${RESET} - Generate GIF from video with the following formats small, hq, fast or normal (no need to provide this option is default). Usage: ${YELLOW}gif <input_video> <output_gif> [small|hq|fast]${RESET}"
     echo
 }
 
@@ -1062,17 +1111,17 @@ show_starship_commands() {
     echo -e "${MAGENTA}starship explain ${RESET}     - Explain current Starship prompt configuration."
     echo
     echo -e "${BLUE}Git Status Indicators:${RESET}\n"
-    echo -e "  ${MAGENTA} (count)${RESET}          - ${RED}conflicted:${RESET} You have merge conflicts that need to be resolved."
-    echo -e "  ${BLUE}󰘽${RESET}                   - ${BLUE}up_to_date:${RESET} Your current branch is clean and in sync with its remote."
-    echo -e "  ${RED}󰋗 (count)${RESET}          - ${RED}untracked:${RESET} You have new, untracked files."
-    echo -e "  ${MAGENTA} (count)${RESET}          - ${YELLOW}ahead:${RESET} Your local branch is ahead of its remote by 'count' commits."
-    echo -e "  ${MAGENTA}(ahead) (behind)${RESET} - ${YELLOW}diverged:${RESET} Your local branch has diverged from its remote; it's ahead by 'ahead' and behind by 'behind' commits."
-    echo -e "  ${MAGENTA} (count)${RESET}          - ${YELLOW}behind:${RESET} Your local branch is behind its remote by 'count' commits."
-    echo -e "  ${BLUE} (count)${RESET}          - ${BLUE}stashed:${RESET} You have changes stashed."
-    echo -e "  ${YELLOW}󰛿 (count)${RESET}          - ${YELLOW}modified:${RESET} You have uncommitted, modified files."
-    echo -e "  ${BLUE}󰐗 (count)${RESET}          - ${BLUE}staged:${RESET} You have 'count' changes staged for commit (added to index)."
-    echo -e "  ${YELLOW}󰍸 (count)${RESET}          - ${YELLOW}renamed:${RESET} You have uncommitted, renamed files."
-    echo -e "  ${RED}󰍶 (count)${RESET}          - ${RED}deleted:${RESET} You have uncommitted, deleted files."
+    echo -e "  ${MAGENTA} (count)${RESET}            - ${RED}conflicted:${RESET} You have merge conflicts that need to be resolved."
+    echo -e "  ${BLUE}󰘽${RESET}                    - ${BLUE}up_to_date:${RESET} Your current branch is clean and in sync with its remote."
+    echo -e "  ${RED}󰋗 (count)${RESET}            - ${RED}untracked:${RESET} You have new, untracked files."
+    echo -e "  ${MAGENTA} (count)${RESET}            - ${YELLOW}ahead:${RESET} Your local branch is ahead of its remote by 'count' commits."
+    echo -e "  ${MAGENTA} (ahead)  (behind)${RESET} - ${YELLOW}diverged:${RESET} Your local branch has diverged from its remote; it's ahead by 'ahead' and behind by 'behind' commits."
+    echo -e "  ${MAGENTA} (count)${RESET}            - ${YELLOW}behind:${RESET} Your local branch is behind its remote by 'count' commits."
+    echo -e "  ${BLUE} (count)${RESET}            - ${BLUE}stashed:${RESET} You have changes stashed."
+    echo -e "  ${YELLOW}󰛿 (count)${RESET}            - ${YELLOW}modified:${RESET} You have uncommitted, modified files."
+    echo -e "  ${BLUE}󰐗 (count)${RESET}            - ${BLUE}staged:${RESET} You have 'count' changes staged for commit (added to index)."
+    echo -e "  ${YELLOW}󰍸 (count)${RESET}            - ${YELLOW}renamed:${RESET} You have uncommitted, renamed files."
+    echo -e "  ${RED}󰍶 (count)${RESET}            - ${RED}deleted:${RESET} You have uncommitted, deleted files."
     echo
 }
 
