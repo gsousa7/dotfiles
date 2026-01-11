@@ -32,7 +32,7 @@ BASH_TOOLS="bash_tools"
 
 # List of core packages to install
 PACKAGES=(
-  "telnet" "rsync" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree" "xclip" "ripgrep" "fonts-powerline" "bat" "software-properties-common" "coreutils" "build-essential" "file" "make" "procps" "zlib1g-dev" "gpg" "build-essential" "ffmpeg"
+  "telnet" "rsync" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree" "xclip" "ripgrep" "fonts-powerline" "bat" "software-properties-common" "coreutils" "build-essential" "file" "make" "procps" "zlib1g-dev" "gpg" "build-essential"
 )
 
 # Extra tools to install via python package manager
@@ -194,7 +194,7 @@ install_homebrew() {
 }
 
 install_rust_and_cargo() {
-    log_message "This function will install Rust and Cargo using the rustup installer."
+    log_message "Install Rust and Cargo using the rustup installer."
     
     # Check if cargo is already installed
     if command -v cargo &> /dev/null; then
@@ -246,7 +246,6 @@ install_extra_tools() {
   else
     log_message "Pastel is already installed."
   fi
- 
 
 }
 
@@ -282,6 +281,23 @@ backup_dotfiles() {
     cp "$ORIGINAL_BASHRC" "$BACKUP_DIR/" && log_message "Backed up .bashrc"
   else
     log_message ".bashrc not found, skipping backup"
+  fi
+
+  # Backup ansible.cfg
+  if [ -f "$HOME/.config/ansible/ansible.cfg" ] || [ -L "$HOME/.config/ansible/ansible.cfg" ]; then
+    mkdir -p "$BACKUP_DIR/.config/ansible"
+    mv "$HOME/.config/ansible/ansible.cfg" "$BACKUP_DIR/.config/ansible/" && log_message "Backed up ansible.cfg"
+  fi
+
+  # Backup vimrc 
+  if [ -f "$HOME/.vimrc" ] || [ -L "$HOME/.vimrc" ]; then
+    mv "$HOME/.vimrc" "$BACKUP_DIR/" && log_message "Backed up .vimrc"
+  fi
+
+  # Backup fastfetch config
+  if [ -f "$HOME/.config/fastfetch/config.json" ] || [ -L "$HOME/.config/fastfetch/config.json" ]; then
+    mkdir -p "$BACKUP_DIR/.config/fastfetch"
+    mv "$HOME/.config/fastfetch/config.json" "$BACKUP_DIR/.config/fastfetch/" && log_message "Backed up fastfetch config"
   fi
 
   # Backup htoprc
@@ -338,6 +354,10 @@ symlink_dotfiles() {
   # Symlink glow config to .config directory
   mkdir -p "$HOME/.config/glow"
   ln -sf "$DOTFILES_DIR/glow.yml" "$HOME/.config/glow/glow.yml" && log_message "Linked glow.yml to .config"
+
+  # Symlink fastfetch config to .config directory
+  mkdir -p "$HOME/.config/fastfetch"
+  ln -sf "$DOTFILES_DIR/fastfetch_config.json" "$HOME/.config/fastfetch/config.jsonc" && log_message "Linked fastfetch config to .config"
 }
 
 eza_configuration() {
@@ -359,7 +379,7 @@ eza_configuration() {
     fi
 
     log_message "Creating symlink for eza theme file..."
-    if ! ln -sf "$EZA_THEMES_DIR/themes/default.yml" "$EZA_THEME_SYMLINK"; then
+    if ! ln -sf "$EZA_THEMES_DIR/themes/dracula.yml" "$EZA_THEME_SYMLINK"; then
         log_message "Failed to create symlink for eza theme file. Exiting."
         return 1
     fi
@@ -539,6 +559,7 @@ install_fonts() {
 
 # Installs vim plugins declared in .vimrc
 install_vim_plugins() {
+  mkdir -p ~/.vim/undodir
   if command -v vim &> /dev/null; then
     log_message "Installing Vim plugins..."
     vim +'PlugInstall --sync' +qa
@@ -604,7 +625,7 @@ install_starship() {
 }
 
 install_cloud_clis() {
-    echo "This function will install AWS CLI v2 and Azure CLI."
+    echo "Install AWS CLI v2 and Azure CLI."
 
     if command -v aws &> /dev/null && command -v az &> /dev/null; then
         echo "Both AWS CLI and Azure CLI are already installed."
@@ -642,7 +663,7 @@ install_cloud_clis() {
 }
 
 install_terraform() {
-    log_message "This function will install Terraform using the official HashiCorp APT repository."
+    log_message "Install Terraform via official HashiCorp APT repository."
 
     # Check if Terraform is already installed
     if command -v terraform &> /dev/null; then

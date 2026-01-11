@@ -150,16 +150,16 @@ alias glof='git log --follow'
 
 
 # Git oneliner to add commit and push
-lazygit() {
+lgit() {
     if [ -z "$1" ]; then
         echo "Error: Commit message is required."
-        echo "Usage: lazygit '<commit_message>' <branch_name>"
+        echo "Usage: lgit '<commit_message>' <branch_name>"
         return 1
     fi
 
     if [ -z "$2" ]; then
         echo "Error: Branch name is required"
-        echo "Usage: lazygit '<commit_message>' <branch_name>"
+        echo "Usage: lgit '<commit_message>' <branch_name>"
         return 1
     fi
 
@@ -648,70 +648,211 @@ function hl() {
 # get vim help
 vimfo() {
     echo ""
-    echo -e "${BLUE}Vim Cheatsheet${RESET}\n"
+    echo -e "${BLUE}Vim Cheatsheet - Editing Essentials${RESET}\n"
+    echo -e "${MAGENTA}Leader Key: Space${RESET}\n"
 
-    # Basic Commands
-    echo -e "${ORANGE}Basic Commands:${RESET}"
-    echo -e "${YELLOW}Not required 'Esc :' but requires \ (exactly has bellow)${RESET}"
-    echo -e "${MAGENTA}\q      ${RESET}- Quit"
-    echo -e "${MAGENTA}\w      ${RESET}- Save"
-    echo -e "${MAGENTA}\x      ${RESET}- Save and quit"
-    echo -e "${MAGENTA}\/      ${RESET}- Clear search highlights"
+    # Save/Quit
+    echo -e "${ORANGE}Save & Quit:${RESET}"
+    echo -e "${MAGENTA}Space w     ${RESET}- Save file"
+    echo -e "${MAGENTA}Space q     ${RESET}- Quit"
+    echo -e "${MAGENTA}Space x     ${RESET}- Save and quit"
+    echo -e "${MAGENTA}:wq         ${RESET}- Save and quit (alternative)"
+    echo -e "${MAGENTA}:q!         ${RESET}- Quit without saving"
     echo
 
-    # Tab Management
-    echo -e "${ORANGE}Tab Commands:${RESET}"
-    echo -e "${MAGENTA}\t      ${RESET}- New tab"
-    echo -e "${MAGENTA}\c      ${RESET}- Close current tab"
-    echo -e "${MAGENTA}\n      ${RESET}- Next tab"
-    echo -e "${MAGENTA}\p      ${RESET}- Previous tab"
+    # Movement
+    echo -e "${ORANGE}Movement:${RESET}"
+    echo -e "${MAGENTA}h j k l     ${RESET}- Left, Down, Up, Right"
+    echo -e "${MAGENTA}w           ${RESET}- Next word"
+    echo -e "${MAGENTA}b           ${RESET}- Previous word"
+    echo -e "${MAGENTA}0           ${RESET}- Start of line"
+    echo -e "${MAGENTA}\$           ${RESET}- End of line"
+    echo -e "${MAGENTA}gg          ${RESET}- Top of file"
+    echo -e "${MAGENTA}G           ${RESET}- Bottom of file"
+    echo -e "${MAGENTA}:<number>   ${RESET}- Go to line number (e.g., :42)"
+    echo -e "${MAGENTA}Ctrl d      ${RESET}- Page down"
+    echo -e "${MAGENTA}Ctrl u      ${RESET}- Page up"
     echo
 
-    # Split Management
-    echo -e "${ORANGE}Split Commands:${RESET}"
-    echo -e "${YELLOW}Required 'Esc :'${RESET}"
-    echo -e "${MAGENTA}:sp     ${RESET}- Create horizontal split (same file)"
-    echo -e "${MAGENTA}:new    ${RESET}- Create horizontal split (new file)"
-    echo -e "${MAGENTA}:vsp    ${RESET}- Create vertical split (same file)"
-    echo -e "${MAGENTA}:vnew   ${RESET}- Create vertical split (new file)"
+    # Editing
+    echo -e "${ORANGE}Insert & Edit:${RESET}"
+    echo -e "${MAGENTA}i           ${RESET}- Insert before cursor"
+    echo -e "${MAGENTA}a           ${RESET}- Insert after cursor"
+    echo -e "${MAGENTA}o           ${RESET}- New line below"
+    echo -e "${MAGENTA}O           ${RESET}- New line above"
+    echo -e "${MAGENTA}x           ${RESET}- Delete character"
+    echo -e "${MAGENTA}dd          ${RESET}- Delete line"
+    echo -e "${MAGENTA}yy          ${RESET}- Copy line"
+    echo -e "${MAGENTA}p           ${RESET}- Paste"
+    echo -e "${MAGENTA}u           ${RESET}- Undo"
+    echo -e "${MAGENTA}Ctrl r      ${RESET}- Redo"
+    echo -e "${MAGENTA}.           ${RESET}- Repeat last command"
+    echo -e "${MAGENTA}gcc         ${RESET}- Comment/uncomment line"
     echo
 
-    echo -e "${ORANGE}Split Control:${RESET}"
-    echo -e "${MAGENTA}Ctrl w c${RESET} - Close current split"
-    echo -e "${MAGENTA}Ctrl w o${RESET} - Close all splits except current"
+    # Visual Mode
+    echo -e "${ORANGE}Visual Mode:${RESET}"
+    echo -e "${MAGENTA}v           ${RESET}- Character select"
+    echo -e "${MAGENTA}V           ${RESET}- Line select"
+    echo -e "${MAGENTA}Ctrl v      ${RESET}- Block select"
+    echo -e "${YELLOW}In visual mode:${RESET}"
+    echo -e "${MAGENTA}>           ${RESET}- Indent right"
+    echo -e "${MAGENTA}<           ${RESET}- Indent left"
+    echo -e "${MAGENTA}J           ${RESET}- Move lines down"
+    echo -e "${MAGENTA}K           ${RESET}- Move lines up"
+    echo -e "${MAGENTA}gc          ${RESET}- Comment selection"
+    echo -e "${MAGENTA}y           ${RESET}- Copy"
+    echo -e "${MAGENTA}d           ${RESET}- Delete"
     echo
 
-    # Navigation
-    echo -e "${ORANGE}Split Navigation:${RESET}"
-    echo -e "${MAGENTA}Ctrl h  ${RESET}- Move to left split"
-    echo -e "${MAGENTA}Ctrl j  ${RESET}- Move to down split"
-    echo -e "${MAGENTA}Ctrl k  ${RESET}- Move to up split"
-    echo -e "${MAGENTA}Ctrl l  ${RESET}- Move to right split"
+    # Search & Replace
+    echo -e "${ORANGE}Search & Replace:${RESET}"
+    echo -e "${MAGENTA}/pattern    ${RESET}- Search forward"
+    echo -e "${MAGENTA}n           ${RESET}- Next match"
+    echo -e "${MAGENTA}N           ${RESET}- Previous match"
+    echo -e "${MAGENTA}Space /     ${RESET}- Clear search highlights"
+    echo -e "${MAGENTA}*           ${RESET}- Search word under cursor"
+    echo -e "${MAGENTA}:%s/old/new/g    ${RESET}- Replace all in file"
+    echo -e "${MAGENTA}:%s/old/new/gc   ${RESET}- Replace with confirmation"
     echo
 
-    # Resizing
-    echo -e "${ORANGE}Split Resizing:${RESET}"
-    echo -e "${MAGENTA}Ctrl w +${RESET} - Increase height"
-    echo -e "${MAGENTA}Ctrl w -${RESET} - Decrease height"
-    echo -e "${MAGENTA}Ctrl w >${RESET} - Increase width"
-    echo -e "${MAGENTA}Ctrl w <${RESET} - Decrease width"
-    echo -e "${MAGENTA}Ctrl w =${RESET} - Equalize split sizes"
+    # Mouse
+    echo -e "${ORANGE}Mouse:${RESET}"
+    echo -e "${MAGENTA}Click       ${RESET}- Position cursor"
+    echo -e "${MAGENTA}Drag select ${RESET}- Auto-copy to clipboard"
+    echo -e "${MAGENTA}Scroll      ${RESET}- Scroll up/down"
     echo
 
-    # Launch Commands
-    echo -e "${ORANGE}Launch with Splits:${RESET}"
-    echo -e "${MAGENTA}vim -O file1.txt file2.txt${RESET} - Open with vertical split"
-    echo -e "${MAGENTA}vim -o file1.txt file2.txt${RESET} - Open with horizontal split"
+    # Splits (Optional)
+    echo -e "${ORANGE}Splits (Optional):${RESET}"
+    echo -e "${MAGENTA}:sp <file>  ${RESET}- Horizontal split"
+    echo -e "${MAGENTA}:vsp <file> ${RESET}- Vertical split"
+    echo -e "${MAGENTA}Ctrl h/j/k/l${RESET}- Navigate between splits"
+    echo -e "${MAGENTA}Ctrl w c    ${RESET}- Close split"
     echo
 
-    # ALE
-    echo -e "${ORANGE}ALE Commands:${RESET}"
-    echo -e "${MAGENTA}:ALEInfo         ${RESET}- Shows debug information for ALE."
-    echo -e "${MAGENTA}:ALEDetail       ${RESET}- Displays detailed errors and warnings."
-    echo -e "${MAGENTA}:ALEGoToNext     ${RESET}- Jumps to the next error or warning."
-    echo -e "${MAGENTA}:ALEGoToPrevious ${RESET}- Jumps to the previous error or warning."
-    echo -e "${MAGENTA}:ALEToggle       ${RESET}- Toggles ALE on or off for the current buffer."
-    echo -e "${MAGENTA}:ALEFix          ${RESET}- Automatically fixes code issues on save."
+    # Linting
+    echo -e "${ORANGE}Linting (ALE):${RESET}"
+    echo -e "${MAGENTA}]e          ${RESET}- Next error/warning"
+    echo -e "${MAGENTA}[e          ${RESET}- Previous error/warning"
+    echo -e "${YELLOW}Auto-fixes on save${RESET}"
+    echo
+
+    # Git
+    echo -e "${ORANGE}Git (Optional):${RESET}"
+    echo -e "${MAGENTA}:Git status ${RESET}- Show git status"
+    echo -e "${MAGENTA}:Git diff   ${RESET}- Show changes"
+    echo -e "${MAGENTA}:Git add %  ${RESET}- Stage current file"
+    echo -e "${MAGENTA}:Git commit ${RESET}- Commit"
+    echo -e "${MAGENTA}]c / [c     ${RESET}- Jump to next/prev git change"
+    echo
+
+    # Tips
+    echo -e "${ORANGE}Useful Commands:${RESET}"
+    echo -e "${MAGENTA}Space ve    ${RESET}- Edit vimrc"
+    echo -e "${MAGENTA}Space vr    ${RESET}- Reload vimrc"
+    echo -e "${MAGENTA}:help <topic>${RESET}- Get help"
+    echo -e "${MAGENTA}Ctrl z      ${RESET}- Suspend Vim (fg to return)"
+    echo
+}
+
+# Tmux help
+tmuxfo() {
+    echo ""
+    echo -e "${BLUE}Tmux Cheatsheet${RESET}\n"
+    echo -e "${MAGENTA}Ctrl a${RESET}                  - Leader key"
+    echo
+
+    echo -e "${ORANGE}Session management${RESET}"
+    echo -e "${MAGENTA}tmux new -s <name>${RESET} or ${MAGENTA}tn${RESET}                   - Create new session"
+    echo -e "${MAGENTA}tmux new-session -A -s <name>${RESET} or ${MAGENTA}tns${RESET}       - Create session if not exists or attach"
+    echo -e "${MAGENTA}tmux ls${RESET} or ${MAGENTA}tl${RESET}                             - List sessions"
+    echo -e "${MAGENTA}tmux attach -t <name>${RESET} or ${MAGENTA}ta${RESET}                - Attach to session"
+    echo -e "${MAGENTA}tmux switch -t <name>${RESET} or ${MAGENTA}ts${RESET}                - Switch to another session"
+    echo -e "${MAGENTA}tmux rename-session -t <old> <new>${RESET} or ${MAGENTA}tres${RESET}  - Rename session"
+    echo -e "${MAGENTA}tmux kill-session -t <name>${RESET} or ${MAGENTA}tks${RESET}         - Kill session"
+    echo -e "${MAGENTA}tmux kill-server${RESET} or ${MAGENTA}tkss${RESET}                   - Kill tmux server"
+    echo -e "${MAGENTA}Ctrl a \$${RESET}                  - Rename current session"
+    echo -e "${MAGENTA}Ctrl a d${RESET}                  - Detach from session"
+    echo -e "${MAGENTA}Ctrl a s${RESET}                  - List and select sessions"
+    echo -e "${MAGENTA}Ctrl a Ctrl t${RESET}             - Choose session from tree"
+    echo
+
+    echo -e "${ORANGE}Window management${RESET}"
+    echo -e "${MAGENTA}Ctrl a c${RESET}                  - Create new window"
+    echo -e "${MAGENTA}Ctrl a x${RESET}                  - Close current window"
+    echo -e "${MAGENTA}Ctrl a n${RESET} or ${MAGENTA}Alt n${RESET}         - Next window"
+    echo -e "${MAGENTA}Ctrl a p${RESET} or ${MAGENTA}Alt p${RESET}         - Previous window"
+    echo -e "${MAGENTA}Ctrl a w${RESET}                  - List windows"
+    echo -e "${MAGENTA}Ctrl a ,${RESET} or ${MAGENTA}trew${RESET}          - Rename current window"
+    echo -e "${MAGENTA}Ctrl a m${RESET}             - Move window to specific index"
+    echo -e "${MAGENTA}Alt 1-5${RESET}                 - Jump to window <1-9>"
+    echo -e "${MAGENTA}tmux list-windows${RESET} or ${MAGENTA}tw${RESET}   - List windows"
+    echo
+
+    echo -e "${ORANGE}Pane creation and layout${RESET}"
+    echo -e "${MAGENTA}Ctrl a |${RESET} or ${MAGENTA}Alt \\\\${RESET}         - Split vertically"
+    echo -e "${MAGENTA}Ctrl a -${RESET} or ${MAGENTA}Alt -${RESET}         - Split horizontally"
+    echo -e "${MAGENTA}Ctrl a space${RESET}              - Cycle through layouts"
+    echo -e "${MAGENTA}Ctrl a =${RESET}                  - Equalize pane sizes"
+    echo -e "${MAGENTA}Alt left/right/up/down arrow${RESET} - Move between panes"
+    echo -e "${MAGENTA}Alt Shift H${RESET}                  - Swap pane with previous"
+    echo -e "${MAGENTA}Alt Shift L${RESET}                  - Swap pane with next"
+    echo
+
+    echo -e "${ORANGE}Pane navigation${RESET}"
+    echo -e "${MAGENTA}Alt left/right/up/down arrow${RESET} - Move between panes"
+    echo -e "${MAGENTA}Ctrl a q${RESET}                     - Show pane numbers (press number to select)"
+    echo -e "${MAGENTA}Ctrl a z${RESET}                     - Toggle pane zoom (fullscreen)"
+    echo -e "${MAGENTA}Ctrl a {${RESET}                     - Swap pane with previous"
+    echo -e "${MAGENTA}Ctrl a }${RESET}                     - Swap pane with next"
+    echo -e "${MAGENTA}Ctrl a Ctrl s${RESET}                - Synchronize panes (send input to all panes)"
+    echo
+
+    echo -e "${ORANGE}Pane resizing${RESET}"
+    echo -e "${MAGENTA}Alt Shift left arrow${RESET}      - Decrease width by 5"
+    echo -e "${MAGENTA}Alt Shift right arrow${RESET}     - Increase width by 5"
+    echo -e "${MAGENTA}Alt Shift down arrow${RESET}      - Decrease height by 2"
+    echo -e "${MAGENTA}Alt Shift up arrow${RESET}        - Increase height by 2"
+    echo
+
+    echo -e "${ORANGE}Pane management${RESET}"
+    echo -e "${MAGENTA}Ctrl a x${RESET}                  - Close current pane"
+    echo -e "${MAGENTA}Ctrl a !${RESET}                  - Break pane into new window"
+    echo
+
+    echo -e "${ORANGE}Copy mode and clipboard${RESET}"
+    echo -e "${MAGENTA}Ctrl a [${RESET}                  - Enter copy mode"
+    echo -e "${MAGENTA}Ctrl c${RESET} or ${MAGENTA}q${RESET}               - Exit copy mode"
+    echo -e "${MAGENTA}Space${RESET}                     - Start selection in copy mode"
+    echo -e "${MAGENTA}Enter${RESET}                     - Copy selection in copy mode"
+    echo -e "${MAGENTA}Ctrl a ]${RESET}                  - Paste copied text"
+    echo -e "${MAGENTA}Shift + mouse drag${RESET}        - Highlight and copy text"
+    echo -e "${MAGENTA}v${RESET}                         - Start selection in vi mode"
+    echo -e "${MAGENTA}y${RESET}                         - Copy selection to system clipboard (tmux-yank)"
+    echo -e "${MAGENTA}Y${RESET}                         - Copy current line to system clipboard (tmux-yank)"
+    echo -e "${MAGENTA}Ctrl a y${RESET}                  - Copy current pane working directory"
+    echo
+
+    echo -e "${ORANGE}Configuration${RESET}"
+    echo -e "${MAGENTA}Ctrl a r${RESET}                  - Reload tmux configuration file"
+    echo -e "${MAGENTA}Ctrl a :${RESET}                  - Enter command mode"
+    echo
+
+    echo -e "${ORANGE}Plugin management - TPM${RESET}"
+    echo -e "${MAGENTA}Ctrl a Ctrl I${RESET}             - Install plugins"
+    echo -e "${MAGENTA}Ctrl a Ctrl u${RESET}             - Update plugins"
+    echo -e "${MAGENTA}Ctrl a Alt u${RESET}              - Uninstall removed plugins"
+    echo -e "${MAGENTA}Ctrl a S${RESET}             - Save tmux session (tmux-resurrect)"
+    echo -e "${MAGENTA}Ctrl a Ctrl r${RESET}             - Restore tmux session (tmux-resurrect)"
+    echo
+
+    echo -e "${ORANGE}Advanced session commands${RESET}"
+    echo -e "${MAGENTA}tmux new-session -d -s <name>${RESET}         - Start a detached session"
+    echo -e "${MAGENTA}tmux select-layout tiled${RESET} or ${MAGENTA}tslt${RESET}      - Tile all panes"
+
+
+    echo
 }
 
 # Tmux help

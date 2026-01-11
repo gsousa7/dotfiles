@@ -1,103 +1,164 @@
+" =============================================
+" SIMPLE VIM CONFIGURATION FOR EDITING
+" =============================================
+
 " ---------------------------------------------
 " General Settings
 " ---------------------------------------------
-set nocompatible                " Disable vi compatibility
-set backspace=indent,eol,start  " Allow backspace in insert mode
-set encoding=utf-8              " Use UTF-8 encoding
-set fileencoding=utf-8          " Ensure files are saved as UTF-8
+set nocompatible                " Use Vim features, not Vi
+set backspace=indent,eol,start  " Backspace works everywhere
+set encoding=utf-8              " UTF-8 encoding
 set clipboard=unnamedplus       " Use system clipboard
-set mouse=nv                     " Enable mouse support
-set history=1000                " Store 1000 lines of command history
-set wildmenu                    " Enhanced command-line completion
-set lazyredraw                  " Improve performance for macros/scripts
-set visualbell                  " Disables the audible bell and uses a visual flash instead
-set t_vb=                       " Disables the visual bell effect
-set t_u7=                       " Disables cursor position reporting
+set mouse=nv                    " Mouse in normal/visual mode
+set history=1000                " Command history
+set wildmenu                    " Command completion
+set lazyredraw                  " Faster macros
+set visualbell t_vb=            " No beeping
+
+" Visual settings
+set scrolloff=8                 " Keep 8 lines visible above/below cursor
+set showcmd                     " Show command being typed
+set laststatus=2                " Always show status line
+set noshowmode                  " Airline shows mode
+
+" File management
+set noswapfile                  " No .swp files
+set nobackup                    " No backup files
+set undofile                    " Persistent undo
+set undodir=~/.vim/undodir      " Undo directory
 
 " ---------------------------------------------
 " Appearance
 " ---------------------------------------------
-set number                   " Show line numbers
-set cursorline               " Highlight the current line
-set showmatch                " Highlight matching parenthesis
-set ruler                    " Show cursor position
-set title                    " Show filename in terminal title
-set termguicolors            " Enable 24-bit colors
-
+set number                      " Line numbers
+set cursorline                  " Highlight current line
+set showmatch                   " Highlight matching brackets
+set ruler                       " Show cursor position
+set termguicolors               " 24-bit colors
+set splitright                  " Splits open right
+set splitbelow                  " Splits open below
 
 " ---------------------------------------------
 " Indentation
 " ---------------------------------------------
-set tabstop=4                " Tab character width
-set shiftwidth=4             " Indentation width
-set expandtab                " Use spaces instead of tabs
-set autoindent               " Copy indent from current line
-set smartindent              " Automatically insert indents
-filetype plugin indent on    " Enable filetype-specific indentation
+set tabstop=4                   " Tab width
+set shiftwidth=4                " Indent width
+set expandtab                   " Spaces not tabs
+set autoindent                  " Auto indent
+set smartindent                 " Smart indent
+filetype plugin indent on       " Filetype indentation
 
 " ---------------------------------------------
 " Search
 " ---------------------------------------------
-set hlsearch                 " Highlight search results
-set incsearch                " Incremental search
-set ignorecase               " Ignore case in searches
-set smartcase                " Override ignorecase if uppercase letters are used
+set hlsearch                    " Highlight search results
+set incsearch                   " Search as you type
+set ignorecase                  " Ignore case
+set smartcase                   " Unless uppercase used
 
 " ---------------------------------------------
 " Plugins
 " ---------------------------------------------
 call plug#begin('~/.vim/plugged')
 
-" Essential Plugins
-Plug 'junegunn/vim-plug'              " Plugin manager
 Plug 'vim-airline/vim-airline'        " Status line
-Plug 'vim-airline/vim-airline-themes' " Airline themes
-Plug 'sheerun/vim-polyglot'           " Syntax highlighting for many languages
-Plug 'dense-analysis/ale'             " Linting and fixing
-Plug 'frazrepo/vim-rainbow'
+Plug 'vim-airline/vim-airline-themes' " Themes
+Plug 'sheerun/vim-polyglot'           " Syntax highlighting
+Plug 'dense-analysis/ale'             " Linting/fixing
+Plug 'frazrepo/vim-rainbow'           " Rainbow brackets
+Plug 'tpope/vim-fugitive'             " Git commands
+Plug 'airblade/vim-gitgutter'         " Git diff markers
+Plug 'jiangmiao/auto-pairs'           " Auto-close brackets
+Plug 'tpope/vim-commentary'           " Easy comments
+Plug 'dracula/vim', { 'as': 'dracula' }
 
 call plug#end()
 
 " ---------------------------------------------
 " Key Mappings
 " ---------------------------------------------
-" Quickly save and quit
-nnoremap <silent> <leader>w :w<CR>
-nnoremap <silent> <leader>q :q<CR>
-nnoremap <silent> <leader>x :x<CR>
+let mapleader = " "
 
-" Navigate splits
-nnoremap <silent> <C-h> <C-w>h
-nnoremap <silent> <C-j> <C-w>j
-nnoremap <silent> <C-k> <C-w>k
-nnoremap <silent> <C-l> <C-w>l
+" Save and quit
+nnoremap <leader>w :w<CR>
+nnoremap <leader>q :q<CR>
+nnoremap <leader>x :x<CR>
 
-" Clear search highlights
-nnoremap <silent> <leader>/ :noh<CR>
+" Clear search
+nnoremap <leader>/ :noh<CR>
 
-" Tab management
-nnoremap <leader>t :tabnew<CR>      " Open a new tab
-nnoremap <leader>c :tabclose<CR>    " Close the current tab
-nnoremap <leader>n :tabnext<CR>     " Go to the next tab
-nnoremap <leader>p :tabprevious<CR> " Go to the previous tab
+" Split navigation (if you use them)
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
 
+" Visual mode - indent
+vnoremap < <gv
+vnoremap > >gv
+
+" Visual mode - move lines
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
+
+" Edit/reload vimrc
+nnoremap <leader>ve :edit $MYVIMRC<CR>
+nnoremap <leader>vr :source $MYVIMRC<CR>
+
+" ---------------------------------------------
+" Mouse Settings
+" ---------------------------------------------
+vnoremap <LeftRelease> "+y`>
+
+" ---------------------------------------------
+" Plugin Settings
+" ---------------------------------------------
+" Rainbow parentheses
 let g:rainbow_active = 1
-" ---------------------------------------------
-" ALE Settings
-" ---------------------------------------------
-let g:ale_fix_on_save = 1           " Auto-fix on save
-let g:ale_linters_explicit = 1      " Use only specified linters
-let g:ale_linters = {'python': ['flake8'], 'yaml': ['yamllint'], 'sh': ['shellcheck']}
+
+" ALE linting
+let g:ale_fix_on_save = 1
+let g:ale_linters_explicit = 1
+let g:ale_sign_error = '✘'
+let g:ale_sign_warning = '⚠'
+
+let g:ale_linters = {
+\   'python': ['flake8', 'pylint'],
+\   'yaml': ['yamllint'],
+\   'sh': ['shellcheck'],
+\   'bash': ['shellcheck'],
+\}
+
+let g:ale_fixers = {
+\   'python': ['black', 'isort'],
+\   'sh': ['shfmt'],
+\   'bash': ['shfmt'],
+\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\}
+
+nmap <silent> ]e <Plug>(ale_next_wrap)
+nmap <silent> [e <Plug>(ale_previous_wrap)
 
 " ---------------------------------------------
-" Other Settings
+" Auto Commands
 " ---------------------------------------------
-autocmd BufWritePre * %s/\s\+$//e   " Remove trailing whitespace on save
-set splitright                     " New vertical splits open to the right
-set splitbelow                     " New horizontal splits open below
+" Remove trailing whitespace
+autocmd BufWritePre * %s/\s\+$//e
 
-if v:version < 802
-    packadd! dracula
-endif
+" Return to last position
+autocmd BufReadPost *
+  \ if line("'\"") > 0 && line("'\"") <= line("$") |
+  \   exe "normal! g`\"" |
+  \ endif
+
+" Language-specific
+autocmd FileType python setlocal tabstop=4 shiftwidth=4 expandtab
+autocmd FileType sh,bash setlocal tabstop=2 shiftwidth=2 expandtab
+autocmd FileType yaml setlocal tabstop=2 shiftwidth=2 expandtab
+autocmd FileType markdown setlocal wrap linebreak spell
+
+" ---------------------------------------------
+" Theme
+" ---------------------------------------------
 syntax enable
 colorscheme dracula
