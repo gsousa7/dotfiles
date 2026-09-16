@@ -13,10 +13,9 @@ $git_branch\
 $git_status\
 $git_state\
 [](fg:color_bg3 bg:color_bg4)\
-$kubernetes\
 $python\
 [](fg:color_bg4 bg:color_bg5)\
-$docker_context\
+$kubernetes\
 [](fg:color_bg5 bg:color_bg6)\
 $cmd_duration\
 $status\
@@ -43,69 +42,6 @@ color_bg3 = '#689d6a'
 color_bg4 = '#458588'
 color_bg5 = '#665c54'
 color_bg6 = '#3c3836'
-
-[palettes.nord]
-color_txt = '#2e3440'
-color_bg1 = '#3B4252'
-color_bg2 = '#434C5E'
-color_bg3 = '#4C566A'
-color_bg4 = '#D8DEE9'
-color_bg5 = '#E5E9F0'
-color_bg6 = '#ECEFF4'
-
-[palettes.nord_inverted]
-color_txt = '#ECEFF4'
-color_bg1 = '#2E3440'
-color_bg2 = '#3B4252'
-color_bg3 = '#434C5E'
-color_bg4 = '#4C566A'
-color_bg5 = '#D8DEE9'
-color_bg6 = '#E5E9F0'
-
-[palettes.dracula]
-color_txt = '#F8F8F2'
-color_bg1 = '#282A36'
-color_bg2 = '#6272A4'
-color_bg3 = '#BD93F9'
-color_bg4 = '#FF79C6'
-color_bg5 = '#8BE9FD'
-color_bg6 = '#50FA7B'
-
-[palettes.solarized_dark]
-color_txt = '#839496'
-color_bg1 = '#002b36'
-color_bg2 = '#073642'
-color_bg3 = '#586e75'
-color_bg4 = '#268bd2'
-color_bg5 = '#2aa198'
-color_bg6 = '#6c71c4'
-
-[palettes.solarized_light]
-color_txt = "#073642"
-color_bg1 = "#fdf6e3"
-color_bg2 = "#eee8d5"
-color_bg3 = "#93a1a1"
-color_bg4 = "#859900"
-color_bg5 = "#b58900"
-color_bg6 = "#dc322f"
-
-[palettes.catppuccin_mocha]
-color_txt = "#CDD6F4"
-color_bg1 = "#1E1E2E"
-color_bg2 = "#181825"
-color_bg3 = "#B4BEE0"
-color_bg4 = "#89B4FA"
-color_bg5 = "#F5C2E7"
-color_bg6 = "#A6E3A1"
-
-[palettes.guezwhoz]
-color_txt = "#d0d0d0"
-color_bg1 = "#1c1c1c"
-color_bg2 = "#080808"
-color_bg3 = "#8a8a8a"
-color_bg4 = "#5fafd7"
-color_bg5 = "#afafff"
-color_bg6 = "#5fd7d7"
 
 [os]
 disabled = false
@@ -145,7 +81,7 @@ style = "fg:color_txt bg:color_bg2"
 format = "[ $path ]($style)"
 truncation_length = 3
 truncation_symbol = "…/"
-home_symbol = "󰋞"
+home_symbol = "󰋞 "
 
 [directory.substitutions]
 "Documents" = "󰈙"
@@ -153,13 +89,13 @@ home_symbol = "󰋞"
 "Music" = "󰝚"
 "Pictures" = ""
 "Developer" = ""
-"git" = ""
+"/git" = "/"
 "Projects" = ""
 "Videos" = "󰕧"
 "Desktop" = ""
-"scripts" = "󰲋"
-'/work/' = ""
-"lab" = " "
+"/scripts/" = "/󰲋/"
+'/work/' = "//"
+"/lab/" = "/ /"
 
 
 [git_branch]
@@ -190,7 +126,7 @@ format = '[ $state( $progress_current/$progress_total) ]($style)'
 
 [python]
 symbol = ""
-style = "fg:color_txt bg:color_4"
+style = "fg:color_txt bg:color_bg4"
 format = '[ $symbol( $version) ]($style)'
 
 [docker_context]

@@ -1,0 +1,15 @@
+# tmux alias
+alias t='tmux'
+alias ta='tmux attach -t'
+alias td='tmux detach'
+alias tl='tmux list-sessions'
+alias tn='tmux new -s'
+alias tks='tmux kill-session -t'
+alias ts='tmux switch -t'
+alias tkss='tmux kill-server'
+alias trew='tmux rename-window'
+alias tres='tmux rename-session -t'
+alias tw='tmux list-windows'
+alias tns='tmux new-session -A -s'
+alias tslt='tmux select-layout tiled'
+

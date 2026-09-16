@@ -2,6 +2,8 @@
 This repository includes the following custom configurations:
 - Bash configuration customization (prompt, history, colors)
   - `.bash_completion`, `.bashrc` and `.bash_tools`
+- Zsh configuration running in parallel with the same aliases/functions, plus completion, autosuggestions and syntax highlighting
+  - `.zshrc` (default login shell is left unchanged; run `zsh` to try it, or `chsh` to switch permanently)
 - Git aliases
 - Kubernetes aliases
 - Utility aliases and functions
@@ -9,10 +11,10 @@ This repository includes the following custom configurations:
   - `ansible.cfg` with custom localizations and users
   - `glow.yml` with dark mode and better readability for markdown files
   - `htoprc` with theme and better visibility
-  - `starship_full.toml` and `starship_simple.toml` for prompt
+  - `starship_full.toml` for prompt
   - `tmux.conf` with theme and better visibility
   - `vimrc` with theme, linting, shortcuts and tools
-  - `wsl.json` with themes and behaviour
+  - `wsl.json` with Windows Terminal themes and behaviour (WSL only)
 
 Files and Links
 | Source file           | Destination                        |
@@ -22,7 +24,9 @@ Files and Links
 | `tmux.conf`           | `~/.config/tmux/tmux.conf`         |
 | `ansible.cfg`         | `~/.config/ansible/ansible.cfg`    |
 | `glow.yml`            | `~/.config/glow/glow.yml`          |
-| `starship_full.toml`/`starship_simple.toml` | `~/.config/starship.toml` |
+| `starship_full.toml`  | `~/.config/starship.toml`          |
+| `zshrc`               | `~/.zshrc` (only if `zsh` is installed) |
+| `wsl.json`            | Windows Terminal `settings.json` (auto-detected, WSL only) |
 
 ## Table of Contents
 1. [Installation](#1-installation)
@@ -141,6 +145,10 @@ Run the script with arguments to skip prompts:
   ```bash
   vscfo
   ```
+- In zsh, to see the extra OMZ-style git/kubectl aliases (`gco`, `gcb`, `ggp`, `kn`, ...), run:
+  ```bash
+  zfo
+  ```
 
 ### Glow Markdown Viewer
 
@@ -153,14 +161,31 @@ Run the script with arguments to skip prompts:
 
 ### Starship Prompt
 
-- Switch to full prompt: `pskinf`
-- Switch to simple prompt: `pskins`
 - Edit the prompt config: `vim ~/.config/starship.toml`
+
+### Zsh (parallel to bash)
+
+- Try it any time with `zsh` — same aliases/functions as bash (`git`, `kubectl`,
+  `eza`, cheatsheets, `lscom`), plus completion caching, autosuggestions,
+  syntax highlighting and history substring search (up/down arrows).
+- `zsh_tools.d/20-git.zsh` and `40-kubernetes.zsh` add extra OMZ-style aliases
+  on top of the bash set (`gco`, `gcb`, `gsw`, `kgpw`, `kn`, ...) — see `zfo`.
+- The default login shell is **not** changed automatically. Switch permanently
+  with `chsh -s "$(command -v zsh)"`.
 
 ### Ansible
 
 An empty inventory file is created at `~/.config/ansible/inventory`.
 Edit this file to add your hosts.
+
+### Windows Terminal (WSL only)
+
+When running under WSL with Windows Terminal installed, the installer detects the live
+`settings.json` (packaged or unpackaged install) via `powershell.exe`, backs up the existing
+file, and symlinks `wsl.json` in its place. On non-WSL systems, or if Windows Terminal isn't
+found, this step is skipped automatically. Because it's a live symlink, any change made through
+the Windows Terminal UI (new profile, theme tweak, etc.) edits `wsl.json` in this repo directly —
+review the diff before committing.
 
 ### Extra Tools
 

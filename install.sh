@@ -32,7 +32,7 @@ BASH_TOOLS="bash_tools"
 
 # List of core packages to install
 PACKAGES=(
-  "telnet" "rsync" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree" "xclip" "ripgrep" "fonts-powerline" "bat" "software-properties-common" "coreutils" "build-essential" "file" "make" "procps" "zlib1g-dev" "gpg" "build-essential"
+  "telnet" "rsync" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree" "xclip" "ripgrep" "fonts-powerline" "bat" "software-properties-common" "coreutils" "build-essential" "file" "make" "procps" "zlib1g-dev" "gpg" "build-essential" "zsh"
 )
 
 # Extra tools to install via python package manager
@@ -259,23 +259,32 @@ clone_dotfiles_repo() {
   fi
 }
 
+# Move $1 (if it exists as a file or symlink) into $BACKUP_DIR/$2 (subdir optional), logging as $3
+backup_file() {
+  local src="$1" subdir="$2" label="${3:-$(basename "$1")}"
+  local dest="$BACKUP_DIR"
+
+  if [ ! -f "$src" ] && [ ! -L "$src" ]; then
+    log_message "$label not found, skipping backup"
+    return
+  fi
+
+  if [ -n "$subdir" ]; then
+    dest="$BACKUP_DIR/$subdir"
+    mkdir -p "$dest"
+  fi
+
+  mv "$src" "$dest/" && log_message "Backed up $label"
+}
+
 # Backup existing dotfiles
 backup_dotfiles() {
- 
   for file in "${FILES_TO_SYMLINK[@]}"; do
-    local dotfile="$HOME/.$file"
-    if [ -f "$dotfile" ] || [ -L "$dotfile" ]; then
-      mv "$dotfile" "$BACKUP_DIR" && log_message "Backed up .$file"
-    else
-      log_message ".$file not found, skipping backup"
-    fi
+    backup_file "$HOME/.$file" "" ".$file"
   done
 
-  if [ -f "$HOME/$BASH_TOOLS" ] || [ -L "$HOME/$BASH_TOOLS" ]; then
-    mv "$BASH_TOOLS" "$BACKUP_DIR/" && log_message "Backed up .$BASH_TOOLS"
-  else
-    log_message ".$BASH_TOOLS not found, skipping backup"
-  fi
+  backup_file "$HOME/$BASH_TOOLS" "" ".$BASH_TOOLS"
+  backup_file "$HOME/.zshrc" "" ".zshrc"
 
   if [ -f "$ORIGINAL_BASHRC" ] || [ -L "$ORIGINAL_BASHRC" ]; then
     cp "$ORIGINAL_BASHRC" "$BACKUP_DIR/" && log_message "Backed up .bashrc"
@@ -283,52 +292,21 @@ backup_dotfiles() {
     log_message ".bashrc not found, skipping backup"
   fi
 
-  # Backup ansible.cfg
-  if [ -f "$HOME/.config/ansible/ansible.cfg" ] || [ -L "$HOME/.config/ansible/ansible.cfg" ]; then
-    mkdir -p "$BACKUP_DIR/.config/ansible"
-    mv "$HOME/.config/ansible/ansible.cfg" "$BACKUP_DIR/.config/ansible/" && log_message "Backed up ansible.cfg"
-  fi
+  backup_file "$HOME/.config/ansible/ansible.cfg" ".config/ansible" "ansible.cfg"
+  backup_file "$HOME/.vimrc" "" ".vimrc"
+  backup_file "$HOME/.config/fastfetch/config.json" ".config/fastfetch" "fastfetch config"
+  backup_file "$HOME/.config/htop/htoprc" ".config/htop" "htoprc"
+  backup_file "$HOME/.tmux.conf" ".config/tmux" ".tmux.conf"
+  backup_file "$HOME/.config/tmux/tmux.conf" ".config/tmux" "tmux.conf"
+  backup_file "$STARSHIP_CONFIG" ".config/starship" "starship.toml"
+  backup_file "$HOME/.config/glow/glow.yml" ".config/glow" "glow.yml"
+}
 
-  # Backup vimrc 
-  if [ -f "$HOME/.vimrc" ] || [ -L "$HOME/.vimrc" ]; then
-    mv "$HOME/.vimrc" "$BACKUP_DIR/" && log_message "Backed up .vimrc"
-  fi
-
-  # Backup fastfetch config
-  if [ -f "$HOME/.config/fastfetch/config.json" ] || [ -L "$HOME/.config/fastfetch/config.json" ]; then
-    mkdir -p "$BACKUP_DIR/.config/fastfetch"
-    mv "$HOME/.config/fastfetch/config.json" "$BACKUP_DIR/.config/fastfetch/" && log_message "Backed up fastfetch config"
-  fi
-
-  # Backup htoprc
-  if [ -f "$HOME/.config/htop/htoprc" ] || [ -L "$HOME/.config/htop/htoprc" ]; then
-    mkdir -p "$BACKUP_DIR/.config/htop"
-    mv "$HOME/.config/htop/htoprc" "$BACKUP_DIR/.config/htop/" && log_message "Backed up htoprc"
-  fi 
-
-  # Backup tmux.conf
-  # Backup $HOME/tmux.conf
-  if [ -f "$HOME/.tmux.conf" ] || [ -L "$HOME/.tmux.conf" ]; then
-    mkdir -p "$BACKUP_DIR/.config/tmux"
-    mv "$HOME/.tmux.conf" "$BACKUP_DIR/.config/tmux/" && log_message "Backed up .tmux.conf"
-  fi
-
-  # Backup $HOME/.config/tmux/tmux.conf
-  if [ -f "$HOME/.config/tmux/tmux.conf" ] || [ -L "$HOME/.config/tmux/tmux.conf" ]; then
-    mkdir -p "$BACKUP_DIR/.config/tmux"
-    mv "$HOME/.config/tmux/tmux.conf" "$BACKUP_DIR/.config/tmux/" && log_message "Backed up tmux.conf"
-  fi
-  
-  # Backup starship.toml
-  if [ -f "$STARSHIP_CONFIG" ] || [ -L "$STARSHIP_CONFIG" ]; then
-    mkdir -p "$BACKUP_DIR/.config/starship"
-    mv "$STARSHIP_CONFIG" "$BACKUP_DIR/.config/starship/" && log_message "Backed up starship.toml"
-  fi
-
-  if [ -f "$HOME/.config/glow/glow.yml" ] || [ -L "$$HOME/.config/glow/glow.yml" ]; then
-    mkdir -p "$BACKUP_DIR/.config/glow"
-    mv "$HOME/.config/glow/glow.yml" "$BACKUP_DIR/$HOME/.config/glow/" && log_message "Backed up glow.yml"
-  fi
+# Symlink $1 to $2, creating $2's parent directory first, logging as $3
+symlink_file() {
+  local src="$1" dest="$2" label="${3:-$(basename "$dest")}"
+  mkdir -p "$(dirname "$dest")"
+  ln -sf "$src" "$dest" && log_message "Linked $label"
 }
 
 # Symlink dotfiles from repository to home directory
@@ -336,28 +314,64 @@ symlink_dotfiles() {
   log_message "Creating symlinks from $DOTFILES_DIR to home"
 
   for file in "${FILES_TO_SYMLINK[@]}"; do
-    ln -sf "$DOTFILES_DIR/$file" "$HOME/.$file" && log_message "Linked $file"
+    symlink_file "$DOTFILES_DIR/$file" "$HOME/.$file" "$file"
   done
 
-  # Symlink tmux config to .config directory
-  mkdir -p "$HOME/.config/tmux"
-  ln -sf "$DOTFILES_DIR/tmux.conf" "$HOME/.config/tmux/tmux.conf" && log_message "Linked tmux.conf to .config"
-  
-  # Symlink htop config to .config directory
-  mkdir -p "$HOME/.config/htop"
-  ln -sf "$DOTFILES_DIR/htoprc" "$HOME/.config/htop/htoprc" && log_message "Linked htoprc to .config"
+  symlink_file "$DOTFILES_DIR/tmux.conf" "$HOME/.config/tmux/tmux.conf" "tmux.conf to .config"
+  symlink_file "$DOTFILES_DIR/htoprc" "$HOME/.config/htop/htoprc" "htoprc to .config"
 
-  # Symlink ansible config to .config directory
-  ln -sf "$DOTFILES_DIR/ansible.cfg" "$HOME/.config/ansible/ansible.cfg" && log_message "Linked ansible.cfg to .config"
+  symlink_file "$DOTFILES_DIR/ansible.cfg" "$HOME/.config/ansible/ansible.cfg" "ansible.cfg to .config"
   touch "$HOME/.config/ansible/inventory" && log_message "Created ansible inventory file in .config/ansible/inventory"
 
-  # Symlink glow config to .config directory
-  mkdir -p "$HOME/.config/glow"
-  ln -sf "$DOTFILES_DIR/glow.yml" "$HOME/.config/glow/glow.yml" && log_message "Linked glow.yml to .config"
+  symlink_file "$DOTFILES_DIR/glow.yml" "$HOME/.config/glow/glow.yml" "glow.yml to .config"
+  symlink_file "$DOTFILES_DIR/fastfetch_config.json" "$HOME/.config/fastfetch/config.jsonc" "fastfetch config to .config"
 
-  # Symlink fastfetch config to .config directory
-  mkdir -p "$HOME/.config/fastfetch"
-  ln -sf "$DOTFILES_DIR/fastfetch_config.json" "$HOME/.config/fastfetch/config.jsonc" && log_message "Linked fastfetch config to .config"
+  # zsh is set up in parallel with bash (see zshrc/zsh_tools.d) - it's a full
+  # config on its own, no include-line dance needed like bash_tools/.bashrc.
+  # Default shell is left untouched; run zsh manually or 'chsh -s "$(command -v zsh)"'.
+  if command -v zsh &> /dev/null; then
+    symlink_file "$DOTFILES_DIR/zshrc" "$HOME/.zshrc" "zshrc"
+  else
+    log_message "zsh not found. Skipping .zshrc symlink."
+  fi
+}
+
+# Echo the live Windows Terminal settings.json path, if this is WSL and it's installed
+find_windows_terminal_settings() {
+  grep -qi microsoft /proc/sys/kernel/osrelease 2> /dev/null || return 1
+  command -v powershell.exe &> /dev/null || return 1
+
+  local win_localappdata win_localappdata_wsl candidate
+  # cmd.exe mangles non-ASCII Windows usernames (e.g. accented characters) under its
+  # default codepage, so use powershell.exe with UTF-8 output instead.
+  win_localappdata=$(powershell.exe -NoProfile -Command "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; [Environment]::GetFolderPath('LocalApplicationData')" 2> /dev/null | tr -d '\r')
+  [ -n "$win_localappdata" ] || return 1
+  win_localappdata_wsl=$(wslpath -u "$win_localappdata" 2> /dev/null)
+  [ -n "$win_localappdata_wsl" ] || return 1
+
+  for candidate in \
+    "$win_localappdata_wsl/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json" \
+    "$win_localappdata_wsl/Microsoft/Windows Terminal/settings.json"; do
+    if [ -f "$candidate" ]; then
+      echo "$candidate"
+      return 0
+    fi
+  done
+  return 1
+}
+
+# Backup and symlink Windows Terminal's settings.json to wsl.json (WSL only, skipped elsewhere)
+configure_windows_terminal() {
+  local wt_settings
+  wt_settings="$(find_windows_terminal_settings)"
+
+  if [ -z "$wt_settings" ]; then
+    log_message "Windows Terminal settings.json not found (not WSL, or Windows Terminal not installed). Skipping."
+    return
+  fi
+
+  backup_file "$wt_settings" ".config/windows-terminal" "Windows Terminal settings.json"
+  symlink_file "$DOTFILES_DIR/wsl.json" "$wt_settings" "wsl.json to Windows Terminal settings.json"
 }
 
 eza_configuration() {
@@ -590,7 +604,7 @@ install_tmux_plugins() {
   fi
   
   # Symlink scripts
-  ln -sf "$DOTFILES_DIR/sh.sh" "$HOME/.config/tmux/scripts/ssh.sh"
+  ln -sf "$DOTFILES_DIR/ssh.sh" "$HOME/.config/tmux/scripts/ssh.sh"
   ln -sf "$DOTFILES_DIR/weather.sh" "$HOME/.config/tmux/scripts/weather.sh"
   
   # Ensure source files are executable
@@ -825,6 +839,8 @@ case "$action" in
     echo ""
     symlink_dotfiles
     echo ""
+    configure_windows_terminal
+    echo ""
     include_bash_tools
     echo ""
     eza_configuration
@@ -860,9 +876,11 @@ log_message "May need to run 'sudo apt-get install -f' to fix dependencies."
 echo ""
 log_message "To apply all changes, restart your shell or run: 'source ~/.bashrc'"
 echo ""
+log_message "zsh is set up in parallel (same aliases, plus extras) - try it with 'zsh'. Default shell unchanged; run 'chsh -s \"\$(command -v zsh)\"' to switch."
+echo ""
 log_message "Run tmux and press Ctrl a + I to install plugins."
 echo ""
-log_message "Current skin is set to detailed/full, to change skin run 'pskins' for simple configuration or 'pskinf' for detailed/full configuration."  
+log_message "Starship prompt is set to the full/detailed configuration."
 echo ""
 log_message "Backups saved in: $BACKUP_DIR"
 echo ""
@@ -871,3 +889,5 @@ log_message "If in WSL instead of OS with Linux, install manually the fonts in /
 log_message "Turn on the WSL integration in Visual Studio Code"
 echo ""
 log_message "Log in to GitHub to import configuration and settings"
+echo ""
+log_message "Check on Firefox about:support profile path to update the bash_tools function ffblur"

@@ -1,9 +1,11 @@
 {
     "$help": "https://aka.ms/terminal-documentation",
     "$schema": "https://aka.ms/terminal-profiles-schema",
-    "actions": [
+    "actions": 
+    [
         {
-            "command": {
+            "command": 
+            {
                 "action": "copy",
                 "singleLine": false
             },
@@ -14,56 +16,137 @@
             "id": "User.paste"
         },
         {
-            "command": {
+            "command": "find",
+            "id": "User.find"
+        },
+        {
+            "command": 
+            {
                 "action": "splitPane",
                 "split": "auto",
                 "splitMode": "duplicate"
             },
             "id": "User.splitPane.A6751878"
-        },
-        {
-            "command": "find",
-            "id": "User.find"
         }
     ],
     "copyFormatting": "none",
     "copyOnSelect": true,
+    "defaultProfile": "{58ad8b0c-3ef8-5f4d-bc6f-13e4c00f2530}",
     "experimental.detectURLs": false,
-    "keybindings": [
+    "keybindings": 
+    [
         {
             "id": "User.copy.644BA8F2",
             "keys": "ctrl+c"
-        },
-        {
-            "id": "User.find",
-            "keys": "ctrl+shift+f"
         },
         {
             "id": "User.paste",
             "keys": "ctrl+v"
         },
         {
+            "id": "User.find",
+            "keys": "ctrl+shift+f"
+        },
+        {
             "id": "User.splitPane.A6751878",
             "keys": "alt+shift+d"
         }
     ],
-    "newTabMenu": [
+    "newTabMenu": 
+    [
         {
             "type": "remainingProfiles"
         }
     ],
-    "profiles": {
-        "defaults": {
+    "profiles": 
+    {
+        "defaults": 
+        {
             "backgroundImage": null,
+            "bellStyle": "none",
             "colorScheme": "Dracula",
             "cursorShape": "vintage",
-            "bellStyle": "none",
-            "font": {
-                "face": "JetBrainsMono Nerd Font"
+            "font": 
+            {
+                "face": "UbuntuSansMono Nerd Font"
             }
-        }
+        },
+        "list": 
+        [
+            {
+                "elevate": true,
+                "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+                "hidden": false,
+                "name": "Windows PowerShell"
+            },
+            {
+                "elevate": true,
+                "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+                "hidden": false,
+                "name": "Command Prompt"
+            },
+            {
+                "colorScheme": "Dracula",
+                "experimental.repositionCursorWithMouse": false,
+                "font": 
+                {
+                    "face": "JetBrainsMono Nerd Font",
+                    "size": 13
+                },
+                "guid": "{58ad8b0c-3ef8-5f4d-bc6f-13e4c00f2530}",
+                "hidden": false,
+                "historySize": 9999,
+                "name": "Debian",
+                "padding": "8",
+                "source": "Windows.Terminal.Wsl"
+            },
+            {
+                "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",
+                "hidden": false,
+                "name": "Azure Cloud Shell",
+                "source": "Windows.Terminal.Azure"
+            },
+            {
+                "commandline": "C:\\Program Files\\Git\\bin\\bash.exe",
+                "guid": "{171dff5e-2fe2-448a-8500-3f100c77ea1e}",
+                "hidden": false,
+                "name": "Git Bash",
+                "startingDirectory": "\\\\wsl$\\Debian\\home\\gsousa"
+            },
+            {
+                "guid": "{a32000c8-c8b2-5273-9acf-383775b18636}",
+                "hidden": false,
+                "name": "DebianAXA",
+                "source": "Windows.Terminal.Wsl"
+            },
+            {
+                "guid": "{0e700874-8d12-5db4-a749-9af936fc69e8}",
+                "hidden": false,
+                "name": "rancher-desktop",
+                "source": "Microsoft.WSL"
+            },
+            {
+                "guid": "{65f9816d-84d8-513c-a2e0-ff89e64dc621}",
+                "hidden": false,
+                "name": "rancher-desktop-data",
+                "source": "Microsoft.WSL"
+            },
+            {
+                "guid": "{0ede7064-01ba-5376-bfb5-180ffb1052f5}",
+                "hidden": false,
+                "name": "Developer Command Prompt for VS 18",
+                "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{3230422e-56b8-5a6a-8ebe-2b21589885d0}",
+                "hidden": false,
+                "name": "Developer PowerShell for VS 18",
+                "source": "Windows.Terminal.VisualStudio"
+            }
+        ]
     },
-    "schemes": [
+    "schemes": 
+    [
         {
             "background": "#1E1F29",
             "black": "#000000",
@@ -201,78 +284,10 @@
             "selectionBackground": "#ECEFF4",
             "white": "#E5E9F0",
             "yellow": "#EBCB8B"
-        },
-        {
-            "name": "Solarized Dark Higher Contrast",
-            "black": "#002831",
-            "red": "#d11c24",
-            "green": "#6cbe6c",
-            "yellow": "#a57706",
-            "blue": "#2176c7",
-            "purple": "#c61c6f",
-            "cyan": "#259286",
-            "white": "#eae3cb",
-            "brightBlack": "#006488",
-            "brightRed": "#f5163b",
-            "brightGreen": "#51ef84",
-            "brightYellow": "#b27e28",
-            "brightBlue": "#178ec8",
-            "brightPurple": "#e24d8e",
-            "brightCyan": "#00b39e",
-            "brightWhite": "#fcf4dc",
-            "background": "#001e27",
-            "foreground": "#9cc2c3",
-            "selectionBackground": "#003748",
-            "cursorColor": "#f34b00"
-        },
-        {
-            "name": "NvimDark",
-            "black": "#07080d",
-            "red": "#ffc0b9",
-            "green": "#b3f6c0",
-            "yellow": "#fce094",
-            "blue": "#a6dbff",
-            "purple": "#ffcaff",
-            "cyan": "#8cf8f7",
-            "white": "#eef1f8",
-            "brightBlack": "#4f5258",
-            "brightRed": "#ffc0b9",
-            "brightGreen": "#b3f6c0",
-            "brightYellow": "#fce094",
-            "brightBlue": "#a6dbff",
-            "brightPurple": "#ffcaff",
-            "brightCyan": "#8cf8f7",
-            "brightWhite": "#eef1f8",
-            "background": "#14161b",
-            "foreground": "#e0e2ea",
-            "selectionBackground": "#4f5258",
-            "cursorColor": "#9b9ea4"
-        },      
-        {
-            "background": "#FDF6E3",
-            "black": "#073642",
-            "blue": "#268BD2",
-            "brightBlack": "#002B36",
-            "brightBlue": "#839496",
-            "brightCyan": "#93A1A1",
-            "brightGreen": "#586E75",
-            "brightPurple": "#6C71C4",
-            "brightRed": "#CB4B16",
-            "brightWhite": "#FDF6E3",
-            "brightYellow": "#657B83",
-            "cursorColor": "#657B83",
-            "cyan": "#2AA198",
-            "foreground": "#657B83",
-            "green": "#859900",
-            "name": "Solarized Light",
-            "purple": "#D33682",
-            "red": "#DC322F",
-            "selectionBackground": "#EEE8D5",
-            "white": "#EEE8D5",
-            "yellow": "#B58900"
         }
     ],
     "tabSwitcherMode": "disabled",
     "theme": "system",
+    "themes": [],
     "useAcrylicInTabRow": true
 }

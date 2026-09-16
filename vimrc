@@ -59,6 +59,9 @@ set smartcase                   " Unless uppercase used
 " ---------------------------------------------
 " Plugins
 " ---------------------------------------------
+" Let vim-markdown own markdown instead of polyglot's bundled copy
+let g:polyglot_disabled = ['markdown']
+
 call plug#begin('~/.vim/plugged')
 
 Plug 'vim-airline/vim-airline'        " Status line
@@ -70,6 +73,8 @@ Plug 'tpope/vim-fugitive'             " Git commands
 Plug 'airblade/vim-gitgutter'         " Git diff markers
 Plug 'jiangmiao/auto-pairs'           " Auto-close brackets
 Plug 'tpope/vim-commentary'           " Easy comments
+Plug 'preservim/vim-markdown'         " Markdown folding, TOC, tables
+Plug 'dhruvasagar/vim-table-mode'     " Table formatting/alignment
 Plug 'dracula/vim', { 'as': 'dracula' }
 
 call plug#end()
@@ -139,6 +144,20 @@ let g:ale_fixers = {
 nmap <silent> ]e <Plug>(ale_next_wrap)
 nmap <silent> [e <Plug>(ale_previous_wrap)
 
+" vim-markdown
+let g:vim_markdown_folding_disabled = 0        " fold by header
+let g:vim_markdown_folding_style_pythonic = 1
+let g:vim_markdown_conceal = 0                 " keep *, _, [] etc. visible
+let g:vim_markdown_conceal_code_blocks = 0
+let g:vim_markdown_frontmatter = 1             " YAML frontmatter highlighting
+let g:vim_markdown_toc_autofit = 1             " :Toc window fits content width
+let g:vim_markdown_new_list_item_indent = 2
+let g:vim_markdown_auto_insert_bullets = 0     " don't auto-insert '-' on <CR>
+let g:vim_markdown_no_extensions_in_markdown = 1
+
+" vim-table-mode
+let g:table_mode_corner = '|'                  " GFM-compatible table corners
+
 " ---------------------------------------------
 " Auto Commands
 " ---------------------------------------------
@@ -155,7 +174,9 @@ autocmd BufReadPost *
 autocmd FileType python setlocal tabstop=4 shiftwidth=4 expandtab
 autocmd FileType sh,bash setlocal tabstop=2 shiftwidth=2 expandtab
 autocmd FileType yaml setlocal tabstop=2 shiftwidth=2 expandtab
-autocmd FileType markdown setlocal wrap linebreak spell
+autocmd FileType markdown setlocal wrap linebreak spell foldlevel=99
+autocmd FileType markdown nnoremap <buffer> <leader>mt :Toc<CR>
+autocmd FileType markdown nnoremap <buffer> <leader>mm :TableModeToggle<CR>
 
 " ---------------------------------------------
 " Theme
