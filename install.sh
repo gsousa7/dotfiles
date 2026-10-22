@@ -250,6 +250,42 @@ install_extra_tools() {
 
 }
 
+# One-time/idempotent setup for the mkbook/booklint notes tooling (see
+# bash_tools.d/50-functions.sh): creates their venv, installs the `markdown`
+# dependency, and pre-caches mermaid.js. Mirrors what mkbook-setup does by
+# hand, so a fresh machine has it ready without running it manually.
+# $HOME/scripts is a separate private repo this one doesn't manage - skip if
+# it isn't cloned here.
+install_notes_tooling() {
+  log_message "Setting up notes tooling (mkbook/booklint)..."
+
+  if [ ! -d "$HOME/scripts" ]; then
+    log_message "$HOME/scripts not found (private scripts repo not cloned here). Skipping."
+    return 0
+  fi
+
+  local venv="$HOME/scripts/.venv"
+  if [ ! -d "$venv" ]; then
+    log_message "Creating venv at $venv..."
+    python3 -m venv "$venv" || { log_message "Failed to create $venv."; return 1; }
+  fi
+
+  if ! "$venv/bin/python3" -c "import markdown" 2> /dev/null; then
+    log_message "Installing markdown into $venv..."
+    "$venv/bin/pip" install --quiet markdown || { log_message "Failed to install markdown into $venv."; return 1; }
+  fi
+
+  mkdir -p "$HOME/.cache/md_book"
+  if [ ! -f "$HOME/.cache/md_book/mermaid.min.js" ]; then
+    log_message "Pre-caching mermaid.js..."
+    curl -fsSL "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" \
+      -o "$HOME/.cache/md_book/mermaid.min.js" \
+      || log_message "Couldn't pre-cache mermaid.js now; mkbook will fetch it on first real run."
+  fi
+
+  log_message "Notes tooling (mkbook/booklint) ready."
+}
+
 # Clone the dotfiles repository
 clone_dotfiles_repo() {
   if [ ! -d "$DOTFILES_DIR" ]; then
@@ -788,6 +824,7 @@ update_everything () {
   pipx upgrade-all
   pipx ensurepath
   cd "$DOTFILES_DIR" && git pull || log_message "Error pulling changes."
+  install_notes_tooling
   log_message "To apply all changes, restart your shell or run: 'source ~/.bashrc' or 'rb'"
 
 }
@@ -876,6 +913,8 @@ case "$action" in
     install_rust_and_cargo
     echo ""
     install_extra_tools
+    echo ""
+    install_notes_tooling
     echo ""
     install_fonts
     echo ""

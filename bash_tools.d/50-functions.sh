@@ -113,3 +113,107 @@ gif() {
     esac
 }
 
+
+# Render a folder of Markdown notes into a single-file, offline HTML "book"
+# (sidebar TOC, mermaid diagrams, click-to-zoom images). Usage: mkbook <repo-folder>
+alias mkbook='$HOME/scripts/.venv/bin/python3 $HOME/scripts/md_book.py'
+
+# Check notes repos for markdown that breaks `mkbook` (fenced code inside a
+# blockquote, a list with no blank line before it, trailing backslashes, two
+# H1s in one file, <img> tags) or breaks on GitHub (dead links, missing
+# images, root-relative /assets paths), plus lessons missing from a README.
+# No args checks every repo under ~/git; ~/git/archived is skipped unless
+# named. Exits non-zero when it finds something, so it works in a hook.
+# Usage: booklint [repo|path ...] [-q] [--no-toc]
+alias booklint='$HOME/scripts/.venv/bin/python3 $HOME/scripts/booklint.py'
+
+# One-time/idempotent bootstrap for `mkbook`: creates its venv, installs the
+# `markdown` dependency, and pre-caches mermaid.js.
+mkbook-setup() {
+  local venv="$HOME/scripts/.venv"
+  if [ ! -d "$venv" ]; then
+    echo "Creating venv at $venv..."
+    python3 -m venv "$venv" || return 1
+  fi
+  if ! "$venv/bin/python3" -c "import markdown" 2>/dev/null; then
+    echo "Installing markdown into $venv..."
+    "$venv/bin/pip" install --quiet markdown || return 1
+  fi
+  mkdir -p "$HOME/.cache/md_book"
+  if [ ! -f "$HOME/.cache/md_book/mermaid.min.js" ]; then
+    echo "Pre-caching mermaid.js (one-time, ~3MB)..."
+    curl -fsSL "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" \
+      -o "$HOME/.cache/md_book/mermaid.min.js" \
+      || echo "  couldn't reach the CDN now -- it will just download on the first real 'mkbook' run instead."
+  fi
+  echo "Environment ready. Try: mkbook <repo-folder>"
+}
+
+# Scaffold a new notes repo under ~/git in the src/NN-chapter/NN-lesson.md
+# convention. Every arg after the name becomes a numbered chapter
+# (default: "introduction"), pre-seeded with src/NN-<chapter>/01-intro.md and
+# assets/NN-<chapter>/. Also git-inits the repo.
+# Usage: mknotes <name> [chapter1] [chapter2] ...
+mknotes() {
+  if [ -z "$1" ]; then
+    echo "usage: mknotes <name> [chapter1] [chapter2] ..."
+    echo "  e.g. mknotes learn-vault"
+    echo "       mknotes learn-vault secrets-engines dynamic-secrets policies"
+    return 1
+  fi
+  local name="$1"
+  shift
+  local chapters=("$@")
+  [ ${#chapters[@]} -eq 0 ] && chapters=("introduction")
+  local dir="$HOME/git/$name"
+
+  if [ -e "$dir" ]; then
+    echo "already exists: $dir" >&2
+    return 1
+  fi
+
+  local title
+  title=$(echo "$name" | sed -E 's/^learn-//; s/[-_]+/ /g; s/(^| )([a-z])/\1\U\2/g')
+
+  local toc="# $title
+
+## Table of Contents
+"
+
+  local i=1
+  local chapter chapter_title num
+  for chapter in "${chapters[@]}"; do
+    num=$(printf "%02d" "$i")
+    chapter_title=$(echo "$chapter" | sed -E 's/[-_]+/ /g; s/(^| )([a-z])/\1\U\2/g')
+
+    mkdir -p "$dir/src/$num-$chapter" "$dir/assets/$num-$chapter"
+
+    cat > "$dir/src/$num-$chapter/01-intro.md" <<MD
+# Introduction
+
+MD
+
+    toc="$toc
+### $i. $chapter_title
+1. [Introduction](src/$num-$chapter/01-intro.md)
+"
+
+    i=$((i + 1))
+  done
+
+  echo "$toc" > "$dir/README.md"
+
+  git -C "$dir" init -q
+
+  echo "Created $dir"
+  echo "  README.md"
+  i=1
+  for chapter in "${chapters[@]}"; do
+    num=$(printf "%02d" "$i")
+    echo "  src/$num-$chapter/01-intro.md"
+    echo "  assets/$num-$chapter/  (empty, mirrors src/)"
+    i=$((i + 1))
+  done
+  echo
+  echo "Next chapter: mkdir -p \"$dir/src/$(printf "%02d" $i)-<name>\" \"$dir/assets/$(printf "%02d" $i)-<name>\""
+}
