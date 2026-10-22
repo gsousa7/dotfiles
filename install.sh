@@ -32,7 +32,7 @@ BASH_TOOLS="bash_tools"
 
 # List of core packages to install
 PACKAGES=(
-  "telnet" "rsync" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree" "xclip" "ripgrep" "fonts-powerline" "bat" "software-properties-common" "coreutils" "build-essential" "file" "make" "procps" "zlib1g-dev" "gpg" "build-essential" "zsh"
+  "telnet" "rsync" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree" "xclip" "ripgrep" "fonts-powerline" "bat" "software-properties-common" "coreutils" "build-essential" "file" "make" "procps" "zlib1g-dev" "gpg" "build-essential"
 )
 
 # Extra tools to install via python package manager
@@ -284,7 +284,6 @@ backup_dotfiles() {
   done
 
   backup_file "$HOME/$BASH_TOOLS" "" ".$BASH_TOOLS"
-  backup_file "$HOME/.zshrc" "" ".zshrc"
 
   if [ -f "$ORIGINAL_BASHRC" ] || [ -L "$ORIGINAL_BASHRC" ]; then
     cp "$ORIGINAL_BASHRC" "$BACKUP_DIR/" && log_message "Backed up .bashrc"
@@ -325,15 +324,6 @@ symlink_dotfiles() {
 
   symlink_file "$DOTFILES_DIR/glow.yml" "$HOME/.config/glow/glow.yml" "glow.yml to .config"
   symlink_file "$DOTFILES_DIR/fastfetch_config.json" "$HOME/.config/fastfetch/config.jsonc" "fastfetch config to .config"
-
-  # zsh is set up in parallel with bash (see zshrc/zsh_tools.d) - it's a full
-  # config on its own, no include-line dance needed like bash_tools/.bashrc.
-  # Default shell is left untouched; run zsh manually or 'chsh -s "$(command -v zsh)"'.
-  if command -v zsh &> /dev/null; then
-    symlink_file "$DOTFILES_DIR/zshrc" "$HOME/.zshrc" "zshrc"
-  else
-    log_message "zsh not found. Skipping .zshrc symlink."
-  fi
 }
 
 # Echo the live Windows Terminal settings.json path, if this is WSL and it's installed
@@ -875,8 +865,6 @@ echo ""
 log_message "May need to run 'sudo apt-get install -f' to fix dependencies."
 echo ""
 log_message "To apply all changes, restart your shell or run: 'source ~/.bashrc'"
-echo ""
-log_message "zsh is set up in parallel (same aliases, plus extras) - try it with 'zsh'. Default shell unchanged; run 'chsh -s \"\$(command -v zsh)\"' to switch."
 echo ""
 log_message "Run tmux and press Ctrl a + I to install plugins."
 echo ""

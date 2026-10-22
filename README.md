@@ -2,8 +2,6 @@
 This repository includes the following custom configurations:
 - Bash configuration customization (prompt, history, colors)
   - `.bash_completion`, `.bashrc` and `.bash_tools`
-- Zsh configuration running in parallel with the same aliases/functions, plus completion, autosuggestions and syntax highlighting
-  - `.zshrc` (default login shell is left unchanged; run `zsh` to try it, or `chsh` to switch permanently)
 - Git aliases
 - Kubernetes aliases
 - Utility aliases and functions
@@ -25,7 +23,6 @@ Files and Links
 | `ansible.cfg`         | `~/.config/ansible/ansible.cfg`    |
 | `glow.yml`            | `~/.config/glow/glow.yml`          |
 | `starship_full.toml`  | `~/.config/starship.toml`          |
-| `zshrc`               | `~/.zshrc` (only if `zsh` is installed) |
 | `wsl.json`            | Windows Terminal `settings.json` (auto-detected, WSL only) |
 
 ## Table of Contents
@@ -68,7 +65,6 @@ sudo dnf install -y git curl
 - Install man pages for Debian-based or RHEL-based systems
 - Install `spotdl`, `yt-dlp` and `tldr` via Python package manager and add them to `$PATH`
 - Clone this repository to `$HOME/dotfiles`
-- Clone trueline repository to `$HOME/.config/trueline`
 - Backup current dotfiles and link from the local repository to the `/tmp/dotfiles_<timestamp>` directory
 - Configure git name, mail and branch
 - Install `vim-plug` and vim plugins
@@ -145,10 +141,6 @@ Run the script with arguments to skip prompts:
   ```bash
   vscfo
   ```
-- In zsh, to see the extra OMZ-style git/kubectl aliases (`gco`, `gcb`, `ggp`, `kn`, ...), run:
-  ```bash
-  zfo
-  ```
 
 ### Glow Markdown Viewer
 
@@ -162,16 +154,6 @@ Run the script with arguments to skip prompts:
 ### Starship Prompt
 
 - Edit the prompt config: `vim ~/.config/starship.toml`
-
-### Zsh (parallel to bash)
-
-- Try it any time with `zsh` — same aliases/functions as bash (`git`, `kubectl`,
-  `eza`, cheatsheets, `lscom`), plus completion caching, autosuggestions,
-  syntax highlighting and history substring search (up/down arrows).
-- `zsh_tools.d/20-git.zsh` and `40-kubernetes.zsh` add extra OMZ-style aliases
-  on top of the bash set (`gco`, `gcb`, `gsw`, `kgpw`, `kn`, ...) — see `zfo`.
-- The default login shell is **not** changed automatically. Switch permanently
-  with `chsh -s "$(command -v zsh)"`.
 
 ### Ansible
 
