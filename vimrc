@@ -6,6 +6,11 @@
 " General Settings
 " ---------------------------------------------
 set nocompatible                " Use Vim features, not Vi
+
+" Keep ~ tidy: vim < 9.1.0327 has no XDG support, so relocate by hand
+set runtimepath^=~/.local/share/vim runtimepath+=~/.local/share/vim/after
+set packpath^=~/.local/share/vim
+set viminfo+=n~/.local/state/vim/viminfo
 set backspace=indent,eol,start  " Backspace works everywhere
 set encoding=utf-8              " UTF-8 encoding
 set clipboard=unnamedplus       " Use system clipboard
@@ -25,7 +30,7 @@ set noshowmode                  " Airline shows mode
 set noswapfile                  " No .swp files
 set nobackup                    " No backup files
 set undofile                    " Persistent undo
-set undodir=~/.vim/undodir      " Undo directory
+set undodir=~/.local/state/vim/undo " Undo directory
 
 " ---------------------------------------------
 " Appearance
@@ -62,7 +67,7 @@ set smartcase                   " Unless uppercase used
 " Let vim-markdown own markdown instead of polyglot's bundled copy
 let g:polyglot_disabled = ['markdown']
 
-call plug#begin('~/.vim/plugged')
+call plug#begin('~/.local/share/vim/plugged')
 
 Plug 'vim-airline/vim-airline'        " Status line
 Plug 'vim-airline/vim-airline-themes' " Themes

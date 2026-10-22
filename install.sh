@@ -203,6 +203,7 @@ install_rust_and_cargo() {
         return 0
     fi
 
+    export CARGO_HOME="$HOME/.local/share/cargo" RUSTUP_HOME="$HOME/.local/share/rustup"
     log_message "Downloading and running the rustup installer..."
     # The rustup installer will handle the installation process
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -516,7 +517,7 @@ update_gitconfig() {
 # Ensure that pre-requisites are meet and installed
 install_vim_prereq() {
   # Install vim-plug
-  local plug_vim_path="$HOME/.vim/autoload/plug.vim"
+  local plug_vim_path="$HOME/.local/share/vim/autoload/plug.vim"
 
   if [ ! -f "$plug_vim_path" ]; then
     log_message "Installing Vim-Plug..."
@@ -526,11 +527,11 @@ install_vim_prereq() {
   fi
   
   # Install Dracula theme
-  local dracula_path="$HOME/.vim/pack/themes/start/dracula"
+  local dracula_path="$HOME/.local/share/vim/pack/themes/start/dracula"
   
   if [ ! -d "$dracula_path" ]; then
     log_message "Installing Dracula theme..."
-    mkdir -p "$HOME/.vim/pack/themes/start"
+    mkdir -p "$HOME/.local/share/vim/pack/themes/start"
     git clone https://github.com/dracula/vim.git "$dracula_path" || log_message "Failed to install Dracula theme."
     log_message "Dracula theme installed successfully."
   else
@@ -600,7 +601,7 @@ install_fonts() {
 
 # Installs vim plugins declared in .vimrc
 install_vim_plugins() {
-  mkdir -p ~/.vim/undodir
+  mkdir -p ~/.local/state/vim/undo
   if command -v vim &> /dev/null; then
     log_message "Installing Vim plugins..."
     vim +'PlugInstall --sync' +qa
@@ -613,8 +614,8 @@ install_vim_plugins() {
 install_tmux_plugins() {
   log_message "Installing tmux plugins..."
   
-  if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
-    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  if [ ! -d "$HOME/.config/tmux/plugins/tpm" ]; then
+    git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
   fi
   
   mkdir -p "$HOME/.config/tmux/scripts"

@@ -7,6 +7,7 @@ export GREP_COLORS='mt=1;36'
 export PAGER='less'
 export TZ='Europe/Lisbon'
 export DESKTOPWINSL='/mnt/c/Users/Gonçalo Sousa/'
+export OBSIDIAN_VAULT="${DESKTOPWINSL}Obsidian/vault"   # vault Obsidian (git corre do WSL; ficheiros no Windows p/ o watcher funcionar)
 export HISTCONTROL='ignoredups'
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
@@ -18,6 +19,23 @@ shopt -s extglob    # !(pattern), @(pattern), etc.
 shopt -s nocaseglob  # case-insensitive globs
 
 fastfetch
+
+# Keep $HOME tidy: relocate dotdirs to XDG locations
+# (git reads ~/.config/git/{config,ignore} natively, nothing to set)
+export W3M_DIR="$HOME/.config/w3m"
+export BUNDLE_USER_HOME="$HOME/.config/bundle"
+export BUNDLE_USER_CACHE="$HOME/.cache/bundle"
+alias wget='wget --hsts-file="$HOME/.cache/wget-hsts"'
+export AWS_CONFIG_FILE="$HOME/.config/aws/config"
+export AWS_SHARED_CREDENTIALS_FILE="$HOME/.config/aws/credentials"
+export ANSIBLE_HOME="$HOME/.local/share/ansible"
+export npm_config_cache="$HOME/.cache/npm"
+export DOTNET_CLI_HOME="$HOME/.local/share/dotnet"
+export GNUPGHOME="$HOME/.local/share/gnupg"
+export CARGO_HOME="$HOME/.local/share/cargo"
+export RUSTUP_HOME="$HOME/.local/share/rustup"
+export NVM_DIR="$HOME/.local/share/nvm"
+export CHECKPOINT_DISABLE=1   # terraform: stops it recreating ~/.terraform.d for update checks
 
 # Ansible
 export ANSIBLE_CONFIG="$HOME/.config/ansible/config.ini"
