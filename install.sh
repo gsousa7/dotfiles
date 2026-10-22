@@ -629,6 +629,24 @@ install_starship() {
   log_message "Starship full/detailed configuration file linked."
 }
 
+install_claude_code() {
+  log_message "Installing Claude Code..."
+
+  if command -v claude &> /dev/null; then
+    log_message "Claude Code is already installed."
+    return 0
+  fi
+
+  curl -fsSL https://claude.ai/install.sh | bash
+
+  if command -v claude &> /dev/null; then
+    log_message "Claude Code installed successfully."
+  else
+    log_message "Claude Code installation failed."
+    return 1
+  fi
+}
+
 # ble.sh: bash line editor giving autosuggestions + syntax highlighting (zsh-like).
 # Must be sourced as the very last thing in .bashrc (after starship init, etc.),
 # so this has to run after install_starship in the install flow below.
@@ -868,6 +886,8 @@ case "$action" in
     backup_dotfiles
     echo ""
     symlink_dotfiles
+    echo ""
+    install_claude_code
     echo ""
     configure_windows_terminal
     echo ""
