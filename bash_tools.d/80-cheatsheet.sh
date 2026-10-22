@@ -136,7 +136,7 @@ tmuxfo() {
     echo -e "${MAGENTA}tmux kill-session -t <name>${RESET} or ${MAGENTA}tks${RESET}         - Kill session"
     echo -e "${MAGENTA}tmux kill-server${RESET} or ${MAGENTA}tkss${RESET}                   - Kill tmux server"
     echo -e "${MAGENTA}Ctrl a \$${RESET}                  - Rename current session"
-    echo -e "${MAGENTA}Ctrl a d${RESET}                  - Detach from session"
+    echo -e "${MAGENTA}Ctrl a d${RESET} or ${MAGENTA}td${RESET}         - Detach from session"
     echo -e "${MAGENTA}Ctrl a s${RESET}                  - List and select sessions"
     echo -e "${MAGENTA}Ctrl a Ctrl t${RESET}             - Choose session from tree"
     echo

@@ -38,7 +38,7 @@ export NVM_DIR="$HOME/.local/share/nvm"
 export CHECKPOINT_DISABLE=1   # terraform: stops it recreating ~/.terraform.d for update checks
 
 # Ansible
-export ANSIBLE_CONFIG="$HOME/.config/ansible/config.ini"
+export ANSIBLE_CONFIG="$HOME/.config/ansible/ansible.cfg"
 export ANSIBLE_INVENTORY="$HOME/.config/ansible/inventory"
 
 # Starship window title
@@ -60,11 +60,6 @@ export LESS_TERMCAP_se=$'\e[0m'
 export LESS_TERMCAP_so=$'\e[01;33m'
 export LESS_TERMCAP_ue=$'\e[0m'
 export LESS_TERMCAP_us=$'\e[1;4;31m'
-
-
-# Dotfiles
-DOTFILES_REPO="git@github.com:gsousa7/dotfiles.git"
-DOTFILES_DIR="$HOME/dotfiles"
 
 
 # Colors

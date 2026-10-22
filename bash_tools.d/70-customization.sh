@@ -1,43 +1,3 @@
-# List starship palettes and set one
-pcolor() {
-    if [ "$(readlink ~/.config/starship.toml)" != "$HOME/dotfiles/starship_full.toml" ]; then
-        echo "Palette can only be changed when the full Starship configuration is active."
-        return 1
-    fi
-
-    echo "Available starship palettes:"
-    echo "1) gruvbox_dark"
-    echo "2) nord"
-    echo "3) nord inverted"
-    echo "4) dracula"
-    echo "5) solarized_dark"
-    echo "6) solarized_light"
-    echo "7) catppuccin_mocha"
-    echo "8) guezwhoz"
-
-    read -p "Enter the number of the palette you want to use: " choice
-
-    local palette=""
-    case $choice in
-        1) palette="gruvbox_dark" ;;
-        2) palette="nord" ;;
-        3) palette="nord_inverted" ;;
-        4) palette="dracula" ;;
-        5) palette="solarized_dark" ;;
-        6) palette="solarized_light" ;;
-        7) palette="catppuccin_mocha" ;;
-        8) palette="guezwhoz" ;;
-        *)
-            echo "Invalid choice. Exiting."
-            return 1
-            ;;
-    esac
-
-    starship config palette "$palette"
-    echo "Starship palette updated to $palette. Restart your terminal to see the changes."
-}
-
-
 eskin() {
     echo "Available eza themes:"
     echo "1) default"
@@ -88,7 +48,7 @@ eskin() {
 
 ffblur() {
   local REPO_URL="https://github.com/datguypiko/Firefox-Mod-Blur.git"
-  local REPO_DIR="$HOME/Firefox-Mod-Blur"
+  local REPO_DIR
   local PROFILE_DIR="/mnt/c/Users/Gonçalo Sousa/AppData/Roaming/Mozilla/Firefox/Profiles/dthrxw1f.default-release-1768090321784"
   local CHROME_DIR="$PROFILE_DIR/chrome"
 
@@ -97,22 +57,25 @@ ffblur() {
     return 1
   fi
 
-  if [ -d "$REPO_DIR/.git" ]; then
-    echo "==> Update local repo..."
-    git -C "$REPO_DIR" fetch --depth 1 origin master || return 1
-    git -C "$REPO_DIR" reset --hard FETCH_HEAD || return 1
-  else
-    echo "==> Cloning repo (first time)..."
-    git clone --depth 1 "$REPO_URL" "$REPO_DIR" || return 1
+  REPO_DIR="$(mktemp -d /tmp/Firefox-Mod-Blur.XXXXXX)" || return 1
+
+  echo "==> Cloning repo to $REPO_DIR..."
+  if ! git clone --depth 1 "$REPO_URL" "$REPO_DIR"; then
+    rm -rf "$REPO_DIR"
+    return 1
   fi
 
   mkdir -p "$CHROME_DIR"
   echo "==> Copy to: $CHROME_DIR"
-  cp -f "$REPO_DIR/userChrome.css"  "$CHROME_DIR/" || return 1
-  cp -f "$REPO_DIR/userContent.css" "$CHROME_DIR/" || return 1
-  rm -rf "$CHROME_DIR/ASSETS"
-  cp -r "$REPO_DIR/ASSETS" "$CHROME_DIR/ASSETS" || return 1
+  if ! { cp -f "$REPO_DIR/userChrome.css" "$CHROME_DIR/" \
+      && cp -f "$REPO_DIR/userContent.css" "$CHROME_DIR/" \
+      && rm -rf "$CHROME_DIR/ASSETS" \
+      && cp -r "$REPO_DIR/ASSETS" "$CHROME_DIR/ASSETS"; }; then
+    rm -rf "$REPO_DIR"
+    return 1
+  fi
 
+  rm -rf "$REPO_DIR"
   echo "==> Finished. Restart Firefox to apply changes"
 }
 

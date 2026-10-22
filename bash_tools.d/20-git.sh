@@ -42,6 +42,22 @@ lgit() {
     git push -u origin "$2"
 }
 
+# Obsidian vault sync: pull --rebase, commit any changes, push.
+# Vault path via $OBSIDIAN_VAULT (default: $HOME/git/vault).
+vsync() {
+    local vault="${OBSIDIAN_VAULT:-$HOME/git/vault}"
+    if [ ! -d "$vault/.git" ]; then
+        echo "vsync: no git repo at $vault (set \$OBSIDIAN_VAULT)" >&2
+        return 1
+    fi
+    git -C "$vault" pull --rebase --autostash || return 1
+    if [ -n "$(git -C "$vault" status --porcelain)" ]; then
+        git -C "$vault" add -A
+        git -C "$vault" commit -qm "vault: sync $(date '+%F %H:%M')"
+    fi
+    git -C "$vault" push
+}
+
 # Git status for multiple repositories
 gdst() {
     found_repo=false
