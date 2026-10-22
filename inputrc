@@ -1,0 +1,11 @@
+# Readline config (bash, python/psql REPLs, etc.) - completion closer to zsh's compsys
+
+set completion-ignore-case on
+set show-all-if-ambiguous on
+set menu-complete-display-prefix on
+set colored-completion-prefix on
+set colored-stats on
+
+# Tab cycles through matches instead of just listing them (like zsh menu-select)
+TAB: menu-complete
+"\e[Z": menu-complete-backward

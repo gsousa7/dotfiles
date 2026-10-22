@@ -25,6 +25,7 @@ mkdir -p "$HOME/work"
 FILES_TO_SYMLINK=(
   "bash_completion"
   "vimrc"
+  "inputrc"
 )
 
 # Bash tools file to include
@@ -32,7 +33,7 @@ BASH_TOOLS="bash_tools"
 
 # List of core packages to install
 PACKAGES=(
-  "telnet" "rsync" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree" "xclip" "ripgrep" "fonts-powerline" "bat" "software-properties-common" "coreutils" "build-essential" "file" "make" "procps" "zlib1g-dev" "gpg" "build-essential"
+  "telnet" "rsync" "bash-completion" "vim" "htop" "tcpdump" "jq" "ncdu" "ansible" "fontconfig" "fdupes" "rename" "python3" "python3-pip" "netcat-openbsd" "traceroute" "ssh" "btop" "atop" "ffmpeg" "git" "pipx" "tmux" "zip" "unzip" "whois" "sed" "nmap" "mtr" "lolcat" "apg" "cowsay" "lsof" "bc" "tree" "xclip" "ripgrep" "fonts-powerline" "bat" "software-properties-common" "coreutils" "build-essential" "file" "make" "procps" "zlib1g-dev" "gpg" "build-essential" "xz-utils"
 )
 
 # Extra tools to install via python package manager
@@ -628,6 +629,45 @@ install_starship() {
   log_message "Starship full/detailed configuration file linked."
 }
 
+# ble.sh: bash line editor giving autosuggestions + syntax highlighting (zsh-like).
+# Must be sourced as the very last thing in .bashrc (after starship init, etc.),
+# so this has to run after install_starship in the install flow below.
+install_ble_sh() {
+  log_message "Installing ble.sh (autosuggestions + syntax highlighting for bash)..."
+
+  local ble_dir="$HOME/.local/share/blesh"
+
+  if [ -f "$ble_dir/ble.sh" ]; then
+    log_message "ble.sh is already installed."
+  else
+    local tmp_dir
+    tmp_dir="$(mktemp -d)"
+    if ! curl -fLo "$tmp_dir/ble-nightly.tar.xz" https://github.com/akinomyoga/ble.sh/releases/download/nightly/ble-nightly.tar.xz; then
+      log_message "Failed to download ble.sh."
+      rm -rf "$tmp_dir"
+      return 1
+    fi
+
+    tar xf "$tmp_dir/ble-nightly.tar.xz" -C "$tmp_dir"
+    mkdir -p "$HOME/.local/share"
+    rm -rf "$ble_dir"
+    mv "$tmp_dir/ble-nightly" "$ble_dir"
+    rm -rf "$tmp_dir"
+    log_message "ble.sh installed to $ble_dir."
+  fi
+
+  local source_line='[ -f "$HOME/.local/share/blesh/ble.sh" ] && source "$HOME/.local/share/blesh/ble.sh"'
+  if ! grep -Fxq "$source_line" "$HOME/.bashrc" 2> /dev/null; then
+    {
+      echo ""
+      echo "# ble.sh - must stay as the last line of .bashrc"
+      echo "bleopt_color_scheme=dracula   # matches vimrc's dracula colorscheme"
+      echo "$source_line"
+    } >> "$HOME/.bashrc"
+    log_message "ble.sh sourcing added to the end of .bashrc."
+  fi
+}
+
 install_cloud_clis() {
     echo "Install AWS CLI v2 and Azure CLI."
 
@@ -842,6 +882,8 @@ case "$action" in
     install_tmux_plugins
     echo ""
     install_starship
+    echo ""
+    install_ble_sh
     echo ""
     install_cloud_clis
     echo ""

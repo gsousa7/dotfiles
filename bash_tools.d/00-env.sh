@@ -12,6 +12,11 @@ export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 export PASTEL_COLOR_MODE=24bit
 
+# Globbing closer to zsh's
+shopt -s globstar   # ** matches recursively
+shopt -s extglob    # !(pattern), @(pattern), etc.
+shopt -s nocaseglob  # case-insensitive globs
+
 fastfetch
 
 # Ansible
