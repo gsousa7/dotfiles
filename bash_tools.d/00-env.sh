@@ -36,6 +36,7 @@ export CARGO_HOME="$HOME/.local/share/cargo"
 export RUSTUP_HOME="$HOME/.local/share/rustup"
 export NVM_DIR="$HOME/.local/share/nvm"
 export CHECKPOINT_DISABLE=1   # terraform: stops it recreating ~/.terraform.d for update checks
+export CLAUDE_CONFIG_DIR="$HOME/.config/claude"   # claude code: config/history/memory out of ~/.claude
 
 # Ansible
 export ANSIBLE_CONFIG="$HOME/.config/ansible/ansible.cfg"
