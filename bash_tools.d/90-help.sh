@@ -119,6 +119,7 @@ show_utility_commands() {
     echo -e "${MAGENTA}cdd       ${RESET} - Change directory to Windows Desktop on WSL (WSL Only)."
     echo -e "${MAGENTA}explain   ${RESET} - Explains the given command or enters interactive mode to explain commands."
     echo -e "${MAGENTA}tldr      ${RESET} - Explains the given command and provides examples."
+    echo -e "${MAGENTA}upall     ${RESET} - Update every package manager present (apt/dnf, brew, pipx, rustup) and print a summary."
     echo -e "${MAGENTA}data      ${RESET} - Print the current date and time."
     echo -e "${MAGENTA}tempolx   ${RESET} - Get the weather in Lisboa."
     echo -e "${MAGENTA}temposx   ${RESET} - Get the weather in Seixal."

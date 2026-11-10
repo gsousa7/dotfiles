@@ -217,3 +217,48 @@ MD
   echo
   echo "Next chapter: mkdir -p \"$dir/src/$(printf "%02d" $i)-<name>\" \"$dir/assets/$(printf "%02d" $i)-<name>\""
 }
+
+# upall — update every package manager present (apt/dnf, brew, pipx, rustup); skips missing ones.
+upall() {
+  local -a res=()
+  local e n rc w=0 failed=0
+  if command -v apt-get > /dev/null 2>&1; then
+    echo "==> apt"
+    sudo apt-get update && sudo apt-get full-upgrade -y && sudo apt-get autoremove -y
+    res+=("apt:$?")
+  elif command -v dnf > /dev/null 2>&1; then
+    echo "==> dnf"
+    sudo dnf upgrade -y
+    res+=("dnf:$?")
+  fi
+  if command -v brew > /dev/null 2>&1; then
+    echo "==> brew"
+    brew update && brew upgrade && brew cleanup
+    res+=("brew:$?")
+  fi
+  if command -v pipx > /dev/null 2>&1; then
+    echo "==> pipx"
+    pipx upgrade-all
+    res+=("pipx:$?")
+  fi
+  if command -v rustup > /dev/null 2>&1; then
+    echo "==> rustup"
+    rustup update
+    res+=("rustup:$?")
+  fi
+  for e in "${res[@]}"; do
+    n=${e%%:*}
+    [ ${#n} -gt $w ] && w=${#n}
+  done
+  echo
+  for e in "${res[@]}"; do
+    n=${e%%:*} rc=${e#*:}
+    if [ "$rc" -eq 0 ]; then
+      printf "%-${w}s  ok\n" "$n"
+    else
+      printf "%-${w}s  FAIL (exit %s)\n" "$n" "$rc"
+      failed=1
+    fi
+  done
+  return $failed
+}
