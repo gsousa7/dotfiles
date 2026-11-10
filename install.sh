@@ -177,7 +177,18 @@ install_packages() {
 
 }
 
+# Homebrew may be installed but not on this script's PATH (fresh shell, or
+# right after its installer runs). Later steps (starship, kubectl) rely on it.
+load_brew() {
+    local brew_bin=/home/linuxbrew/.linuxbrew/bin/brew
+    if ! command -v brew >/dev/null 2>&1 && [ -x "$brew_bin" ]; then
+        eval "$("$brew_bin" shellenv)"
+        log_message "Homebrew loaded into PATH from $brew_bin"
+    fi
+}
+
 install_homebrew() {
+    load_brew
     # Check if Homebrew is already installed
     if command -v brew >/dev/null 2>&1; then
         log_message "Homebrew is already installed. Exiting."
@@ -187,6 +198,7 @@ install_homebrew() {
     log_message "Running Homebrew installation script..."
     # Run the official Homebrew installation script
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    load_brew
     sudo ln -s /usr/bin/batcat /usr/local/bin/bat
     brew install bat-extras
     touch /home/$USER/.config/bat/config
@@ -646,7 +658,12 @@ install_starship() {
   log_message "Installing Starship prompt..."
   
   if ! command -v starship &> /dev/null; then
-    curl -sS https://starship.rs/install.sh | sh
+    # Prefer Homebrew (install_homebrew runs earlier) so `upall` keeps it updated.
+    if command -v brew &> /dev/null; then
+      brew install starship
+    else
+      curl -sS https://starship.rs/install.sh | sh
+    fi
     log_message "Starship installed successfully."
     if ! grep -Fxq 'eval "$(starship init bash)"' ~/.bashrc; then
       echo 'eval "$(starship init bash)"' >> ~/.bashrc
@@ -806,6 +823,16 @@ install_kubectl() {
         log_message "kubectl is already installed. Version:"
         kubectl version --client
         return 0
+    fi
+
+    # Prefer Homebrew (install_homebrew runs earlier) so `upall` keeps it updated.
+    if command -v brew &> /dev/null; then
+        log_message "Installing kubectl via Homebrew..."
+        if brew install kubernetes-cli; then
+            log_message "kubectl installed via Homebrew."
+            return 0
+        fi
+        log_message "Homebrew install failed, falling back to the official binary."
     fi
 
     log_message "Downloading the latest stable version of kubectl..."
