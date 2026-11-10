@@ -718,6 +718,8 @@ install_ble_sh() {
       echo "# ble.sh - must stay as the last line of .bashrc"
       echo "bleopt_color_scheme=dracula   # matches vimrc's dracula colorscheme"
       echo "bleopt_exec_elapsed_enabled=0   # no \"[ble: elapsed …]\" line after slow commands"
+      echo "bleopt_internal_suppress_bash_output=   # no \"[ble: press RET to continue]\" after fastfetch"
+      echo "bleopt_exec_errexit_mark=   # no \"[ble: exit N]\" line after a command returns non-zero"
       echo "$source_line"
     } >> "$HOME/.bashrc"
     log_message "ble.sh sourcing added to the end of .bashrc."
