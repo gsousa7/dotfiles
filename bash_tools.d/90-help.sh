@@ -153,6 +153,7 @@ show_utility_commands() {
     echo -e "${MAGENTA}tmuxfo    ${RESET} - Show custom tmux keymaps and cheatsheet"
     echo -e "${MAGENTA}vscfo     ${RESET} - Show Visual Studio Code keymaps and cheatsheet"
     echo -e "${MAGENTA}wtfo      ${RESET} - Show Windows Terminal shortcuts and cheatsheet"
+    echo -e "${MAGENTA}wtsync    ${RESET} - Sync Windows Terminal settings.json with dotfiles wsl.json (pull | push | status)"
     echo -e "${MAGENTA}svim      ${RESET} - Edit files with sudo. Equal to 'sudoedit' and 'sudo -e'"
     echo -e "${MAGENTA}..        ${RESET} - Go up one directory"
     echo -e "${MAGENTA}...       ${RESET} - Go up two directories"

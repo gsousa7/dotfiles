@@ -164,10 +164,12 @@ Edit this file to add your hosts.
 
 When running under WSL with Windows Terminal installed, the installer detects the live
 `settings.json` (packaged or unpackaged install) via `powershell.exe`, backs up the existing
-file, and symlinks `wsl.json` in its place. On non-WSL systems, or if Windows Terminal isn't
-found, this step is skipped automatically. Because it's a live symlink, any change made through
-the Windows Terminal UI (new profile, theme tweak, etc.) edits `wsl.json` in this repo directly —
-review the diff before committing.
+file, and copies `wsl.json` in its place (a copy, not a symlink: Windows can't follow WSL
+symlinks). On non-WSL systems, or if Windows Terminal isn't found, this step is skipped
+automatically. Keep the two in sync with `wtsync`: `wtsync pull` saves changes made in the
+Windows Terminal UI into `wsl.json` (review the diff before committing), `wtsync push` applies
+`wsl.json` to Windows Terminal (backing up the live file first), and `wtsync` alone says whether
+they differ. `wtfo` lists the Windows Terminal shortcuts.
 
 ### Extra Tools
 

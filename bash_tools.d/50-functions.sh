@@ -262,3 +262,36 @@ upall() {
   done
   return $failed
 }
+
+# Windows Terminal settings.json <-> dotfiles wsl.json (Windows cannot follow WSL symlinks, so copy)
+#   wtsync          show whether they differ
+#   wtsync pull     Windows Terminal -> wsl.json (after changing settings in the UI)
+#   wtsync push     wsl.json -> Windows Terminal (backup of the live file first)
+wtsync() {
+    local repo="${WT_DOTFILE:-$HOME/dotfiles/wsl.json}" live="" f
+    for f in /mnt/c/Users/*/AppData/Local/Packages/Microsoft.WindowsTerminal_*/LocalState/settings.json; do
+        [ -f "$f" ] && live="$f" && break
+    done
+    if [ -z "$live" ]; then
+        echo "Windows Terminal settings.json not found (not WSL?)"
+        return 1
+    fi
+    case "${1:-status}" in
+    pull)
+        cp "$live" "$repo" && echo "Copied Windows Terminal -> $repo"
+        git -C "$(dirname "$repo")" diff --stat -- "$(basename "$repo")"
+        ;;
+    push)
+        local bak="$HOME/.local/state/wt-backups/settings.$(date +%Y%m%d-%H%M%S).json"
+        mkdir -p "$(dirname "$bak")" && cp "$live" "$bak" && echo "Backup: $bak"
+        cp "$repo" "$live" && echo "Copied $repo -> Windows Terminal"
+        ;;
+    status)
+        if cmp -s "$live" "$repo"; then echo "In sync: $repo"; else echo "Differ: run wtsync pull (keep UI changes) or wtsync push (apply repo)"; fi
+        ;;
+    *)
+        echo "Usage: wtsync [status|pull|push]"
+        return 1
+        ;;
+    esac
+}

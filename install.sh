@@ -400,7 +400,8 @@ find_windows_terminal_settings() {
   return 1
 }
 
-# Backup and symlink Windows Terminal's settings.json to wsl.json (WSL only, skipped elsewhere)
+# Backup Windows Terminal's settings.json and copy wsl.json over it (WSL only, skipped elsewhere).
+# A copy, not a symlink: Windows can't follow a WSL symlink. 'wtsync pull' saves UI changes back.
 configure_windows_terminal() {
   local wt_settings
   wt_settings="$(find_windows_terminal_settings)"
@@ -411,7 +412,7 @@ configure_windows_terminal() {
   fi
 
   backup_file "$wt_settings" ".config/windows-terminal" "Windows Terminal settings.json"
-  symlink_file "$DOTFILES_DIR/wsl.json" "$wt_settings" "wsl.json to Windows Terminal settings.json"
+  cp "$DOTFILES_DIR/wsl.json" "$wt_settings" && log_message "Copied wsl.json to Windows Terminal settings.json"
 }
 
 eza_configuration() {
