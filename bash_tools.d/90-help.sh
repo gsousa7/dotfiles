@@ -152,6 +152,7 @@ show_utility_commands() {
     echo -e "${MAGENTA}vimfo     ${RESET} - Show custom vim keymaps and cheatsheet"
     echo -e "${MAGENTA}tmuxfo    ${RESET} - Show custom tmux keymaps and cheatsheet"
     echo -e "${MAGENTA}vscfo     ${RESET} - Show Visual Studio Code keymaps and cheatsheet"
+    echo -e "${MAGENTA}wtfo      ${RESET} - Show Windows Terminal shortcuts and cheatsheet"
     echo -e "${MAGENTA}svim      ${RESET} - Edit files with sudo. Equal to 'sudoedit' and 'sudo -e'"
     echo -e "${MAGENTA}..        ${RESET} - Go up one directory"
     echo -e "${MAGENTA}...       ${RESET} - Go up two directories"
@@ -245,6 +246,7 @@ show_help() {
     echo "- vim            (or vi, editor - Vim commands)"
     echo "- tmux           (Tmux commands)"
     echo "- vsc            (or vscode, code - VS Code commands)"
+    echo "- wt             (or wterm, windows-terminal - Windows Terminal shortcuts)"
     echo "- all            (Show all sections)"
     echo
     echo -e "${YELLOW}Usage: lscom [section]${RESET}"
@@ -287,6 +289,9 @@ lscom() {
     "vsc" | "vscode" | "code")
         vscfo
         ;;
+    "wt" | "wterm" | "windows-terminal")
+        wtfo
+        ;;
     "all" | "full" | "")
         show_git_commands
         echo
@@ -307,6 +312,8 @@ lscom() {
         tmuxfo
         echo
         vscfo
+        echo
+        wtfo
         ;;
     *)
         show_help

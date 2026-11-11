@@ -305,3 +305,53 @@ vscfo() {
     echo
 }
 
+
+# Windows Terminal cheatsheet (defaults + custom keys in wsl.json / settings.json)
+wtfo() {
+    echo ""
+    echo -e "${BLUE}Windows Terminal Cheatsheet${RESET}"
+    # sections: "## Title" lines, then "keys|description" lines; key column width from the longest key
+    awk -F'|' -v k="$(printf '%b' "${MAGENTA}")" -v s="$(printf '%b' "${ORANGE}")" -v r="$(printf '%b' "${RESET}")" '
+        { lines[NR] = $0; if ($0 !~ /^##/ && length($1) > w) w = length($1) }
+        END {
+            for (i = 1; i <= NR; i++) {
+                split(lines[i], f, "|")
+                if (lines[i] ~ /^##/) printf "\n%s%s%s\n", s, substr(lines[i], 4), r
+                else printf "%s%-*s%s  - %s\n", k, w, f[1], r, f[2]
+            }
+        }' <<'WT'
+## Tabs and windows
+Ctrl t|New tab (custom; Ctrl Shift t is unbound)
+Ctrl Shift Space|New tab menu (choose profile)
+Ctrl Shift d|Duplicate tab
+Ctrl Tab / Ctrl Shift Tab|Next / previous tab
+Ctrl Alt 1-9|Jump to tab 1-9
+Ctrl Shift w|Close pane / tab
+Ctrl Shift n|New window
+Alt Enter / F11|Fullscreen
+Win `|Quake mode: drop-down terminal from the top of the screen (from anywhere)
+## Panes
+Alt Shift d|Split pane (auto direction, same profile)
+Alt Shift + / Alt Shift -|Split right / split down
+Ctrl Alt arrows|Move focus between panes (custom; Alt arrows stay for tmux)
+Ctrl Alt Shift arrows|Resize pane (custom; Alt Shift arrows stay for tmux)
+## Copy, paste and search
+Select with mouse|Copies automatically (copyOnSelect)
+Ctrl c|Copy selection (no selection = interrupt, as usual)
+Ctrl v|Paste
+Shift Enter|New line without running (custom)
+Ctrl Shift f|Find in scrollback
+Ctrl click|Open URL under the mouse
+## Scrolling and prompts
+Ctrl Up / Ctrl Down|Jump to previous / next prompt (custom; marks also on the scrollbar)
+Ctrl Shift Up / Down|Scroll one line
+Ctrl Shift PgUp / PgDn|Scroll one page
+Ctrl Shift Home / End|Top / bottom of scrollback
+## Appearance and settings
+Ctrl = / Ctrl - / Ctrl 0|Font size bigger / smaller / reset
+Ctrl Shift p|Command palette (every action, searchable)
+Ctrl ,|Settings (UI)
+Ctrl Shift ,|Settings (JSON file)
+WT
+    echo
+}
