@@ -25,7 +25,6 @@ mkdir -p "$HOME/projects/work"
 FILES_TO_SYMLINK=(
   "bash_completion"
   "vimrc"
-  "inputrc"
 )
 
 # Bash tools file to include
@@ -345,6 +344,8 @@ backup_dotfiles() {
   backup_file "$HOME/.vimrc" "" ".vimrc"
   backup_file "$HOME/.config/fastfetch/config.json" ".config/fastfetch" "fastfetch config"
   backup_file "$HOME/.config/htop/htoprc" ".config/htop" "htoprc"
+  backup_file "$HOME/.inputrc" "" ".inputrc"
+  backup_file "$HOME/.config/readline/inputrc" ".config/readline" "inputrc"
   backup_file "$HOME/.tmux.conf" ".config/tmux" ".tmux.conf"
   backup_file "$HOME/.config/tmux/tmux.conf" ".config/tmux" "tmux.conf"
   backup_file "$STARSHIP_CONFIG" ".config/starship" "starship.toml"
@@ -368,6 +369,8 @@ symlink_dotfiles() {
 
   symlink_file "$DOTFILES_DIR/tmux.conf" "$HOME/.config/tmux/tmux.conf" "tmux.conf to .config"
   symlink_file "$DOTFILES_DIR/htoprc" "$HOME/.config/htop/htoprc" "htoprc to .config"
+  # readline finds it through INPUTRC (exported in bash_tools.d/00-env.sh)
+  symlink_file "$DOTFILES_DIR/inputrc" "$HOME/.config/readline/inputrc" "inputrc to .config"
 
   symlink_file "$DOTFILES_DIR/ansible.cfg" "$HOME/.config/ansible/ansible.cfg" "ansible.cfg to .config"
   touch "$HOME/.config/ansible/inventory" && log_message "Created ansible inventory file in .config/ansible/inventory"

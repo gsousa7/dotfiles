@@ -74,3 +74,5 @@ RESET="\e[0m"
 ORANGE="\e[38;5;214m"
 RED="\e[31m"
 
+# readline config lives in ~/.config (was ~/.inputrc)
+export INPUTRC="${XDG_CONFIG_HOME:-$HOME/.config}/readline/inputrc"
