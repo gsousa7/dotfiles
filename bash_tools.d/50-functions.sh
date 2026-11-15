@@ -116,21 +116,21 @@ gif() {
 
 # Render a folder of Markdown notes into a single-file, offline HTML "book"
 # (sidebar TOC, mermaid diagrams, click-to-zoom images). Usage: mkbook <repo-folder>
-alias mkbook='$HOME/scripts/.venv/bin/python3 $HOME/scripts/md_book.py'
+alias mkbook='$HOME/projects/scripts/.venv/bin/python3 $HOME/projects/scripts/md_book.py'
 
 # Check notes repos for markdown that breaks `mkbook` (fenced code inside a
 # blockquote, a list with no blank line before it, trailing backslashes, two
 # H1s in one file, <img> tags) or breaks on GitHub (dead links, missing
 # images, root-relative /assets paths), plus lessons missing from a README.
-# No args checks every repo under ~/git; ~/git/archived is skipped unless
+# No args checks every repo under ~/projects; ~/projects/archived is skipped unless
 # named. Exits non-zero when it finds something, so it works in a hook.
 # Usage: booklint [repo|path ...] [-q] [--no-toc]
-alias booklint='$HOME/scripts/.venv/bin/python3 $HOME/scripts/booklint.py'
+alias booklint='$HOME/projects/scripts/.venv/bin/python3 $HOME/projects/scripts/booklint.py'
 
 # One-time/idempotent bootstrap for `mkbook`: creates its venv, installs the
 # `markdown` dependency, and pre-caches mermaid.js.
 mkbook-setup() {
-  local venv="$HOME/scripts/.venv"
+  local venv="$HOME/projects/scripts/.venv"
   if [ ! -d "$venv" ]; then
     echo "Creating venv at $venv..."
     python3 -m venv "$venv" || return 1
@@ -149,7 +149,7 @@ mkbook-setup() {
   echo "Environment ready. Try: mkbook <repo-folder>"
 }
 
-# Scaffold a new notes repo under ~/git in the src/NN-chapter/NN-lesson.md
+# Scaffold a new notes repo under ~/projects in the src/NN-chapter/NN-lesson.md
 # convention. Every arg after the name becomes a numbered chapter
 # (default: "introduction"), pre-seeded with src/NN-<chapter>/01-intro.md and
 # assets/NN-<chapter>/. Also git-inits the repo.
@@ -165,7 +165,7 @@ mknotes() {
   shift
   local chapters=("$@")
   [ ${#chapters[@]} -eq 0 ] && chapters=("introduction")
-  local dir="$HOME/git/$name"
+  local dir="$HOME/projects/$name"
 
   if [ -e "$dir" ]; then
     echo "already exists: $dir" >&2
@@ -268,7 +268,7 @@ upall() {
 #   wtsync pull     Windows Terminal -> wsl.json (after changing settings in the UI)
 #   wtsync push     wsl.json -> Windows Terminal (backup of the live file first)
 wtsync() {
-    local repo="${WT_DOTFILE:-$HOME/dotfiles/wsl.json}" live="" f
+    local repo="${WT_DOTFILE:-$HOME/projects/dotfiles/dotfiles/wsl.json}" live="" f
     for f in /mnt/c/Users/*/AppData/Local/Packages/Microsoft.WindowsTerminal_*/LocalState/settings.json; do
         [ -f "$f" ] && live="$f" && break
     done

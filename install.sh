@@ -4,7 +4,7 @@
 
 # Variables
 DOTFILES_REPO="git@github.com:gsousa7/dotfiles.git"
-DOTFILES_DIR="$HOME/dotfiles"
+DOTFILES_DIR="$HOME/projects/dotfiles/dotfiles"
 TIMESTAMP="$(date +%Y%m%d_%H%M)"
 BACKUP_DIR="/tmp/dotfiles_$TIMESTAMP"
 LOG_FILE="$BACKUP_DIR/dotfiles_install.log"
@@ -17,9 +17,9 @@ mkdir -p "$BACKUP_DIR"
 
 # Create costum directories
 mkdir -p "$HOME/.config/ansible"
-mkdir -p "$HOME/git"
+mkdir -p "$HOME/projects"
 mkdir -p "$HOME/lab"
-mkdir -p "$HOME/work"
+mkdir -p "$HOME/projects/work"
 
 # List of dotfiles to handle
 FILES_TO_SYMLINK=(
@@ -267,17 +267,17 @@ install_extra_tools() {
 # bash_tools.d/50-functions.sh): creates their venv, installs the `markdown`
 # dependency, and pre-caches mermaid.js. Mirrors what mkbook-setup does by
 # hand, so a fresh machine has it ready without running it manually.
-# $HOME/scripts is a separate private repo this one doesn't manage - skip if
+# $HOME/projects/scripts is a separate private repo this one doesn't manage - skip if
 # it isn't cloned here.
 install_notes_tooling() {
   log_message "Setting up notes tooling (mkbook/booklint)..."
 
-  if [ ! -d "$HOME/scripts" ]; then
-    log_message "$HOME/scripts not found (private scripts repo not cloned here). Skipping."
+  if [ ! -d "$HOME/projects/scripts" ]; then
+    log_message "$HOME/projects/scripts not found (private scripts repo not cloned here). Skipping."
     return 0
   fi
 
-  local venv="$HOME/scripts/.venv"
+  local venv="$HOME/projects/scripts/.venv"
   if [ ! -d "$venv" ]; then
     log_message "Creating venv at $venv..."
     python3 -m venv "$venv" || { log_message "Failed to create $venv."; return 1; }

@@ -37,16 +37,16 @@ alias ippub='curl -s https://ipinfo.io/ip && echo'
 alias ippubf='curl -s https://ipinfo.io && echo'
 alias rb="source $HOME/.bashrc"
 alias eb="vim $HOME/.bashrc"
-alias ebt="vim $HOME/dotfiles/bash_tools.d"
+alias ebt="vim $HOME/projects/dotfiles/dotfiles/bash_tools.d"
 alias evrc="vim $HOME/.vimrc"
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
-alias wdir='cd $HOME/work'
-alias gdir='cd $HOME/git'
+alias wdir='cd $HOME/projects/work'
+alias gdir='cd $HOME/projects'
 alias ldir='cd $HOME/lab'
-alias ddir='cd $HOME/dotfiles'
-alias cvdir="cd $HOME/git/gsousa7.github.io"
+alias ddir='cd $HOME/projects/dotfiles/dotfiles'
+alias cvdir="cd $HOME/projects/apps/gsousa7.github.io"
 alias cvinit="bundle exec jekyll serve"
 alias svim='sudoedit'
 alias v='vim'

@@ -64,7 +64,7 @@ sudo dnf install -y git curl
 - This script will install prequisites packages and tool packages
 - Install man pages for Debian-based or RHEL-based systems
 - Install `spotdl`, `yt-dlp` and `tldr` via Python package manager and add them to `$PATH`
-- Clone this repository to `$HOME/dotfiles`
+- Clone this repository to `$HOME/projects/dotfiles/dotfiles`
 - Backup current dotfiles and link from the local repository to the `/tmp/dotfiles_<timestamp>` directory
 - Configure git name, mail and branch
 - Install `vim-plug` and vim plugins

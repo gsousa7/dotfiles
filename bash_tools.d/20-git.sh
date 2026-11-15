@@ -43,9 +43,9 @@ lgit() {
 }
 
 # Obsidian vault sync: pull --rebase, commit any changes, push.
-# Vault path via $OBSIDIAN_VAULT (default: $HOME/git/vault).
+# Vault path via $OBSIDIAN_VAULT (default: $HOME/projects/vault).
 vsync() {
-    local vault="${OBSIDIAN_VAULT:-$HOME/git/vault}"
+    local vault="${OBSIDIAN_VAULT:-$HOME/projects/vault}"
     if [ ! -d "$vault/.git" ]; then
         echo "vsync: no git repo at $vault (set \$OBSIDIAN_VAULT)" >&2
         return 1
