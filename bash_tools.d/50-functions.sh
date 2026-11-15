@@ -295,3 +295,11 @@ wtsync() {
         ;;
     esac
 }
+
+# MarkText (Linux build, via WSLg): fast because files are read inside WSL, not over \\wsl.localhost
+#   mt            open ~/projects
+#   mt <file|dir> open that path
+mt() {
+    command -v marktext >/dev/null 2>&1 || { echo "marktext not installed"; return 1; }
+    (marktext "${@:-$HOME/projects}" >/dev/null 2>&1 &)
+}
