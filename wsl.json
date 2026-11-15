@@ -392,5 +392,5 @@
     "tabSwitcherMode": "disabled",
     "theme": "system",
     "themes": [],
-    "useAcrylicInTabRow": true
+    "useAcrylicInTabRow": false
 }
