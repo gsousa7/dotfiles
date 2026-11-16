@@ -350,6 +350,8 @@ backup_dotfiles() {
   backup_file "$HOME/.config/tmux/tmux.conf" ".config/tmux" "tmux.conf"
   backup_file "$STARSHIP_CONFIG" ".config/starship" "starship.toml"
   backup_file "$HOME/.config/glow/glow.yml" ".config/glow" "glow.yml"
+  backup_file "$HOME/.config/gtk-3.0/settings.ini" ".config/gtk-3.0" "gtk-3.0 settings.ini"
+  backup_file "$HOME/.config/fontconfig/fonts.conf" ".config/fontconfig" "fonts.conf"
 }
 
 # Symlink $1 to $2, creating $2's parent directory first, logging as $3
@@ -377,6 +379,10 @@ symlink_dotfiles() {
 
   symlink_file "$DOTFILES_DIR/glow.yml" "$HOME/.config/glow/glow.yml" "glow.yml to .config"
   symlink_file "$DOTFILES_DIR/fastfetch_config.json" "$HOME/.config/fastfetch/config.jsonc" "fastfetch config to .config"
+
+  # Linux GUI apps (WSLg): dark GTK theme + JetBrainsMono as the UI font
+  symlink_file "$DOTFILES_DIR/gtk3-settings.ini" "$HOME/.config/gtk-3.0/settings.ini" "gtk-3.0 settings.ini to .config"
+  symlink_file "$DOTFILES_DIR/fonts.conf" "$HOME/.config/fontconfig/fonts.conf" "fonts.conf to .config"
 }
 
 # Echo the live Windows Terminal settings.json path, if this is WSL and it's installed
@@ -416,6 +422,76 @@ configure_windows_terminal() {
 
   backup_file "$wt_settings" ".config/windows-terminal" "Windows Terminal settings.json"
   cp "$DOTFILES_DIR/wsl.json" "$wt_settings" && log_message "Copied wsl.json to Windows Terminal settings.json"
+}
+
+# MarkText (Linux build) from its GitHub releases: install if missing, upgrade when a newer
+# release exists (so 'install.sh -u' keeps it current). Only where Linux GUI apps can run.
+install_marktext() {
+  if [ ! -d /mnt/wslg ] && [ -z "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]; then
+    log_message "No GUI (WSLg/X11/Wayland) found. Skipping MarkText."
+    return 0
+  fi
+
+  local latest installed="" arch="" ext url tmp
+  latest="$(curl -fsSL https://api.github.com/repos/marktext/marktext/releases/latest |
+    sed -nE 's/.*"tag_name": *"v?([^"]+)".*/\1/p')"
+  if [ -z "$latest" ]; then
+    log_message "Could not get the latest MarkText release. Skipping."
+    return 1
+  fi
+
+  case "$PACKAGE_MANAGER" in
+    apt)
+      ext="deb"
+      installed="$(dpkg-query -W -f='${Version}' marktext 2> /dev/null)"
+      ;;
+    dnf | yum)
+      ext="rpm"
+      rpm -q marktext &> /dev/null && installed="$(rpm -q --qf '%{VERSION}' marktext)"
+      ;;
+  esac
+  [ "$(uname -m)" = "aarch64" ] && arch="arm64-"
+
+  if [ "$installed" = "$latest" ]; then
+    log_message "MarkText $installed is already the latest."
+    return 0
+  fi
+
+  log_message "Installing MarkText $latest (installed: ${installed:-none})..."
+  url="https://github.com/marktext/marktext/releases/download/v$latest/marktext-linux-$arch$latest.$ext"
+  tmp="$(mktemp -d)"
+  if curl -fsSL "$url" -o "$tmp/marktext.$ext" &&
+    sudo "$PACKAGE_MANAGER" install -y "$tmp/marktext.$ext"; then
+    log_message "MarkText $latest installed."
+  else
+    log_message "Failed to install MarkText from $url."
+  fi
+  rm -rf "$tmp"
+}
+
+# MarkText (Linux build, under WSLg): Dracula + JetBrainsMono preferences, plus the GNOME
+# font/dark settings Electron reads. A copy, not a symlink: MarkText rewrites preferences.json
+# atomically, which would replace a symlink with a plain file.
+configure_marktext() {
+  if ! command -v marktext &> /dev/null; then
+    log_message "MarkText not installed. Skipping its configuration."
+    return
+  fi
+
+  local prefs="$HOME/.config/marktext/preferences.json"
+  if cmp -s "$DOTFILES_DIR/marktext.json" "$prefs"; then
+    log_message "MarkText preferences already up to date."
+  else
+    backup_file "$prefs" ".config/marktext" "MarkText preferences.json"
+    mkdir -p "$(dirname "$prefs")"
+    cp "$DOTFILES_DIR/marktext.json" "$prefs" && log_message "Copied marktext.json to $prefs"
+  fi
+
+  if command -v gsettings &> /dev/null; then
+    gsettings set org.gnome.desktop.interface font-name 'JetBrainsMono Nerd Font SemiBold 11'
+    gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+    log_message "Set GNOME UI font and dark color scheme (gsettings)."
+  fi
 }
 
 eza_configuration() {
@@ -748,12 +824,7 @@ install_ble_sh() {
 }
 
 install_cloud_clis() {
-    echo "Install AWS CLI v2 and Azure CLI."
-
-    if command -v aws &> /dev/null && command -v az &> /dev/null; then
-        echo "Both AWS CLI and Azure CLI are already installed."
-        return 0
-    fi
+    echo "Install AWS CLI v2."
 
     if ! command -v aws &> /dev/null; then
         echo "Installing AWS CLI v2..."
@@ -769,19 +840,6 @@ install_cloud_clis() {
         fi
     else
         echo "AWS CLI is already installed."
-    fi
-
-    if ! command -v az &> /dev/null; then
-        echo "Installing Azure CLI..."
-        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-        if [ $? -eq 0 ]; then
-            echo "Azure CLI installation complete."
-        else
-            echo "Failed to download Azure CLI installer. Aborting."
-            return 1
-        fi
-    else
-        echo "Azure CLI is already installed."
     fi
 }
 
@@ -860,6 +918,7 @@ update_everything () {
   pipx ensurepath
   cd "$DOTFILES_DIR" && git pull || log_message "Error pulling changes."
   install_notes_tooling
+  install_marktext
   log_message "To apply all changes, restart your shell or run: 'source ~/.bashrc' or 'rb'"
 
 }
@@ -964,6 +1023,10 @@ case "$action" in
     install_claude_code
     echo ""
     configure_windows_terminal
+    echo ""
+    install_marktext
+    echo ""
+    configure_marktext
     echo ""
     include_bash_tools
     echo ""
