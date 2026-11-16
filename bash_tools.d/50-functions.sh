@@ -116,7 +116,7 @@ gif() {
 
 # Render a folder of Markdown notes into a single-file, offline HTML "book"
 # (sidebar TOC, mermaid diagrams, click-to-zoom images). Usage: mkbook <repo-folder>
-alias mkbook='$HOME/projects/scripts/.venv/bin/python3 $HOME/projects/scripts/md_book.py'
+alias mkbook='$HOME/projects/scripts/.venv/bin/python3 $HOME/projects/scripts/notes/md_book.py'
 
 # Check notes repos for markdown that breaks `mkbook` (fenced code inside a
 # blockquote, a list with no blank line before it, trailing backslashes, two
@@ -125,7 +125,7 @@ alias mkbook='$HOME/projects/scripts/.venv/bin/python3 $HOME/projects/scripts/md
 # No args checks every repo under ~/projects; ~/projects/archived is skipped unless
 # named. Exits non-zero when it finds something, so it works in a hook.
 # Usage: booklint [repo|path ...] [-q] [--no-toc]
-alias booklint='$HOME/projects/scripts/.venv/bin/python3 $HOME/projects/scripts/booklint.py'
+alias booklint='$HOME/projects/scripts/.venv/bin/python3 $HOME/projects/scripts/notes/booklint.py'
 
 # One-time/idempotent bootstrap for `mkbook`: creates its venv, installs the
 # `markdown` dependency, and pre-caches mermaid.js.
