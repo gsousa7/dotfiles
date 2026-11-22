@@ -128,16 +128,16 @@ alias mkbook='$HOME/projects/scripts/.venv/bin/python3 $HOME/projects/scripts/no
 alias booklint='$HOME/projects/scripts/.venv/bin/python3 $HOME/projects/scripts/notes/booklint.py'
 
 # One-time/idempotent bootstrap for `mkbook`: creates its venv, installs the
-# `markdown` dependency, and pre-caches mermaid.js.
+# `markdown` + `pymdown-extensions` + `pygments` dependencies, and pre-caches mermaid.js.
 mkbook-setup() {
   local venv="$HOME/projects/scripts/.venv"
   if [ ! -d "$venv" ]; then
     echo "Creating venv at $venv..."
     python3 -m venv "$venv" || return 1
   fi
-  if ! "$venv/bin/python3" -c "import markdown" 2>/dev/null; then
-    echo "Installing markdown into $venv..."
-    "$venv/bin/pip" install --quiet markdown || return 1
+  if ! "$venv/bin/python3" -c "import markdown, pymdownx, pygments" 2>/dev/null; then
+    echo "Installing markdown + pymdown-extensions + pygments into $venv..."
+    "$venv/bin/pip" install --quiet markdown pymdown-extensions pygments || return 1
   fi
   mkdir -p "$HOME/.cache/md_book"
   if [ ! -f "$HOME/.cache/md_book/mermaid.min.js" ]; then

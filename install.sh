@@ -263,8 +263,8 @@ install_extra_tools() {
 }
 
 # One-time/idempotent setup for the mkbook/booklint notes tooling (see
-# bash_tools.d/50-functions.sh): creates their venv, installs the `markdown`
-# dependency, and pre-caches mermaid.js. Mirrors what mkbook-setup does by
+# bash_tools.d/50-functions.sh): creates their venv, installs `markdown`, `pymdown-extensions`, `pygments`
+# dependencies, and pre-caches mermaid.js. Mirrors what mkbook-setup does by
 # hand, so a fresh machine has it ready without running it manually.
 # $HOME/projects/scripts is a separate private repo this one doesn't manage - skip if
 # it isn't cloned here.
@@ -282,9 +282,9 @@ install_notes_tooling() {
     python3 -m venv "$venv" || { log_message "Failed to create $venv."; return 1; }
   fi
 
-  if ! "$venv/bin/python3" -c "import markdown" 2> /dev/null; then
-    log_message "Installing markdown into $venv..."
-    "$venv/bin/pip" install --quiet markdown || { log_message "Failed to install markdown into $venv."; return 1; }
+  if ! "$venv/bin/python3" -c "import markdown, pymdownx, pygments" 2> /dev/null; then
+    log_message "Installing markdown + pymdown-extensions + pygments into $venv..."
+    "$venv/bin/pip" install --quiet markdown pymdown-extensions pygments || { log_message "Failed to install markdown + pymdown-extensions + pygments into $venv."; return 1; }
   fi
 
   mkdir -p "$HOME/.cache/md_book"

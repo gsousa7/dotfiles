@@ -172,7 +172,7 @@ show_utility_commands() {
     echo -e "${MAGENTA}hl        ${RESET} - Highlights the output of a command using batcat. Usage: ${YELLOW}hl <command> ${RESET}or ${YELLOW}<command> | hl${RESET}"
     echo -e "${MAGENTA}mkbook    ${RESET} - Render a folder of Markdown notes into a single offline HTML book. Usage: ${YELLOW}mkbook <repo-folder>${RESET}"
     echo -e "${MAGENTA}booklint  ${RESET} - Check notes repos for markdown that breaks mkbook or GitHub. Usage: ${YELLOW}booklint [repo|path ...] [-q] [--no-toc]${RESET}"
-    echo -e "${MAGENTA}mkbook-setup${RESET} - Create the mkbook venv, install 'markdown' and pre-cache mermaid.js (idempotent)"
+    echo -e "${MAGENTA}mkbook-setup${RESET} - Create the mkbook venv, install 'markdown' + 'pymdown-extensions' + 'pygments' and pre-cache mermaid.js (idempotent)"
     echo -e "${MAGENTA}mknotes   ${RESET} - Scaffold a notes repo in $HOME/projects with numbered chapters. Usage: ${YELLOW}mknotes <name> [chapter1] [chapter2] ...${RESET}"
     echo -e "${MAGENTA}s5m       ${RESET} - Sleep 5 minutes."
     echo -e "${MAGENTA}s10m      ${RESET} - Sleep 10 minutes."
